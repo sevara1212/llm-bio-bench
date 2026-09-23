@@ -2,7 +2,7 @@
 import pandas as pd
 import scanpy as sc
 
-N_TOP = 10
+N_TOP = 50  # keep ranks 1-50 so questions can use less famous genes
 
 # Canonical markers from the scanpy PBMC3k tutorial, used to label clusters.
 CELL_TYPE_MARKERS = {
@@ -50,6 +50,12 @@ for cluster in names.columns:
         rows.append({"cluster": cluster, "rank": rank, "gene": gene,
                      "ensembl": symbol_to_ensembl[gene]})
 pd.DataFrame(rows).to_csv("data/pbmc_markers.csv", index=False)
+
+# Background genes for noise injection: expressed, but in no cluster's top 50.
+top_genes = {r["gene"] for r in rows}
+background = [g for g in adata.raw.var_names if g not in top_genes]
+pd.DataFrame({"gene": background, "ensembl": [symbol_to_ensembl[g] for g in background]}
+             ).to_csv("data/background_genes.csv", index=False)
 
 # Label each cluster by which canonical marker set it expresses most.
 # CHECK THIS BY EYE against the tutorial before trusting it.
