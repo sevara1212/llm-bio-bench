@@ -4,6 +4,7 @@ Usage: python src/run_eval.py <model> [n_runs] [--dataset pbmc|hao] [--skip-knob
   anthropic/claude-sonnet-5   -> Anthropic API directly (ANTHROPIC_API_KEY)
   google/gemini-3.8-flash     -> Gemini API directly (GEMINI_API_KEY), OpenAI-compatible endpoint
   openai/gpt-5.6-terra        -> OpenRouter (OPENROUTER_API_KEY); so is anything else
+  --provider openrouter       -> force OpenRouter, e.g. for Gemini while Google billing is down
 
 --test asks the first question once, prints the raw response, tokens and cost, and saves nothing.
 
@@ -34,9 +35,11 @@ parser.add_argument("--dataset", default="pbmc", choices=["pbmc", "hao"])
 parser.add_argument("--skip-knob", action="append", default=[],
                     help="leave out a difficulty knob, e.g. --skip-knob noise (repeatable)")
 parser.add_argument("--test", action="store_true", help="ask one question, print everything, save nothing")
+parser.add_argument("--provider", choices=["anthropic", "google", "openrouter"],
+                    help="override the provider picked from the model prefix, e.g. send google/... via openrouter")
 args = parser.parse_args()
 MODEL, N_RUNS, DATASET = args.model, args.n_runs, args.dataset
-PROVIDER = {"anthropic": "anthropic", "google": "google"}.get(MODEL.split("/")[0], "openrouter")
+PROVIDER = args.provider or {"anthropic": "anthropic", "google": "google"}.get(MODEL.split("/")[0], "openrouter")
 API_MODEL = MODEL if PROVIDER == "openrouter" else MODEL.split("/", 1)[1]  # "google/gemini-3.8-flash" -> "gemini-3.8-flash"
 # Requests per minute, per provider. OpenRouter caps new accounts at 20/min per model.
 # Gemini API limits depend on your billing tier - see aistudio.google.com/rate-limit - so 60 is a

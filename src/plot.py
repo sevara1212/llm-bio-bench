@@ -25,11 +25,12 @@ SURFACE, TEXT, TEXT_2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0"
 DATASET = sys.argv[1] if len(sys.argv) > 1 else "pbmc"
 DESCRIPTION = {"pbmc": "PBMC3k, 8 clusters", "hao": "Hao 2021 CITE-seq PBMC, 30 cell types"}[DATASET]
 scores = pd.read_csv(f"results/scores_{DATASET}.csv", dtype={"level": str})
-# Only plot models that answered every question; partial runs would give misleading curves.
-counts = scores.groupby("model").size()
-models = sorted(counts[counts == counts.max()].index)
-if len(models) < len(counts):
-    print("Skipping incomplete models:", counts[counts < counts.max()].to_dict())
+# score.py already kept only questions every model answered, so all models share one n.
+models = sorted(scores.model.unique())
+N_PER_MODEL = len(scores) // len(models)
+point_n = scores.groupby(["knob", "level", "format", "model"]).size()
+N_PER_POINT = f"{point_n.min()}" if point_n.min() == point_n.max() else f"{point_n.min()}-{point_n.max()}"
+KNOBS = {k: v for k, v in KNOBS.items() if k in set(scores.knob)}  # e.g. no noise panel on hao
 # Fixed model -> colour, so a model keeps its colour when others are skipped.
 MODEL_ORDER = ["claude-sonnet-5", "gemini-3.8-flash", "gpt-5.6-terra"]
 rng = np.random.default_rng(0)
@@ -78,7 +79,9 @@ for name, column in METRICS.items():
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper right", ncol=len(models), frameon=False, bbox_to_anchor=(0.99, 1.0))
     fig.suptitle(f"Cell-type accuracy as questions get harder ({name})", x=0.01, y=0.985, ha="left", fontsize=14, fontweight="bold")
-    fig.text(0.01, 0.925, f"{DESCRIPTION}, {scores.run.nunique()} run(s) per question. Shaded band = 95% bootstrap CI. Noise levels pool 3 random draws.",
+    fig.text(0.01, 0.925, f"{DESCRIPTION}, {scores.run.nunique()} run(s) per question, n = {N_PER_MODEL} answers per model, "
+             f"n = {N_PER_POINT} per point (same questions for every model). Shaded band = 95% bootstrap CI."
+             + (" Noise levels pool 3 random draws." if "noise" in KNOBS else ""),
              color=TEXT_2, fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.90))
     fig.savefig(f"results/{DATASET}_difficulty_{name}.png", dpi=150, facecolor=SURFACE)

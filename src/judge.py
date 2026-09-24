@@ -1,14 +1,22 @@
 """LLM judge for the Hao dataset: map each free-text answer to one of the 30 labels.
 
-The judge only sees the model's answer text - never the true label or the genes -
-so it maps wording, it doesn't grade. Each distinct answer string is judged once
-and cached in results/judge_cache_hao.json, so re-running is free.
+Two steps, applied identically to every model's answers:
+  1. rule_match(): exact match (after lower-casing, trimming, dropping a plural "s") against the
+     label names and a short list of unambiguous synonyms. No LLM involved.
+  2. Only answers rule_match() can't place go to the LLM judge.
 
-Usage: python src/judge.py      (judges every new answer in results/*_hao.csv)
+The judge sees only the answer text - never which model wrote it, the true label or the genes -
+so it maps wording, it doesn't grade. Each distinct answer string is judged once and cached in
+results/judge_cache_hao.json.
+
+Usage: python src/judge.py           judge answers not yet in the cache
+       python src/judge.py --fresh   ignore the cache and judge everything again in one pass
 """
 import glob
 import json
 import os
+import re
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import anthropic
@@ -50,6 +58,37 @@ VAGUE = {
 NOT_PBMC = "Not found in PBMCs (e.g. neutrophil, eosinophil, endothelial, epithelial)"
 UNKNOWN = "Unknown / low-quality / no cell type given"
 OPTIONS = FINE + list(VAGUE) + [NOT_PBMC, UNKNOWN]
+
+# Unambiguous synonyms for rule_match(), written already normalized (lower case, singular).
+SYNONYMS = {
+    "nk cell": "NK", "natural killer cell": "NK", "natural killer (nk) cell": "NK",
+    "cd56bright nk cell": "NK_CD56bright",
+    "cd14+ monocyte": "CD14 Mono", "cd14 monocyte": "CD14 Mono", "classical monocyte": "CD14 Mono",
+    "cd16+ monocyte": "CD16 Mono", "cd16 monocyte": "CD16 Mono", "non-classical monocyte": "CD16 Mono",
+    "platelet": "Platelet", "megakaryocyte": "Platelet",
+    "plasmablast": "Plasmablast", "plasma cell": "Plasmablast",
+    "plasmacytoid dendritic cell": "pDC", "plasmacytoid dendritic cell (pdc)": "pDC",
+    "naive b cell": "B naive", "memory b cell": "B memory",
+    "regulatory t cell": "Treg", "regulatory t cell (treg)": "Treg",
+    "gamma-delta t cell": "gdT", "mucosal-associated invariant t cell": "MAIT",
+    "b cell": "B cell (subtype unclear)", "t cell": "T cell (CD4/CD8/other unclear)",
+    "monocyte": "Monocyte (subtype unclear)", "dendritic cell": "Dendritic cell (subtype unclear)",
+    "unknown": UNKNOWN,
+}
+
+
+def _normalize(text):
+    t = re.sub(r"\s+", " ", text.strip().lower()).rstrip(".")
+    return t[:-1] if len(t) > 3 and t.endswith("s") and not t.endswith("ss") else t
+
+
+RULE_TABLE = {**{_normalize(o): o for o in OPTIONS}, **SYNONYMS}
+
+
+def rule_match(answer):
+    """Label for an answer that is exactly a label name or synonym, else None."""
+    return RULE_TABLE.get(_normalize(answer)) if isinstance(answer, str) else None
+
 
 INSTRUCTIONS = f"""A model was shown marker genes from a cluster of human PBMCs and named the cell type.
 Map its answer to exactly one label from this list:
@@ -98,13 +137,21 @@ def judge(answer):
     return by_lower[label.lower()]
 
 
+def results_files():
+    """Model results files only (not scores_hao.csv or the hand-check sheet)."""
+    return [p for p in glob.glob("results/*_hao.csv")
+            if "knob" in pd.read_csv(p, nrows=0).columns]
+
+
 if __name__ == "__main__":
-    cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
+    fresh = "--fresh" in sys.argv
+    cache = {} if fresh or not os.path.exists(CACHE) else json.load(open(CACHE))
     answers = set()
-    for path in glob.glob("results/*_hao.csv"):
+    for path in results_files():
         answers |= set(pd.read_csv(path).predicted.dropna().astype(str))
-    todo = sorted(answers - set(cache))
-    print(f"{len(answers)} distinct answers, {len(todo)} new to judge")
+    ruled = {a for a in answers if rule_match(a)}
+    todo = sorted(answers - ruled - set(cache))
+    print(f"{len(answers)} distinct answers: {len(ruled)} matched by rules, {len(todo)} to send to the judge")
     with ThreadPoolExecutor(8) as pool:
         for answer, label in zip(todo, pool.map(judge, todo)):
             cache[answer] = label
