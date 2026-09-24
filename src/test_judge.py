@@ -32,11 +32,18 @@ CASES = {
     "Proliferating lymphocytes (cycling T/NK cells)": "Proliferating lymphocyte (lineage unclear)",
     "Proliferating T cells (cycling lymphocytes)": "Proliferating lymphocyte (lineage unclear)",
     "Proliferating NK cells (cycling)": "NK Proliferating",
-    "CD8+ cytotoxic T cells (or NK-like/NKT cells)": "CD8 TEM",
-    "CD8+ cytotoxic T cell / NK-like T cell": "CD8 TEM",
+    "CD8+ cytotoxic T cells (or NK-like/NKT cells)": "CD8 T cell (subtype unclear)",
+    "CD8+ cytotoxic T cell / NK-like T cell": "CD8 T cell (subtype unclear)",
     "cDC2 (CD1C+ dendritic cell)": "cDC2",
     "Naive T cell (likely naive CD4+ T cell)": "CD4 Naive",
     "Lymphocyte (likely naive T cell)": "T cell (CD4/CD8/other unclear)",
+    # the 3 disagreements from the 30-row hand-check:
+    "CD8+ memory/effector T cells (KLRB1+ GZMK+ subset, possibly MAIT-like)": "CD8 TEM",
+    "cytotoxic CD8+ T cell": "CD8 T cell (subtype unclear)",
+    "CD8+ cytotoxic T cell": "CD8 T cell (subtype unclear)",
+    # rule 2: effector wording still maps to TEM
+    "CD8+ effector T cells": "CD8 TEM",
+    "CD8+ effector memory T cell": "CD8 TEM",
 }
 
 misses = 0

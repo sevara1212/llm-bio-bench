@@ -104,6 +104,10 @@ B intermediate, dnT, ILC. Most common confusions:
 | dnT | CD8 TCM / CD8 TEM | 24 |
 | ILC | CD4 T (subtype unclear) | 15 |
 
+*(Counts above are from the Claude-only run with the earlier judge. With the tightened judge — see
+methods.md — plain "cytotoxic CD8" answers now count as "CD8 T cell (subtype unclear)", not CD8 TEM, so
+some of these move to that label; the model still answers CD8 either way.)*
+
 **Pattern:** anything cytotoxic (GZMH, GZMK, NKG7, CCL5) becomes "CD8 effector memory", even CD4 CTLs and
 MAIT/γδ T cells. The model knows the cytotoxic program but not the markers that tell these apart
 (TRDC/TRGC1 for γδ, KLRB1+SLC4A10 for MAIT).

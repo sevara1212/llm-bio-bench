@@ -108,16 +108,23 @@ Rules: TEM = effector memory, TCM = central memory, CTL = cytotoxic. "Classical 
 one lineage, use it ("proliferating NK" -> NK Proliferating). If it hedges between lineages or names
 none ("cycling T/NK cells", "proliferating lymphocytes") -> Proliferating lymphocyte (lineage unclear).
 "Proliferating T cells" without CD4/CD8 -> Proliferating lymphocyte (lineage unclear).
-"Cytotoxic" or "effector" CD8 T cells -> CD8 TEM (that is what TEM is in this dataset).
+CD8 TEM only if the answer says effector memory, effector or TEM. "Cytotoxic CD8 T cell" alone does not
+specify a subtype -> CD8 T cell (subtype unclear).
 "Conventional", "myeloid" or "classical" DC without saying cDC1/cDC2 (or CLEC9A/XCR1 vs CD1C/FCER1A)
 -> Dendritic cell (subtype unclear).
 Be strict: only pick a fine type when the answer itself says it. Never pick one because it is the most
 common subtype.
-If the answer lists several possibilities, map the first/main one. Judge the wording only."""
+Judge the PRIMARY answer only: the cell type the answer commits to. Ignore hedges and alternatives such as
+"possibly X", "maybe X", "or Y", "X-like", "e.g. X" - never let a hedge pick the label. Words describing the
+cell's state (proliferating, cycling, naive, memory, effector) are part of the primary answer, not hedges.
+Judge the wording only."""
 
 client = anthropic.Anthropic(timeout=60, max_retries=6)
-SCHEMA = {"type": "object", "properties": {"label": {"type": "string", "enum": OPTIONS}},
-          "required": ["label"], "additionalProperties": False}
+# primary_answer comes first so the judge writes down the committed cell type (state words included,
+# hedges dropped) before choosing a label. Only `label` is used for scoring.
+SCHEMA = {"type": "object",
+          "properties": {"primary_answer": {"type": "string"}, "label": {"type": "string", "enum": OPTIONS}},
+          "required": ["primary_answer", "label"], "additionalProperties": False}
 
 
 def judge(answer):
@@ -129,7 +136,10 @@ def judge(answer):
         output_config={"effort": "low", "format": {"type": "json_schema", "schema": SCHEMA}},
     )
     text = next(b.text for b in resp.content if b.type == "text")
-    label = json.loads(text)["label"]
+    out = json.loads(text)
+    # Label selection sometimes slips between similar names (primary_answer "NK Proliferating",
+    # label "NK_CD56bright"). If the judge's own primary answer is exactly a label or synonym, trust it.
+    label = rule_match(out["primary_answer"]) or out["label"]
     # Guard against near-misses like "NK Cell (subtype unclear)": match case-insensitively.
     by_lower = {o.lower(): o for o in OPTIONS}
     if label.lower() not in by_lower:
