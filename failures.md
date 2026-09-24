@@ -131,6 +131,22 @@ and only under heavy noise.
 
 ---
 
+# Baseline failures (marker lookup, no LLM)
+
+## 9. Housekeeping genes in the database
+
+CellMarker's lists include ribosomal genes for some cell types, so a ribosome-only gene list gets
+matched to them. `hao_cCD4-Naive_rank_window_1-10_r0_symbol` (RPL30, RPS13, RPL21, RPS27, RPL32, …)
+-> **Plasma cell**, matched on 6 ribosomal genes. An LLM at least recognises these as uninformative.
+
+## 10. Ties
+
+The top overlap count is tied between 2+ labels in 38.7% of CellMarker questions (23.3% PanglaoDB),
+so the tie rule matters: scoring ties with fractional credit instead of the tie-break moves
+CellMarker's strict accuracy from 28.7% to 27.5% (see methods.md).
+
+---
+
 ## To do
 - [x] Re-count everything after the 3× repeats — accuracy per run varies by ≤1.2 points; see type 6
 - [ ] Re-check types 1–5 counts using all 3 runs

@@ -33,6 +33,9 @@ N_PER_POINT = f"{point_n.min()}" if point_n.min() == point_n.max() else f"{point
 KNOBS = {k: v for k, v in KNOBS.items() if k in set(scores.knob)}  # e.g. no noise panel on hao
 # Fixed model -> colour, so a model keeps its colour when others are skipped.
 MODEL_ORDER = ["claude-sonnet-5", "gemini-3.8-flash", "gpt-5.6-terra"]
+# No-LLM baselines are drawn in neutral grays so they read as reference lines, not competitors.
+BASELINE_COLORS = {"cellmarker-lookup": "#52514e", "panglaodb-lookup": "#a3a29c"}
+RANDOM = {"hao": 1 / 30, "pbmc": 1 / 8}[DATASET]  # strict accuracy of a uniform random guess
 rng = np.random.default_rng(0)
 METRICS = {"strict": "strict", "lenient": "score"}  # figure name -> scores.csv column
 
@@ -54,7 +57,8 @@ for name, column in METRICS.items():
             ax.set_facecolor(SURFACE)
             x = np.arange(len(levels))
             for i, model in enumerate(models):
-                color = COLORS[MODEL_ORDER.index(model)] if model in MODEL_ORDER else COLORS[i]
+                color = (COLORS[MODEL_ORDER.index(model)] if model in MODEL_ORDER
+                         else BASELINE_COLORS.get(model, TEXT_2))
                 dx = (i - (len(models) - 1) / 2) * 0.06  # small sideways dodge so tied lines stay visible
                 sub = scores[(scores.knob == knob) & (scores.format == fmt) & (scores.model == model)]
                 stats = [mean_ci(sub[sub.level == lv][column]) for lv in levels]
@@ -62,6 +66,10 @@ for name, column in METRICS.items():
                 ax.fill_between(x + dx, lo, hi, color=color, alpha=0.10, linewidth=0)
                 ax.plot(x + dx, mean, color=color, linewidth=2, solid_capstyle="round", solid_joinstyle="round",
                         marker="o", markersize=7, markeredgecolor=SURFACE, markeredgewidth=2, label=model)
+            if name == "strict":
+                ax.axhline(RANDOM, color=TEXT_2, linewidth=1, alpha=0.6)
+                if col == 0:
+                    ax.text(x[-1], RANDOM + 0.015, "random guess", ha="right", va="bottom", fontsize=8, color=TEXT_2)
             ax.set_xticks(x, levels)
             ax.set_ylim(-0.03, 1.05)
             ax.grid(axis="y", color=GRID, linewidth=1)

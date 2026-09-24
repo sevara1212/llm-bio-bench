@@ -62,6 +62,57 @@ Models are compared only on (question, run) pairs answered by all three models: 
   instructions changed 3.8% of labels (23/600) but only 0.7% of correct/incorrect outcomes (4/600);
   strict accuracy moved by 0.3 points.
 
+## Baselines (no LLM)
+
+- **Random guess:** uniform over the 30 fine types -> strict 3.3%, lenient 7.8% (PBMC3k: 12.5% strict).
+- **Marker lookup** (`src/baseline_marker_lookup.py`), run with two databases:
+  - **PanglaoDB** (`PanglaoDB_markers_27_Mar_2020.tsv.gz`, panglaodb.se, downloaded 2026-09-24), human
+    entries of organ "Immune system"/"Blood" plus "Hematopoietic stem cells".
+  - **CellMarker** (`human_cell_marker.txt`, downloaded by hand 2026-09-24; newer than CellMarker 2.0,
+    includes 2025 papers), human, tissue class Blood, disease Normal. **Rows from Hao et al. 2021
+    (PMID 34062119) were excluded** - CellMarker contains 2,014 marker rows derived from that very
+    dataset (B, CD4 T, CD8 T, DC, monocyte, NK), which would leak the answer key.
+  - Method, identical for both: candidate types are database types mapped by hand to the Hao labels
+    (PanglaoDB table in the script; CellMarker in `configs/cellmarker_to_hao.csv`, 161 names); "known
+    markers" = each type's top 50 genes by evidence (CellMarker: number of distinct papers; PanglaoDB:
+    human sensitivity), so large generic lists (CellMarker "B cell": 1,298 genes) can't win by size;
+    Ensembl IDs are converted to symbols with the dataset's own ID table; pick the type with the most
+    given genes among its markers; no overlap -> Unknown.
+  - **Ties** on the top count are broken by the lowest sum of the matched markers' ranks (stronger
+    markers win), then alphabetically. Because the last step is arbitrary, the lookups are also scored
+    with **fractional credit**: each of the k distinct labels tied on the top count gets 1/k (several
+    database names can map to one label, so k counts labels, not names). Both versions are reported.
+  - Types a database can't split (e.g. PanglaoDB "Monocytes") map to the lineage-only label and can
+    only earn lenient credit.
+  - The top count was tied between 2+ labels in 38.7% (CellMarker) and 23.3% (PanglaoDB) of the 600
+    scored Hao questions, usually k = 2; no overlap at all: 2.3% / 11.5% (all 1,200 questions).
+- **CellTypist** was not used: it classifies individual cells from full expression profiles, not
+  gene lists, so it can't be run on these questions or the difficulty knobs.
+
+Results (Hao, same 600 questions per method, 300 per format, strict):
+
+| | Ensembl IDs | Gene symbols |
+|---|---|---|
+| CellMarker lookup, tie-break | 28.7% | 28.7% |
+| CellMarker lookup, fractional | 27.5% | 27.5% |
+| Claude Sonnet 5 | 28.0% | 37.0% |
+| Gemini 3.8 Flash | 22.0% | 37.7% |
+| GPT-5.6 Terra | 21.7% | 32.7% |
+| PanglaoDB lookup, tie-break | 16.0% | 16.0% |
+| PanglaoDB lookup, fractional | 16.3% | 16.3% |
+| Random guess | 3.3% | 3.3% |
+
+(The lookups convert Ensembl IDs to symbols first, so their accuracy is the same in both formats.
+Fractional numbers are over both formats together; the formats are identical for the lookups.)
+Lenient: CellMarker 46.2% tie-break / 45.5% fractional; PanglaoDB 34.5% / 35.9%.
+PBMC3k (8 types), strict: CellMarker 64.4% / 61.0%, PanglaoDB 36.9% / 41.9% (tie-break / fractional).
+
+Statement of the gap: with gene symbols, the three LLMs score 4.0-9.0 points above the CellMarker
+lookup (tie-break) and 5.2-10.2 points above it (fractional). With Ensembl IDs, Claude scores 0.7
+points below the lookup (tie-break) and 0.5 points above it (fractional); Gemini and GPT score 5.5-7.0
+points below it (5.5-5.8 fractional, 6.7-7.0 tie-break). Each LLM loses 9.0-15.7 points when the same genes are given as
+Ensembl IDs instead of symbols; the lookup loses nothing, because it converts IDs to symbols first.
+
 ## Open decision
 
 - **"likely X" is currently treated as part of the primary answer** in the hand-written test cases
