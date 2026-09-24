@@ -1,8 +1,13 @@
 """Step 6: accuracy vs difficulty level, one panel per knob x gene format, one line per model.
 
-Reads results/scores.csv (run score.py first). Writes results/difficulty_curves.png.
+Usage: python src/plot.py [pbmc|hao]   (default pbmc)
+Reads results/scores_<dataset>.csv (run score.py first). Writes one figure per metric:
+  results/<dataset>_difficulty_strict.png   exact cell type only
+  results/<dataset>_difficulty_lenient.png  0.5 credit for right lineage ("T cell")
 Shaded band = 95% bootstrap CI over questions.
 """
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -17,9 +22,18 @@ KNOBS = {  # knob -> (panel title, x label, level order)
 COLORS = ["#2a78d6", "#eb6834", "#1baf7a"]
 SURFACE, TEXT, TEXT_2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0"
 
-scores = pd.read_csv("results/scores.csv", dtype={"level": str})
-models = sorted(scores.model.unique())
+DATASET = sys.argv[1] if len(sys.argv) > 1 else "pbmc"
+DESCRIPTION = {"pbmc": "PBMC3k, 8 clusters", "hao": "Hao 2021 CITE-seq PBMC, 30 cell types"}[DATASET]
+scores = pd.read_csv(f"results/scores_{DATASET}.csv", dtype={"level": str})
+# Only plot models that answered every question; partial runs would give misleading curves.
+counts = scores.groupby("model").size()
+models = sorted(counts[counts == counts.max()].index)
+if len(models) < len(counts):
+    print("Skipping incomplete models:", counts[counts < counts.max()].to_dict())
+# Fixed model -> colour, so a model keeps its colour when others are skipped.
+MODEL_ORDER = ["claude-sonnet-5", "gemini-3.8-flash", "gpt-5.6-terra"]
 rng = np.random.default_rng(0)
+METRICS = {"strict": "strict", "lenient": "score"}  # figure name -> scores.csv column
 
 
 def mean_ci(x, n_boot=2000):
@@ -30,40 +44,43 @@ def mean_ci(x, n_boot=2000):
 
 plt.rcParams.update({"font.size": 10, "axes.edgecolor": GRID, "axes.labelcolor": TEXT_2,
                      "xtick.color": TEXT_2, "ytick.color": TEXT_2, "text.color": TEXT})
-fig, axes = plt.subplots(2, len(KNOBS), figsize=(15, 7.5), sharey=True, facecolor=SURFACE)
+for name, column in METRICS.items():
+    fig, axes = plt.subplots(2, len(KNOBS), figsize=(15, 7.5), sharey=True, facecolor=SURFACE)
 
-for col, (knob, (title, xlabel, levels)) in enumerate(KNOBS.items()):
-    for row, fmt in enumerate(["symbol", "ensembl"]):
-        ax = axes[row, col]
-        ax.set_facecolor(SURFACE)
-        x = np.arange(len(levels))
-        for i, (model, color) in enumerate(zip(models, COLORS)):
-            dx = (i - (len(models) - 1) / 2) * 0.06  # small sideways dodge so tied lines stay visible
-            sub = scores[(scores.knob == knob) & (scores.format == fmt) & (scores.model == model)]
-            stats = [mean_ci(sub[sub.level == lv].strict) for lv in levels]
-            mean, lo, hi = map(np.array, zip(*stats))
-            ax.fill_between(x + dx, lo, hi, color=color, alpha=0.10, linewidth=0)
-            ax.plot(x + dx, mean, color=color, linewidth=2, solid_capstyle="round", solid_joinstyle="round",
-                    marker="o", markersize=7, markeredgecolor=SURFACE, markeredgewidth=2, label=model)
-        ax.set_xticks(x, levels)
-        ax.set_ylim(-0.03, 1.05)
-        ax.grid(axis="y", color=GRID, linewidth=1)
-        ax.set_axisbelow(True)
-        for side in ("top", "right", "left"):
-            ax.spines[side].set_visible(False)
-        ax.tick_params(length=0)
-        if row == 0:
-            ax.set_title(title, fontsize=12, fontweight="bold", loc="left", color=TEXT)
-        else:
-            ax.set_xlabel(xlabel)
-        if col == 0:
-            ax.set_ylabel(f"{'Gene symbols' if fmt == 'symbol' else 'Ensembl IDs'}\naccuracy (strict)")
+    for col, (knob, (title, xlabel, levels)) in enumerate(KNOBS.items()):
+        for row, fmt in enumerate(["symbol", "ensembl"]):
+            ax = axes[row, col]
+            ax.set_facecolor(SURFACE)
+            x = np.arange(len(levels))
+            for i, model in enumerate(models):
+                color = COLORS[MODEL_ORDER.index(model)] if model in MODEL_ORDER else COLORS[i]
+                dx = (i - (len(models) - 1) / 2) * 0.06  # small sideways dodge so tied lines stay visible
+                sub = scores[(scores.knob == knob) & (scores.format == fmt) & (scores.model == model)]
+                stats = [mean_ci(sub[sub.level == lv][column]) for lv in levels]
+                mean, lo, hi = map(np.array, zip(*stats))
+                ax.fill_between(x + dx, lo, hi, color=color, alpha=0.10, linewidth=0)
+                ax.plot(x + dx, mean, color=color, linewidth=2, solid_capstyle="round", solid_joinstyle="round",
+                        marker="o", markersize=7, markeredgecolor=SURFACE, markeredgewidth=2, label=model)
+            ax.set_xticks(x, levels)
+            ax.set_ylim(-0.03, 1.05)
+            ax.grid(axis="y", color=GRID, linewidth=1)
+            ax.set_axisbelow(True)
+            for side in ("top", "right", "left"):
+                ax.spines[side].set_visible(False)
+            ax.tick_params(length=0)
+            if row == 0:
+                ax.set_title(title, fontsize=12, fontweight="bold", loc="left", color=TEXT)
+            else:
+                ax.set_xlabel(xlabel)
+            if col == 0:
+                ax.set_ylabel(f"{'Gene symbols' if fmt == 'symbol' else 'Ensembl IDs'}\naccuracy ({name})")
 
-handles, labels = axes[0, 0].get_legend_handles_labels()
-fig.legend(handles, labels, loc="upper right", ncol=len(models), frameon=False, bbox_to_anchor=(0.99, 1.0))
-fig.suptitle("Cell-type accuracy as questions get harder", x=0.01, y=0.985, ha="left", fontsize=14, fontweight="bold")
-fig.text(0.01, 0.925, "PBMC3k, 8 clusters. Shaded band = 95% bootstrap CI. Noise levels pool 3 random draws.",
-         color=TEXT_2, fontsize=10)
-fig.tight_layout(rect=(0, 0, 1, 0.90))
-fig.savefig("results/difficulty_curves.png", dpi=150, facecolor=SURFACE)
-print("Saved results/difficulty_curves.png")
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper right", ncol=len(models), frameon=False, bbox_to_anchor=(0.99, 1.0))
+    fig.suptitle(f"Cell-type accuracy as questions get harder ({name})", x=0.01, y=0.985, ha="left", fontsize=14, fontweight="bold")
+    fig.text(0.01, 0.925, f"{DESCRIPTION}, {scores.run.nunique()} run(s) per question. Shaded band = 95% bootstrap CI. Noise levels pool 3 random draws.",
+             color=TEXT_2, fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.90))
+    fig.savefig(f"results/{DATASET}_difficulty_{name}.png", dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+    print(f"Saved results/{DATASET}_difficulty_{name}.png")

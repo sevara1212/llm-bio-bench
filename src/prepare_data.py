@@ -55,7 +55,7 @@ pd.DataFrame(rows).to_csv("data/pbmc_markers.csv", index=False)
 top_genes = {r["gene"] for r in rows}
 background = [g for g in adata.raw.var_names if g not in top_genes]
 pd.DataFrame({"gene": background, "ensembl": [symbol_to_ensembl[g] for g in background]}
-             ).to_csv("data/background_genes.csv", index=False)
+             ).to_csv("data/pbmc_background_genes.csv", index=False)
 
 # Label each cluster by which canonical marker set it expresses most.
 # CHECK THIS BY EYE against the tutorial before trusting it.
