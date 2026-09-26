@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cEryth_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "Eryth",
+  "genes": [
+   "HBA1"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "Eryth"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HBA1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HBA1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EsECCpABCBIYAipAzHFgxtN+DEYDtA45IDgJF5R30Fu8fhWkFHL5/tdPmU7p1rot+g8Omxnl6JpzKmXDA30HdPe5C/G9vcXPxbFbWjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYPe3tUGEgxYJhDBI6P8lYrwDQgaDEy2qj6VcjS0sQTBICIwI/XAIr5rrHxgmZj99gLoGdztlDf+FAJkCs3Kv4hY/1GgYGkE0r2V4iWPFNIMmMBJKl55pHsq/sG0ALn3/F6WN8vItRr1YQPtDrE/wp3ztbgSlRLxXOmjD1KumQnitJa9c7OpnYEwTL46HCsTnwP3QPoV9yUF/tB1zGLCHka1zM1sVcwNtPFvTnnBKSw3H/+PGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01RtwqktDXbopBTPgkah77GS",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "HBA1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "HBA1"
+      ]
+     },
+     "id": "toolu_01RtwqktDXbopBTPgkah77GS"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 108,
+    "total_tokens": 1044,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 40
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"HBA1\":{\"symbol\":\"HBA1\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Erythroid cell\",\"rank\":3},{\"cell_type\":\"Erythrocyte\",\"rank\":4},{\"cell_type\":\"Red blood cell\",\"rank\":5}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01RtwqktDXbopBTPgkah77GS"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Erythrocyte (red blood cell / erythroid lineage)\", \"confidence\": 0.85}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1148,
+    "output_tokens": 43,
+    "total_tokens": 1191,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cEryth_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Eryth",
+  "predicted": "Erythrocyte (red blood cell / erythroid lineage)",
+  "confidence": 0.85,
+  "raw": "{\"cell_type\": \"Erythrocyte (red blood cell / erythroid lineage)\", \"confidence\": 0.85}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2084,
+  "completion_tokens": 151,
+  "reasoning_tokens": null,
+  "cost_usd": 0.005678,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.0
+ }
+}

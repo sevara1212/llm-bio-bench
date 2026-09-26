@@ -1,11 +1,16 @@
 """Agent conditions on the fixed Hao subset: Claude Sonnet 5 as a LangGraph prebuilt ReAct agent.
 
-Usage: python src/run_agent.py <generic|specialist> [--limit N]
+Usage: python src/run_agent.py <generic|specialist|specialist_nudge> [--limit N] [--questions subset|all_nonoise]
 
   generic     web search only (DuckDuckGo, via langchain-community)
   specialist  gene_info (MyGene.info: symbol or Ensembl ID -> symbol, name, summary)
               + the SAME CellMarker lookup as baseline_marker_lookup.py (Hao 2021 excluded, top 50
                 markers per type, same mapping file): gene -> cell types, cell type -> markers
+  specialist_nudge  identical to specialist plus a one-line system prompt (NUDGE below). Added after
+                the error analysis of the specialist; the specialist itself is unchanged.
+
+--questions subset (default) = the fixed 96-question subset; all_nonoise = all 600 non-noise Hao
+questions (the set the plain models were compared on).
 
 Everything else matches plain Claude: same model (claude-sonnet-5, Anthropic API), same prompt
 (prompts.make_prompt), no temperature, default thinking, max_tokens 4000, same JSON answer parsing.
@@ -43,7 +48,8 @@ from prompts import make_prompt
 load_dotenv()
 
 parser = argparse.ArgumentParser()
-parser.add_argument("condition", choices=["generic", "specialist"])
+parser.add_argument("condition", choices=["generic", "specialist", "specialist_nudge"])
+parser.add_argument("--questions", choices=["subset", "all_nonoise"], default="subset")
 parser.add_argument("--limit", type=int, help="pilot: only N questions, spread evenly over the subset")
 args = parser.parse_args()
 
@@ -118,8 +124,11 @@ def web_search(query: str) -> str:
     return json.dumps(ddg.invoke(query), separators=(",", ":"))
 
 
-TOOL_FUNCS = {"generic": [web_search],
-              "specialist": [gene_info, cellmarker_gene_to_cell_types, cellmarker_cell_type_markers]}
+SPECIALIST_TOOLS = [gene_info, cellmarker_gene_to_cell_types, cellmarker_cell_type_markers]
+TOOL_FUNCS = {"generic": [web_search], "specialist": SPECIALIST_TOOLS, "specialist_nudge": SPECIALIST_TOOLS}
+# The only difference between specialist and specialist_nudge. The other conditions have no system prompt.
+NUDGE = "After converting any Ensembl IDs, always query CellMarker before answering."
+SYSTEM_PROMPT = {"specialist_nudge": NUDGE}.get(args.condition)
 
 
 def make_tools(counter):
@@ -165,7 +174,7 @@ def final_text(messages):
 
 def ask(q):
     counter = {"n": 0, "lock": threading.Lock()}
-    agent = create_react_agent(llm, make_tools(counter))
+    agent = create_react_agent(llm, make_tools(counter), prompt=SYSTEM_PROMPT)
     prompt = make_prompt(DATASET, q["genes"])
     result, status = {"messages": [HumanMessage(prompt)]}, "ok"
     start = time.monotonic()
@@ -179,6 +188,8 @@ def ask(q):
         status = "timeout"
     except GraphRecursionError:
         status = "recursion_limit"
+    except Exception as e:  # e.g. network down after the client's retries: not saved, so a rerun retries it
+        status = f"error: {type(e).__name__}: {str(e)[:120]}"
     pool.shutdown(wait=False)
     latency = time.monotonic() - start
     messages = result["messages"]
@@ -198,26 +209,35 @@ def ask(q):
         "cost_usd": cost_usd(MODEL, tin, tout), "n_tool_calls": counter["n"],
         "n_model_calls": len(ai), "latency_s": round(latency, 1),
     }
-    trajectory = {"condition": args.condition, "model": MODEL, "question": q, "prompt": prompt,
+    trajectory = {"condition": args.condition, "model": MODEL, "question": q, "system_prompt": SYSTEM_PROMPT,
+                  "prompt": prompt,
                   "status": status, "messages": [serialize(m) for m in messages], "summary": row}
     json.dump(trajectory, open(f"{OUT_DIR}/{q['id']}.json", "w"), indent=1, default=str)
     return row
 
 
-subset = json.load(open("data/agent_subset_hao.json"))["ids"]
+if args.questions == "subset":
+    subset = json.load(open("data/agent_subset_hao.json"))["ids"]
+else:
+    subset = [q["id"] for q in json.load(open(f"data/questions_{DATASET}.json")) if q["knob"] != "noise"]
 qs = {q["id"]: q for q in json.load(open(f"data/questions_{DATASET}.json"))}
 todo_ids = subset[:: len(subset) // args.limit][: args.limit] if args.limit else subset
 done = pd.read_csv(CSV) if os.path.exists(CSV) else pd.DataFrame()
 todo = [qs[i] for i in todo_ids if done.empty or i not in set(done.id)]
 print(f"agent-{args.condition}: {len(todo)} to ask, {len(done)} already done", flush=True)
 
-rows = []
+rows, failed = [], 0
 with ThreadPoolExecutor(WORKERS) as pool:
     for i, row in enumerate(pool.map(ask, todo), 1):
+        if row["finish_reason"].startswith("error"):
+            failed += 1
+            print(f"[{i}/{len(todo)}] {row['id']:<45} FAILED (will retry on rerun): {row['finish_reason']}", flush=True)
+            continue
         rows.append(row)
         print(f"[{i}/{len(todo)}] {row['id']:<45} tools={row['n_tool_calls']} {row['finish_reason']:<8} "
               f"{row['latency_s']:>5}s ${row['cost_usd']:.4f}  pred={row['predicted']}", flush=True)
         results = pd.concat([done, pd.DataFrame(rows)], ignore_index=True)
         results.to_csv(CSV + ".tmp", index=False)
         os.replace(CSV + ".tmp", CSV)
-print(f"\nSaved {len(done) + len(rows)} rows to {CSV} | this run ${sum(r['cost_usd'] for r in rows):.3f}")
+print(f"\nSaved {len(done) + len(rows)} rows to {CSV} | this run ${sum(r['cost_usd'] for r in rows):.3f} "
+      f"| failed (not saved, rerun to retry): {failed}")

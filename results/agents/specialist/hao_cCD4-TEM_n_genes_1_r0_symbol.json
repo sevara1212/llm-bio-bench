@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-TEM_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 TEM",
+  "genes": [
+   "IL7R"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD4 TEM"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: IL7R",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: IL7R"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eu8CCpABCBIYAipAN3AAzGhAl6bO39WwmxDAuJz+tLKchgSE8uVQwKjzX2aq9Fu8lBnnbTnYggbPFXYKyn2bNFOboZQTB9Iw/LZwfzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYLd3tUGEgzCAClTislt7Q4xChwaDAsOovXe0dUnYd2MfCIwJPG5xHOQoA9nV5NyJ3dqoEQuTEz3Q5oGYa7jhOyWnZGpdZyV7JNAwPtxcQGa3LHwKosBHA4LcHSv12Q3UFYlWs5CMH+CxPAYUWIfvHiacWFBluITjP5qnU6gLKTs6lr41Py67ZM0MnteD9DXNTkx2k+L+ekQ3g5bzOyhk1iUfxCaIVepSRf7pJorzz1X+irTR8djn8KLVrJPV6cpXCdSLId2fN2thgcqAMxW/SQtTV2/wxkbJfLEBhW9zvlBDRgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01CwfZo8gn85aUryz4sHnDmf",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "IL7R"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "IL7R"
+      ]
+     },
+     "id": "toolu_01CwfZo8gn85aUryz4sHnDmf"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 117,
+    "total_tokens": 1053,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 49
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"IL7R\":{\"symbol\":\"IL7R\",\"n_cell_types\":27,\"cell_types\":[{\"cell_type\":\"Innate lymphoid cell\",\"rank\":1},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":1},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":1},{\"cell_type\":\"CD4+ T cell\",\"rank\":2},{\"cell_type\":\"Effector memory T cell\",\"rank\":2},{\"cell_type\":\"Memory T cell\",\"rank\":3},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":5},{\"cell_type\":\"CD4 T cell\",\"rank\":5},{\"cell_type\":\"T cell\",\"rank\":5},{\"cell_type\":\"Conventional T cell\",\"rank\":7},{\"cell_type\":\"Effector memory CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Central memory T cell\",\"rank\":8},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":8},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":9},{\"cell_type\":\"Naive T cell\",\"rank\":9},{\"cell_type\":\"Effector T cell\",\"rank\":10},{\"cell_type\":\"CD8+ T cell\",\"rank\":13},{\"cell_type\":\"M1 macrophage\",\"rank\":13},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":15}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01CwfZo8gn85aUryz4sHnDmf"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD4+ Memory T cell\", \"confidence\": 0.6}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1550,
+    "output_tokens": 32,
+    "total_tokens": 1582,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-TEM_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 TEM",
+  "predicted": "CD4+ Memory T cell",
+  "confidence": 0.6,
+  "raw": "{\"cell_type\": \"CD4+ Memory T cell\", \"confidence\": 0.6}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2486,
+  "completion_tokens": 149,
+  "reasoning_tokens": null,
+  "cost_usd": 0.006462,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.9
+ }
+}

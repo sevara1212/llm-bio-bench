@@ -1,0 +1,138 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cB-memory_rank_window_1-10_r0_symbol",
+  "dataset": "hao",
+  "cluster": "B memory",
+  "genes": [
+   "MS4A1",
+   "BANK1",
+   "CD79A",
+   "RALGPS2",
+   "CD37",
+   "TNFRSF13C",
+   "CD79B",
+   "HLA-DRA",
+   "HLA-DPB1",
+   "CD74"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "1-10",
+  "replicate": 0,
+  "answer": "B memory"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MS4A1, BANK1, CD79A, RALGPS2, CD37, TNFRSF13C, CD79B, HLA-DRA, HLA-DPB1, CD74",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MS4A1, BANK1, CD79A, RALGPS2, CD37, TNFRSF13C, CD79B, HLA-DRA, HLA-DPB1, CD74"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EtoCCpABCBIYAipAWUPltKgPTk7UxD49v4E8OII2CkxFOtIb8qKPeQ7/ZZwm8vFjFmgtEAg+C2PvkI7mw6NMbp5sqMBbJ/FzX1b+ejIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAZDb3tUGEgzEhQSDXqoQah3XdpoaDH1ZwElmSoi+igFm5iIwCLPvyyC9kaTlKH3A/sHkNESNsxAF29Zwt/Vw8hFRX6QhfUWGTFjo80NLbJkCizaEKndkp2BWGe9+pWaQbeuPZhds8hwuWnEAa7NDDr6YS7E++YJ7CY8HAByrKiyi2wt6cLUOFATIEH7lhhlMWoEcItISyudH0kmoYPXyMyGvmY1kcyYdqYUbFRY87E0hFOy9lz174WSdBDbV6UU1pIQVHBgCe11AT+5yMhgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01194sFdTcK4EQqRzoGWcSz1",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "MS4A1",
+       "BANK1",
+       "CD79A",
+       "TNFRSF13C"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "MS4A1",
+       "BANK1",
+       "CD79A",
+       "TNFRSF13C"
+      ]
+     },
+     "id": "toolu_01194sFdTcK4EQqRzoGWcSz1"
+    }
+   ],
+   "usage": {
+    "input_tokens": 993,
+    "output_tokens": 157,
+    "total_tokens": 1150,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 67
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"MS4A1\":{\"symbol\":\"MS4A1\",\"n_cell_types\":10,\"cell_types\":[{\"cell_type\":\"Atypical memory B cell\",\"rank\":2},{\"cell_type\":\"B cell\",\"rank\":2},{\"cell_type\":\"Memory B cell\",\"rank\":2},{\"cell_type\":\"Double-negative B cell\",\"rank\":4},{\"cell_type\":\"IgM memory B cell\",\"rank\":4},{\"cell_type\":\"Naive B cell\",\"rank\":4},{\"cell_type\":\"Marginal zone -like B cell\",\"rank\":5},{\"cell_type\":\"Transitional B cell\",\"rank\":5},{\"cell_type\":\"Unswitched memory B cell\",\"rank\":5},{\"cell_type\":\"Activated B cell\",\"rank\":6}]},\"BANK1\":{\"symbol\":\"BANK1\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Intermediate B cell\",\"rank\":1},{\"cell_type\":\"B cell\",\"rank\":13},{\"cell_type\":\"Naive B cell\",\"rank\":13},{\"cell_type\":\"Memory B cell\",\"rank\":26}]},\"CD79A\":{\"symbol\":\"CD79A\",\"n_cell_types\":8,\"cell_types\":[{\"cell_type\":\"B cell\",\"rank\":3},{\"cell_type\":\"Mature B cell\",\"rank\":4},{\"cell_type\":\"Immature B cell\",\"rank\":7},{\"cell_type\":\"Naive B cell\",\"rank\":7},{\"cell_type\":\"Memory B cell\",\"rank\":8},{\"cell_type\":\"Central memory T cell\",\"rank\":11},{\"cell_type\":\"Megakaryocyte\",\"rank\":13},{\"cell_type\":\"Plasma cell\",\"rank\":25}]},\"TNFRSF13C\":{\"symbol\":\"TNFRSF13C\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"B cell\",\"rank\":15},{\"cell_type\":\"Naive B cell\",\"rank\":44}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01194sFdTcK4EQqRzoGWcSz1"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"B cell\", \"confidence\": 0.92}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1801,
+    "output_tokens": 24,
+    "total_tokens": 1825,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cB-memory_rank_window_1-10_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "1-10",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "B memory",
+  "predicted": "B cell",
+  "confidence": 0.92,
+  "raw": "{\"cell_type\": \"B cell\", \"confidence\": 0.92}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2794,
+  "completion_tokens": 181,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007398,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.9
+ }
+}

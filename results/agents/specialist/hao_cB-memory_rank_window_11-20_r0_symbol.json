@@ -1,0 +1,138 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cB-memory_rank_window_11-20_r0_symbol",
+  "dataset": "hao",
+  "cluster": "B memory",
+  "genes": [
+   "LINC00926",
+   "HLA-DQA1",
+   "BLK",
+   "HLA-DQB1",
+   "LTB",
+   "RPS11",
+   "RPL13A",
+   "HLA-DRB1",
+   "AIM2",
+   "HLA-DPA1"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "answer": "B memory"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LINC00926, HLA-DQA1, BLK, HLA-DQB1, LTB, RPS11, RPL13A, HLA-DRB1, AIM2, HLA-DPA1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LINC00926, HLA-DQA1, BLK, HLA-DQB1, LTB, RPS11, RPL13A, HLA-DRB1, AIM2, HLA-DPA1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EsYDCpABCBIYAipAuM/0szOJC4ENgo56ty1Ei9z59+RAzqBA6BwNrK1a8NBDbFGc4xl+xCpYitGGsDguagXMIbUPh7GvpsknAiv85DIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAZTb3tUGEgww8xqHZsn6xZgOxy0aDLoUiR+NMOWGmX4OmiIwrUAT5U4J6MgWrZ/yVcUMzSDzHrHON5sFox+X1NkwORRBcyw45ZrUVN06IManK+95KuIB9CasmUQjIdTNDLhkK9Y/ARUyr6CCNpv7HTuzlrgbYtN/6ZB2KMM2ZiNMpxG0XZLuyX9Z9Lw/rD7EvjnybnZOxAOSU3QGp+xdZpowxVa9A44TrkZqSMGeZ2j+efZYwccnso6dNfXmQBKh7nlMh+ikRBehgON4eqhwAvreC+RZL3nzBW9EjUcYibSZy0Ir7o5ynibywJYDkcnzMJBjFMXICKd4TBn1PWSJxfcsl4DDJJDsR0JDDah7lioIiJ4igryt/L9tHdL5x1VkDxDxbuqCYlaf7mZHOLrBxnUGOMxLeZQy9xgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01Ch6DKKK5BAHAdsux988U3S",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "LINC00926",
+       "BLK",
+       "HLA-DQA1",
+       "AIM2"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LINC00926",
+       "BLK",
+       "HLA-DQA1",
+       "AIM2"
+      ]
+     },
+     "id": "toolu_01Ch6DKKK5BAHAdsux988U3S"
+    }
+   ],
+   "usage": {
+    "input_tokens": 997,
+    "output_tokens": 201,
+    "total_tokens": 1198,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 111
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"LINC00926\":{\"symbol\":\"LINC00926\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Naive B cell\",\"rank\":26},{\"cell_type\":\"Memory B cell\",\"rank\":34},{\"cell_type\":\"B cell\",\"rank\":44}]},\"BLK\":{\"symbol\":\"BLK\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Memory B cell\",\"rank\":21},{\"cell_type\":\"B cell\",\"rank\":22},{\"cell_type\":\"Naive B cell\",\"rank\":47}]},\"HLA-DQA1\":{\"symbol\":\"HLA-DQA1\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Conventional dendritic cell 2\",\"rank\":7},{\"cell_type\":\"Dendritic cell\",\"rank\":8},{\"cell_type\":\"B cell\",\"rank\":37},{\"cell_type\":\"M2 macrophage\",\"rank\":40},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":43}]},\"AIM2\":{\"symbol\":\"AIM2\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Memory B cell\",\"rank\":4}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01Ch6DKKK5BAHAdsux988U3S"
+  },
+  {
+   "type": "ai",
+   "content": "This gene signature (LINC00926, BLK, HLA-DQA1/DQB1/DRB1/DPA1, AIM2, LTB) is a classic B cell marker set \u2014 LINC00926 and BLK are highly B-cell-specific, and the strong MHC-II signal plus AIM2 further supports a memory/mature B cell phenotype.\n\n```json\n{\"cell_type\": \"B cell (memory B cell)\", \"confidence\": 0.85}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1599,
+    "output_tokens": 153,
+    "total_tokens": 1752,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cB-memory_rank_window_11-20_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "B memory",
+  "predicted": "B cell (memory B cell)",
+  "confidence": 0.85,
+  "raw": "This gene signature (LINC00926, BLK, HLA-DQA1/DQB1/DRB1/DPA1, AIM2, LTB) is a classic B cell marker set \u2014 LINC00926 and BLK are highly B-cell-specific, and the strong MHC-II signal plus AIM2 further supports a memory/mature B cell phenotype.\n\n```json\n{\"cell_type\": \"B cell (memory B cell)\", \"confidence\": 0.85}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2596,
+  "completion_tokens": 354,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008732,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 6.1
+ }
+}

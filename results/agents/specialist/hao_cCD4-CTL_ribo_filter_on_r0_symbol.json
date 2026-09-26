@@ -1,0 +1,128 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-CTL_ribo_filter_on_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 CTL",
+  "genes": [
+   "GZMH",
+   "FGFBP2",
+   "B2M",
+   "IL32",
+   "NKG7",
+   "CD52",
+   "CST7",
+   "CD3G",
+   "CD2",
+   "CCL5"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "answer": "CD4 CTL"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH, FGFBP2, B2M, IL32, NKG7, CD52, CST7, CD3G, CD2, CCL5",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH, FGFBP2, B2M, IL32, NKG7, CD52, CST7, CD3G, CD2, CCL5"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EssECpABCBIYAipAUVAyCloPiLDOZswylfhe4i6ZR2X7hF2+RM5QPhyVoPVhZ3XgaBwrFhf8ZUX8oKKUFWv3HuR1VE5qeO0MqC1oTzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAa7c3tUGEgwEVkN23xIJHDIopugaDEGdXSBO7S2XV1cFwyIwJVlmI295mrh41hP+keBCLK60Tic5xKjVcLk1WcslEceLeeMzafx55nZIo4HrWWPBKucCCI6sF5I5mZ9KM3uLfUG9WRNQXT4eV/3v5Mn9Y1moN32wFYw3Vj1e7JNZgOlDPNEL63b3Qk/R+2JQd8kAUiEFdyn6mfbJql+nTE1klm4x94Ul3PkTzoHO1/ROr2RTzdftqdRmXLdj2gWmq3KsfPXPBudgSyk4Lm41RmdkV2ob9QSvhfi4SA3z23Nl34v2rPkrrEvbk9uPxgfyOtpcyBroJF+osom4klIILUAlGzvioclNVx59DCMk9Jd8WxHqS3RWgiVkv3c/jo29im4c+x2zrZxRUYtEAJyaVWuhh18qI3fRawMEt3JfFPZg8XzAI+Aa6CMqDqvBt8Psznowx/DLskf3EwVkwFYGVv3ewL44QYu2zZvh+mQJ4Ey/6G8WAkFvShUhJjKULprgEQ34ekm95WokY41vv8ytvnzpCpBsnDPBW/pnUzXL67rVHm/zakMMU34Kl8zRjGiOK8jcN+5ioNdFn1Yh6xAYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01K4XwDmymPZNaDyjYvwN3zk",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "cell_type": "CD8+ Effector Memory T cell"
+     },
+     "name": "cellmarker_cell_type_markers",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "CD8+ Effector Memory T cell"
+     },
+     "id": "toolu_01K4XwDmymPZNaDyjYvwN3zk"
+    }
+   ],
+   "usage": {
+    "input_tokens": 978,
+    "output_tokens": 262,
+    "total_tokens": 1240,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 188
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"not_found\": \"CD8+ Effector Memory T cell\", \"similar_cell_types\": [\"AXL+ SIGLEC6+ dendritic cell\", \"Activated B cell\", \"Activated CD4+ T cell\", \"Activated CD8+ T cell\", \"Antibody-secreting cell\", \"Atypical B cell\", \"Atypical memory B cell\", \"B cell\", \"Beta cell\", \"CD16 bright CD56 dim natural killer cell\", \"CD16 dim CD56 bright natural killer cell\", \"CD16+ dendritic cell\", \"CD4 T cell\", \"CD4+ T cell\", \"CD4+ T helper cell\", \"CD56+ natural killer cell\", \"CD56-bright natural killer cell\", \"CD56-dim natural killer cell\", \"CD56bright NK cell\", \"CD56bright natural killer cell\", \"CD56dim NK cell\", \"CD56dim natural killer cell\", \"CD8 T cell\", \"CD8+ T cell\", \"CD8+ mucosal-associated invariant T cell\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "toolu_01K4XwDmymPZNaDyjYvwN3zk"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD8+ cytotoxic effector T cell (Temra/effector memory)\", \"confidence\": 0.8}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1591,
+    "output_tokens": 47,
+    "total_tokens": 1638,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-CTL_ribo_filter_on_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 CTL",
+  "predicted": "CD8+ cytotoxic effector T cell (Temra/effector memory)",
+  "confidence": 0.8,
+  "raw": "{\"cell_type\": \"CD8+ cytotoxic effector T cell (Temra/effector memory)\", \"confidence\": 0.8}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2569,
+  "completion_tokens": 309,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008228,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.5
+ }
+}

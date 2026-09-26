@@ -1,0 +1,140 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cB-naive_rank_window_11-20_r0_symbol",
+  "dataset": "hao",
+  "cluster": "B naive",
+  "genes": [
+   "LINC00926",
+   "BTG1",
+   "MEF2C",
+   "CXCR4",
+   "HLA-DRA",
+   "HLA-DQB1",
+   "CD22",
+   "RPL18A",
+   "RPS11",
+   "HLA-DRB1"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "answer": "B naive"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LINC00926, BTG1, MEF2C, CXCR4, HLA-DRA, HLA-DQB1, CD22, RPL18A, RPS11, HLA-DRB1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LINC00926, BTG1, MEF2C, CXCR4, HLA-DRA, HLA-DQB1, CD22, RPL18A, RPS11, HLA-DRB1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EqgDCpABCBIYAipAPlltkJqr6Ve3bIWIvdWzdYMVUGkbfLNGkvXG+nA54SNR6aNM82z5yDehIYadQiZFmMKyI9u6kkqLUtDnTiokNjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAabb3tUGEgyvdbPDd4Cyf63yrlQaDCAiKxHTZhhDJ50uBiIwz51oyP12XlfY8WnzGN1ulEc/4LWDXmlENmQfmt5vszLHckIXjGR1tR3GdZhq0AG1KsQB/mxtI/AxJe6b2sqvDDJrdf4YbagF8C/5XGkoHQx5uwITRA043JUSamNb/+8nrGvZZwEkxCQr8MCOuHTYRaaiAF/l8hdJTCZVcxohaddbuj3Fp/LUAN5uY3/SyZyi5aEmTaHF1Df9TYmDQrCJzq/AYnIT9MCd7R28gTLbOGPFH/qoVH2gx6dbO50sW2FqesS+N7BzZfFDj7lNW+lH7JDJCfEorXpDW0xHIehIiVPsta0HYo8wo5aR6bIaEKvn4M+A1DjQSRgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01JUhPAnJAD75tUmqEE6cbmG",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "LINC00926",
+       "CD22",
+       "MEF2C",
+       "CXCR4",
+       "HLA-DRA"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LINC00926",
+       "CD22",
+       "MEF2C",
+       "CXCR4",
+       "HLA-DRA"
+      ]
+     },
+     "id": "toolu_01JUhPAnJAD75tUmqEE6cbmG"
+    }
+   ],
+   "usage": {
+    "input_tokens": 995,
+    "output_tokens": 193,
+    "total_tokens": 1188,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 96
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"LINC00926\":{\"symbol\":\"LINC00926\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Naive B cell\",\"rank\":26},{\"cell_type\":\"Memory B cell\",\"rank\":34},{\"cell_type\":\"B cell\",\"rank\":44}]},\"CD22\":{\"symbol\":\"CD22\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"B cell\",\"rank\":6},{\"cell_type\":\"Memory B cell\",\"rank\":9},{\"cell_type\":\"Basophil\",\"rank\":10},{\"cell_type\":\"AXL+ SIGLEC6+ dendritic cell\",\"rank\":13},{\"cell_type\":\"Naive B cell\",\"rank\":21}]},\"MEF2C\":{\"symbol\":\"MEF2C\",\"n_cell_types\":0,\"cell_types\":[]},\"CXCR4\":{\"symbol\":\"CXCR4\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":9},{\"cell_type\":\"Naive B cell\",\"rank\":19},{\"cell_type\":\"M2 macrophage\",\"rank\":27},{\"cell_type\":\"Effector memory T cell\",\"rank\":48}]},\"HLA-DRA\":{\"symbol\":\"HLA-DRA\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Mature B cell\",\"rank\":5},{\"cell_type\":\"Immature B cell\",\"rank\":10},{\"cell_type\":\"B cell\",\"rank\":19},{\"cell_type\":\"Dendritic cell\",\"rank\":32},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":38}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01JUhPAnJAD75tUmqEE6cbmG"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"B cell\", \"confidence\": 0.85}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1740,
+    "output_tokens": 24,
+    "total_tokens": 1764,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cB-naive_rank_window_11-20_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "B naive",
+  "predicted": "B cell",
+  "confidence": 0.85,
+  "raw": "{\"cell_type\": \"B cell\", \"confidence\": 0.85}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2735,
+  "completion_tokens": 217,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00764,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.7
+ }
+}

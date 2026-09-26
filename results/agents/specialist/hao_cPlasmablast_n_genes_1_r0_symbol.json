@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cPlasmablast_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "Plasmablast",
+  "genes": [
+   "MZB1"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "Plasmablast"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MZB1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MZB1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EpoCCpABCBIYAipAxad2vFJWswiszBNX9AgqXXjE6AA7O19vkejcJ3v/FI1064cx1ToOXqUmZGq9QRw/VjjTTk7oPqGZmQH0c96YHjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAd7f3tUGEgzF17s6vUB/UmsfyIQaDHelweZpbGwd2KWpQSIwUFRBLcPS/ZzvNwpyiiHS/Hb7jW+g9GTqwsOiA4NgEvYDLU41yMw4IZs1iCj+pH3xKjfx/dskG6ITQP2Wi93hNaz7xCswzrQNrpUI671LWbw4cvMgud/kmuXlAJdsQsBA/6r0tl158KwuGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01AH8gCpKMEB6XWYdhiQxnMe",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "MZB1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "MZB1"
+      ]
+     },
+     "id": "toolu_01AH8gCpKMEB6XWYdhiQxnMe"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 89,
+    "total_tokens": 1025,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 21
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"MZB1\":{\"symbol\":\"MZB1\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Plasma cell\",\"rank\":2},{\"cell_type\":\"Plasmablast\",\"rank\":5},{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":37}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01AH8gCpKMEB6XWYdhiQxnMe"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Plasma cell\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1135,
+    "output_tokens": 27,
+    "total_tokens": 1162,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cPlasmablast_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Plasmablast",
+  "predicted": "Plasma cell",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"Plasma cell\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2071,
+  "completion_tokens": 116,
+  "reasoning_tokens": null,
+  "cost_usd": 0.005302,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.3
+ }
+}

@@ -133,6 +133,49 @@ Ensembl IDs instead of symbols; the lookup loses nothing, because it converts ID
 - Tool quirk found: MyGene.info returns "TARP" for ENSG00000211689 (TRGC1, a gamma-delta T marker);
   in the one affected question the agent still answered correctly.
 
+### Specialist on all 600 non-noise Hao questions
+
+The original specialist (no nudge, unchanged) was then run on all 600 non-noise Hao questions - the set
+plain Claude and the lookup were compared on - with `run_agent.py specialist --questions all_nonoise`
+(the 72 non-noise subset questions already answered were reused, 528 new; 0 failures). Scored with
+`score_agents.py --all-nonoise`; n = 600 per condition (300 symbol, 300 Ensembl), one run each.
+
+| | Strict | Lenient | Strict symbol | Strict Ensembl |
+|---|---|---|---|---|
+| plain Claude | 32.5% | 54.9% | 37.0% | 28.0% |
+| CellMarker lookup (tie-break) | 28.7% | 46.2% | 28.7% | 28.7% |
+| specialist agent | 41.2% | 61.0% | 43.3% | 39.0% |
+
+- Paired (strict): specialist right & plain Claude wrong on 59 questions, the reverse on 7 (two-sided
+  sign test p = 2.4e-11); specialist right & lookup wrong on 90, the reverse on 15 (p = 3.3e-14).
+- Strict by lineage (plain / lookup / specialist): B 44/32/50%, CD4 T 2/7/6%, CD8 T 8/0/12%, DC
+  39/25/56%, Mono 78/50/85%, NK 38/27/43%, other 70/68/75%, other T 18/47/42%.
+- 1.3 tool calls per question on average; $0.011 per question ($6.78 for the 600); 6.6 s mean latency.
+
+### specialist_nudge — a SEPARATE condition, added AFTER the error analysis (post hoc)
+
+- **Why it exists:** in the error analysis of the specialist's 59 wrong answers (96-question subset),
+  21 were "no_cellmarker": the agent converted Ensembl IDs with `gene_info` and answered without
+  querying CellMarker (20 of the 21 were Ensembl questions). The nudge tests whether telling it to
+  query CellMarker fixes this. Because it was designed after seeing the specialist's errors on these
+  same 96 questions, its results on them are post hoc and should not be read as an unbiased estimate.
+- **Only difference from the specialist:** a one-line system prompt, "After converting any Ensembl IDs,
+  always query CellMarker before answering." (The specialist and all other conditions have no system
+  prompt.) Same tools, model, user prompt, limits and questions. The original specialist is unchanged.
+- **Results** (same 96 questions, one run each, strict):
+
+  | | Overall | Symbol | Ensembl | Lenient |
+  |---|---|---|---|---|
+  | specialist | 38.5% | 43.8% | 33.3% | 60.9% |
+  | specialist_nudge | 42.7% | 41.7% | 43.8% | 64.6% |
+
+  - Paired: nudge right & specialist wrong on 7 questions, the reverse on 3 (two-sided sign test
+    p = 0.34 — not significant).
+  - CellMarker was queried on 100% of questions with the nudge vs 40% (Ensembl) / 90% (symbol) without.
+  - Of the specialist's 21 "no_cellmarker" errors, the nudge queried CellMarker on all 21 and answered
+    **6 correctly** (strict); lenient mean on those 21 rose from 0.40 to 0.60.
+  - Cost per question $0.016 vs $0.011; mean latency 8.0 s vs 5.9 s.
+
 ## Open decision
 
 - **"likely X" is currently treated as part of the primary answer** in the hand-written test cases

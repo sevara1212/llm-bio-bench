@@ -1,0 +1,152 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cASDC_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "ASDC",
+  "genes": [
+   "PPP1R14A"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "ASDC"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErICCpABCBIYAipA97SjGw1sDVZs3A/J0z19OupB/ACKCpkasG4UFn6ux6++Sv60gX76aJcDbcCzToGdG9Hw1e/A5aGvZtcCJHm/EjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAcHa3tUGEgxOnPj9JAYaQ6qS6VIaDOOLLrZ4G2yGKZCHBiIwrE7au+gn/iTGfQXKEcxpoV92ZUecuKEjT2oqVu/QPMO/vpFEWQ/rB4nNB52ffldRKk+eGYsTdJEHri+rUjqr8Ll73UMObRasgosZksWUdYsGx5HMtCv7k9ErGIAhGqjfuqJnyBbWxYdN1Mqq0mvL1GEttOpAVxT6YuL9lY3d4i+5GAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01QdxqtKojBPGYbvxSQYdD4H",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "PPP1R14A"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    },
+    {
+     "id": "toolu_014yEDj9zVdiVfD5GASxir3f",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "PPP1R14A"
+      ]
+     },
+     "name": "gene_info",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "PPP1R14A"
+      ]
+     },
+     "id": "toolu_01QdxqtKojBPGYbvxSQYdD4H"
+    },
+    {
+     "name": "gene_info",
+     "args": {
+      "genes": [
+       "PPP1R14A"
+      ]
+     },
+     "id": "toolu_014yEDj9zVdiVfD5GASxir3f"
+    }
+   ],
+   "usage": {
+    "input_tokens": 939,
+    "output_tokens": 154,
+    "total_tokens": 1093,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 28
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"PPP1R14A\":{\"symbol\":\"PPP1R14A\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"AXL+ SIGLEC6+ dendritic cell\",\"rank\":50}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01QdxqtKojBPGYbvxSQYdD4H"
+  },
+  {
+   "type": "tool",
+   "content": "{\"PPP1R14A\":{\"symbol\":\"PPP1R14A\",\"name\":\"protein phosphatase 1 regulatory inhibitor subunit 14A\",\"summary\":\"The protein encoded by this gene belongs to the protein phosphatase 1 (PP1) inhibitor family. This protein is an inhibitor of smooth muscle myosin phosphatase, and has higher inhibitory activity when phosphorylated. Inhibition of myosin phosphatase leads to increased myosin phosphorylation and enhanced smooth muscle contraction. Alternatively spliced transcript variants encoding different isoforms\"}}",
+   "tool_name": "gene_info",
+   "tool_call_id": "toolu_014yEDj9zVdiVfD5GASxir3f"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\"cell_type\": \"AXL+ SIGLEC6+ dendritic cell (ASDC)\", \"confidence\": 0.45}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1446,
+    "output_tokens": 52,
+    "total_tokens": 1498,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cASDC_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "ASDC",
+  "predicted": "AXL+ SIGLEC6+ dendritic cell (ASDC)",
+  "confidence": 0.45,
+  "raw": "```json\n{\"cell_type\": \"AXL+ SIGLEC6+ dendritic cell (ASDC)\", \"confidence\": 0.45}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2385,
+  "completion_tokens": 206,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00683,
+  "n_tool_calls": 2,
+  "n_model_calls": 2,
+  "latency_s": 4.3
+ }
+}

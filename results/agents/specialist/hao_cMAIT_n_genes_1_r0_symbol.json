@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cMAIT_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "MAIT",
+  "genes": [
+   "KLRB1"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "MAIT"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRB1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRB1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EvUCCpABCBIYAipAR1EvMzuLm81m5FWfcTNI6r6WftbgRhyYqaO4oZR2WusdUKLJfv+NHgK5FmeW/6B0rqWHOR9cuQCsOnSvktAv/jIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAfbe3tUGEgyIZjHHmCZtHE4OmN0aDOYZAtfLI3fdEOMywSIwIHQxUOrrd0TCOgq3ts7w/hYeoh9Md14/q62QE7RODe9dNXSOTLL9n1WW3g6UEeyAKpEBZLqJ4gX/rC0DmoNDJe4uLTsPVyHgZz7Ixl1gESq6eRGHzjv3Gh1ipqBh4A/7PRkPKnaBFxLQNazwfEpdtGUhug43oF2VVLxb22pHfdfnVF+qOFyIahuUJaBogaJWEkPLI453+JT4cuD7mmFj/GJUxYU33ZZtjbhnLS3OpM+VgkTXg1z3S9bhn5ux3bPAn2MSmBgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_017pYGYRuamYEKdWGSj2uKeS",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "KLRB1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "KLRB1"
+      ]
+     },
+     "id": "toolu_017pYGYRuamYEKdWGSj2uKeS"
+    }
+   ],
+   "usage": {
+    "input_tokens": 937,
+    "output_tokens": 129,
+    "total_tokens": 1066,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 60
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"KLRB1\":{\"symbol\":\"KLRB1\",\"n_cell_types\":20,\"cell_types\":[{\"cell_type\":\"CD4+ T helper cell\",\"rank\":2},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":2},{\"cell_type\":\"Innate lymphoid cell\",\"rank\":3},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":3},{\"cell_type\":\"Effector memory T cell\",\"rank\":4},{\"cell_type\":\"CD8+ mucosal-associated invariant T cell\",\"rank\":5},{\"cell_type\":\"T helper17 cell\",\"rank\":5},{\"cell_type\":\"Natural killer T cell\",\"rank\":6},{\"cell_type\":\"Gamma delta T cell\",\"rank\":10},{\"cell_type\":\"T helper 1 cell\",\"rank\":11},{\"cell_type\":\"T helper 17 cell\",\"rank\":11},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":12},{\"cell_type\":\"Memory T cell\",\"rank\":13},{\"cell_type\":\"Natural killer cell\",\"rank\":13},{\"cell_type\":\"T cell\",\"rank\":13},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":14},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":18},{\"cell_type\":\"Effector T cell\",\"rank\":33},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":38},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":43}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_017pYGYRuamYEKdWGSj2uKeS"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Mucosa-associated invariant T (MAIT) cell\", \"confidence\": 0.4}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1595,
+    "output_tokens": 41,
+    "total_tokens": 1636,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cMAIT_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "MAIT",
+  "predicted": "Mucosa-associated invariant T (MAIT) cell",
+  "confidence": 0.4,
+  "raw": "{\"cell_type\": \"Mucosa-associated invariant T (MAIT) cell\", \"confidence\": 0.4}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2532,
+  "completion_tokens": 170,
+  "reasoning_tokens": null,
+  "cost_usd": 0.006764,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.3
+ }
+}

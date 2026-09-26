@@ -1,0 +1,150 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cEryth_rank_window_21-30_r0_symbol",
+  "dataset": "hao",
+  "cluster": "Eryth",
+  "genes": [
+   "BCL2L1",
+   "STRADB",
+   "TRIM58",
+   "SELENBP1",
+   "RNF10",
+   "DMTN",
+   "GLRX5",
+   "CA1",
+   "FBXO7",
+   "TENT5C"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "21-30",
+  "replicate": 0,
+  "answer": "Eryth"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: BCL2L1, STRADB, TRIM58, SELENBP1, RNF10, DMTN, GLRX5, CA1, FBXO7, TENT5C",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: BCL2L1, STRADB, TRIM58, SELENBP1, RNF10, DMTN, GLRX5, CA1, FBXO7, TENT5C"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EuUCCpABCBIYAipAg7gjwpaUa0nhEIUokRR17uY47vhgc/i+lRngKIpCxQfmRLD6kbtizenXQBSLWi+NGatFxF6sKBnuShYqzDHkRjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYjX3tUGEgy1m6QZqzzg0D3zGDsaDOS/AB8szGAclxQOHCIwmfWEvG/NfnBO1mjfKnaEVBtBw8TiA4kA8jE6YctCaWuJnkB9GND3x6kNR2npY6EyKoEBiPSh/QlRyHB2+gZKJYlyOrQAhBbMlqr9GMNKS8J/WbUoUl7z4YJlQRMC4HO/yW5fP7FgXqJ+MnMDkUtpd+OleUvIuxdHPwgj4xKqWjt5xRimaGM4gmQvOkdaUK4vfPQB1aO7jljH3Pp+5Lqs+W3BuN4ntuluLExyDCkOmRhg+/ZeGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01SRCYNqKaUjWmQNK5PsFLhU",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "BCL2L1",
+       "STRADB",
+       "TRIM58",
+       "SELENBP1",
+       "RNF10",
+       "DMTN",
+       "GLRX5",
+       "CA1",
+       "FBXO7",
+       "TENT5C"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "BCL2L1",
+       "STRADB",
+       "TRIM58",
+       "SELENBP1",
+       "RNF10",
+       "DMTN",
+       "GLRX5",
+       "CA1",
+       "FBXO7",
+       "TENT5C"
+      ]
+     },
+     "id": "toolu_01SRCYNqKaUjWmQNK5PsFLhU"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1013,
+    "output_tokens": 188,
+    "total_tokens": 1201,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 59
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"BCL2L1\":{\"symbol\":\"BCL2L1\",\"n_cell_types\":0,\"cell_types\":[]},\"STRADB\":{\"symbol\":\"STRADB\",\"n_cell_types\":0,\"cell_types\":[]},\"TRIM58\":{\"symbol\":\"TRIM58\",\"n_cell_types\":0,\"cell_types\":[]},\"SELENBP1\":{\"symbol\":\"SELENBP1\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Erythrocyte\",\"rank\":20}]},\"RNF10\":{\"symbol\":\"RNF10\",\"n_cell_types\":0,\"cell_types\":[]},\"DMTN\":{\"symbol\":\"DMTN\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Erythrocyte\",\"rank\":18}]},\"GLRX5\":{\"symbol\":\"GLRX5\",\"n_cell_types\":0,\"cell_types\":[]},\"CA1\":{\"symbol\":\"CA1\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Erythrocyte\",\"rank\":7}]},\"FBXO7\":{\"symbol\":\"FBXO7\",\"n_cell_types\":0,\"cell_types\":[]},\"TENT5C\":{\"symbol\":\"TENT5C\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasma cell\",\"rank\":23},{\"cell_type\":\"Regulatory T cell\",\"rank\":48}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01SRCYNqKaUjWmQNK5PsFLhU"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Erythrocyte (erythroid cell)\", \"confidence\": 0.8}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1686,
+    "output_tokens": 36,
+    "total_tokens": 1722,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cEryth_rank_window_21-30_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "21-30",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Eryth",
+  "predicted": "Erythrocyte (erythroid cell)",
+  "confidence": 0.8,
+  "raw": "{\"cell_type\": \"Erythrocyte (erythroid cell)\", \"confidence\": 0.8}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2699,
+  "completion_tokens": 224,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007638,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.1
+ }
+}

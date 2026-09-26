@@ -1,4 +1,9 @@
-"""Score the agent conditions against plain Claude and the CellMarker lookup, on the same 96 questions.
+"""Score the agent conditions against plain Claude and the CellMarker lookup, on the same questions.
+
+Usage: python src/score_agents.py                 the fixed 96-question subset: all conditions,
+                                                  specialist error classes, nudge vs specialist
+       python src/score_agents.py --all-nonoise   all 600 non-noise Hao questions: plain Claude,
+                                                  CellMarker lookup, specialist agent
 
 Run judge.py first (it judges agent answers too). Uses scoring.py - the same label mapping and scores
 as everything else.
@@ -17,10 +22,12 @@ Support is counted from cellmarker_gene_to_cell_types outputs only.
 same counting idea as the lookup baseline). For wrong answers the scorer also says if it got lineage
 credit (lenient 0.5) and, for Ensembl questions, whether gene_info returned the right symbols.
 
-Writes results/agents/scores_agents_hao.csv and results/agents/specialist_errors_hao.csv.
+Writes results/agents/scores_agents_hao[_all_nonoise].csv and results/agents/specialist_errors_hao.csv.
 """
 import csv
 import json
+import sys
+from math import comb
 from collections import Counter
 from types import SimpleNamespace
 
@@ -31,7 +38,12 @@ from scoring import scorer
 pd.set_option("display.width", 220)
 pd.set_option("display.max_colwidth", 70)
 normalize, score, _ = scorer("hao")
-ids = json.load(open("data/agent_subset_hao.json"))["ids"]
+ALL = "--all-nonoise" in sys.argv
+if ALL:
+    ids = [q["id"] for q in json.load(open("data/questions_hao.json")) if q["knob"] != "noise"]
+else:
+    ids = json.load(open("data/agent_subset_hao.json"))["ids"]
+SUFFIX = "_all_nonoise" if ALL else ""
 L1 = pd.read_csv("data/hao_labels.csv").set_index("cell_type").l1
 CM_TO_HAO = dict(csv.reader(open("configs/cellmarker_to_hao.csv")))
 ID_TO_SYMBOL = {e: g for f in ["data/hao_markers.csv", "data/hao_background_genes.csv"]
@@ -42,7 +54,10 @@ SOURCES = {
     "CellMarker lookup": "results/cellmarker-lookup_hao.csv",
     "generic agent": "results/agents/agent-generic_hao.csv",
     "specialist agent": "results/agents/agent-specialist_hao.csv",
+    "specialist_nudge (post-hoc)": "results/agents/agent-specialist_nudge_hao.csv",
 }
+if ALL:  # only these three were run on all 600
+    SOURCES = {k: SOURCES[k] for k in ["plain Claude", "CellMarker lookup", "specialist agent"]}
 frames = []
 for name, path in SOURCES.items():
     d = pd.read_csv(path)
@@ -58,7 +73,7 @@ assert not not_judged.any(), f"{not_judged.sum()} answers not judged yet: run py
 s["score"] = [score(SimpleNamespace(answer=a, normalized=n)) for a, n in zip(s.answer, s.normalized)]
 s["strict"] = (s.score == 1).astype(float)
 s["lineage"] = s.answer.map(L1)
-s.to_csv("results/agents/scores_agents_hao.csv", index=False)
+s.to_csv(f"results/agents/scores_agents_hao{SUFFIX}.csv", index=False)
 
 order = list(SOURCES)
 n = s.groupby("condition").size()
@@ -68,26 +83,41 @@ t = s.groupby("condition").agg(strict=("strict", "mean"), lenient=("score", "mea
 print("OVERALL"); print(t.round(3).to_string())
 t = s.pivot_table(index="condition", columns="format", values=["strict", "score"]).reindex(order)
 t.columns = [f"{'lenient' if m == 'score' else m} ({f})" for m, f in t.columns]
-print("\nBY GENE FORMAT (n = 48 each)"); print(t.round(3).to_string())
+print(f"\nBY GENE FORMAT (n = {len(ids) // 2} each)"); print(t.round(3).to_string())
 t = s.pivot_table(index="lineage", columns="condition", values="strict")[order]
 t.insert(0, "n", s[s.condition == order[0]].groupby("lineage").size())
 print("\nSTRICT BY LINEAGE GROUP"); print(t.round(2).to_string())
 t = s.pivot_table(index="lineage", columns="condition", values="score")[order]
 print("\nLENIENT BY LINEAGE GROUP"); print(t.round(2).to_string())
 
-print("\nPAIRED, SAME 96 QUESTIONS (strict): specialist vs each other condition")
-piv = s.pivot_table(index="id", columns="condition", values="strict")
-for other in ["plain Claude", "CellMarker lookup", "generic agent"]:
-    gained = int(((piv["specialist agent"] == 1) & (piv[other] == 0)).sum())
-    lost = int(((piv["specialist agent"] == 0) & (piv[other] == 1)).sum())
-    print(f"   vs {other:<18} specialist right & other wrong: {gained:>2} | other right & specialist wrong: {lost:>2}")
+def sign_test(a, b):
+    """Exact two-sided sign test on the discordant pairs."""
+    n, k = a + b, max(a, b)
+    return min(1.0, 2 * sum(comb(n, i) for i in range(k, n + 1)) / 2 ** n) if n else 1.0
 
-agents = s[s.condition.str.contains("agent")]
+
+piv = s.pivot_table(index="id", columns="condition", values="strict")
+
+
+def paired(cond, others):
+    print(f"\nPAIRED, SAME {len(piv)} QUESTIONS (strict): {cond} vs each other condition")
+    for other in others:
+        a = int(((piv[cond] == 1) & (piv[other] == 0)).sum())
+        b = int(((piv[cond] == 0) & (piv[other] == 1)).sum())
+        print(f"   vs {other:<28} {cond} right & other wrong: {a:>3} | other right & {cond} wrong: {b:>3} "
+              f"| sign test p = {sign_test(a, b):.3f}")
+
+
+paired("specialist agent", [c for c in order if c != "specialist agent"])
+
+agents = s[s.condition.str.contains("agent|nudge")]
 print("\nAGENT BEHAVIOUR")
 print(agents.groupby("condition").agg(
     mean_tool_calls=("n_tool_calls", "mean"), share_no_tool=("n_tool_calls", lambda x: (x == 0).mean()),
     share_hit_budget=("n_tool_calls", lambda x: (x >= 5).mean()), not_ok=("finish_reason", lambda x: (x != "ok").sum()),
     mean_latency_s=("latency_s", "mean"), total_cost=("cost_usd", "sum"), cost_per_q=("cost_usd", "mean")).round(3).to_string())
+if ALL:
+    sys.exit()
 
 
 # ---- classify the specialist's wrong answers ----------------------------------------------------
@@ -161,3 +191,27 @@ for r in wrong_sym.itertuples():
 print("\nby format:"); print(errs.groupby(["class", "format"]).size().unstack(fill_value=0).to_string())
 print()
 print(errs[["id", "truth", "predicted", "class", "tools_used", "truth_support", "top_support", "top_labels"]].to_string(index=False))
+
+
+# ---- specialist_nudge (added after this error analysis) vs the original specialist --------------
+NUDGE = "specialist_nudge (post-hoc)"
+paired(NUDGE, ["specialist agent"])
+nudge = s[s.condition == NUDGE].set_index("id")
+target = errs[errs["class"] == "no_cellmarker"]
+fixed = [i for i in target.id if nudge.loc[i, "strict"] == 1]
+queried = []
+for i in target.id:
+    t = json.load(open(f"results/agents/specialist_nudge/{i}.json"))
+    queried.append(any(m["type"] == "tool" and m["tool_name"] == "cellmarker_gene_to_cell_types" for m in t["messages"]))
+print(f"\nThe specialist's {len(target)} 'no_cellmarker' errors: nudge queried CellMarker on {sum(queried)}, "
+      f"and answered {len(fixed)} correctly (strict); lenient mean on these {nudge.loc[target.id, 'score'].mean():.2f} "
+      f"vs specialist {target.lenient.mean():.2f}")
+for i in fixed:
+    print(f"   fixed: {i}: {target.set_index('id').loc[i, 'predicted']!r} -> {nudge.loc[i, 'predicted']!r}")
+ens_calls = s[(s.condition.isin(["specialist agent", NUDGE]))].copy()
+ens_calls["queried_cellmarker"] = [
+    any(m["type"] == "tool" and m["tool_name"] == "cellmarker_gene_to_cell_types"
+        for m in json.load(open(f"results/agents/{'specialist_nudge' if c == NUDGE else 'specialist'}/{i}.json"))["messages"])
+    for c, i in zip(ens_calls.condition, ens_calls.id)]
+print("\nShare of questions where CellMarker was queried:")
+print(ens_calls.pivot_table(index="condition", columns="format", values="queried_cellmarker").round(2).to_string())

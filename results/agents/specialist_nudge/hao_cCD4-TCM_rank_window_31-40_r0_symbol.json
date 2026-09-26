@@ -1,0 +1,144 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-TCM_rank_window_31-40_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 TCM",
+  "genes": [
+   "MAL",
+   "RPS3",
+   "RPL6",
+   "EEF1A1",
+   "RPL37",
+   "RPL24",
+   "RPL35A",
+   "CD3D",
+   "RPL18",
+   "RPS14"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "31-40",
+  "replicate": 0,
+  "answer": "CD4 TCM"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MAL, RPS3, RPL6, EEF1A1, RPL37, RPL24, RPL35A, CD3D, RPL18, RPS14",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MAL, RPS3, RPL6, EEF1A1, RPL37, RPL24, RPL35A, CD3D, RPL18, RPS14"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eq8DCpABCBIYAipAgJ6bWmSHQQCWyvzI2fv007n7vCfKpZlWKvY8YpU5rWE/+0vBQ47ErqFMFPvBpnIR7Zs9q/xq965MkYnBgW4P+jIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAZPX3tUGEgzxA9TiMTDHdOSAq/EaDJT3Z/MRr95FOUNIFiIwRsTCkc75NAndPvTslLX7/iWEvhhHeOjiYYaXIACrj23yLNlLlepwu+wpfoSwDP1cKssBEjNOLJZqRLCE8xuB9gH52NkUgl0YnyhrDVojekTPaq8f5AbKxRZmnAMHRGVsf9OWNK7b6wsgJSUrO27cWPRiRUpfmdB+wPE9O4HpTP8reMPe33xUQo1bGQZ0/6RZgiMZmKVNjfZM3NQvg0Yw6qBEWdexreA6QT+d05AnUCj8Bhr0+nax9VrmMWeMY9AOQmhBgA268ozSLmXbxpMXESYJghaHyHOHQwo2cIYpAiaUeIZuN32hCfftMva2vVdTk/LTF6lD318b3M4GKokYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_016j6ekVL2DLzFkCmmLJRsze",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "MAL",
+       "CD3D"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "MAL",
+       "CD3D"
+      ]
+     },
+     "id": "toolu_016j6ekVL2DLzFkCmmLJRsze"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1008,
+    "output_tokens": 173,
+    "total_tokens": 1181,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 100
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"MAL\":{\"symbol\":\"MAL\",\"n_cell_types\":7,\"cell_types\":[{\"cell_type\":\"Naive CD4 T cell\",\"rank\":4},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":12},{\"cell_type\":\"CD4+ T cell\",\"rank\":16},{\"cell_type\":\"Naive T cell\",\"rank\":21},{\"cell_type\":\"Naive CD8+ T cell\",\"rank\":24}]},\"CD3D\":{\"symbol\":\"CD3D\",\"n_cell_types\":30,\"cell_types\":[{\"cell_type\":\"CD4+ T helper cell\",\"rank\":1},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":1},{\"cell_type\":\"Proliferative T cell\",\"rank\":2},{\"cell_type\":\"T cell\",\"rank\":2},{\"cell_type\":\"CD8 T cell\",\"rank\":3},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":3},{\"cell_type\":\"CD8+ T cell\",\"rank\":4},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":4},{\"cell_type\":\"Natural killer T cell\",\"rank\":4},{\"cell_type\":\"Regulatory CD4+ T cell\",\"rank\":4},{\"cell_type\":\"Activated CD8+ T cell\",\"rank\":5},{\"cell_type\":\"CD4+ T cell\",\"rank\":5},{\"cell_type\":\"Effector CD8+ T cell\",\"rank\":5},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":8},{\"cell_type\":\"Memory T cell\",\"rank\":8},{\"cell_type\":\"Proliferative CD4+ T cell\",\"rank\":8},{\"cell_type\":\"Regulatory T cell\",\"rank\":9},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":10},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":11}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_016j6ekVL2DLzFkCmmLJRsze"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EpsDCpABCBIYAipAFPCXEJBx0By6DM1VXAUwE2ZE5EO3ZeyR9uvwefm7gxGcfs2XooEIvTRHX55zLUQwUg5dr88o1T0H4e9OeEm0cTIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAZXX3tUGEgw3ybMrZLwYXBHRE+waDGmmbRNvmJCWJGdi2CIwTJW/mlE9nFmlI3lcd9gp7RvIJOvzPJ2UAmTHYpOoQdFcPQgS9jSB+LKfnTABneMtKrcBtnbAvwwwHUj4IRhMOlYY8mpQLVLERLTfVgmsGWH28a4APnvf1RnsOoocScS69bg4Agf6owJmTJxUm09D4PO+TiT20/jjrkMhTYeAt8PuVShZNndfSmU8k18ZQO6xFb3FOeuNaP+PF0KYnuy9Xu2MIrtc5i7MHjtLgWHVH5dI7cLuFJ48DHB0OuW/ZypLc3g0u7Vkcrd1bLsSuUrLMTV21dUE6RCx2EPVPecGPorwKKfhUKSyOFZKGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "text": "```json\n{\"cell_type\": \"Naive CD4+ T cell\", \"confidence\": 0.7}\n```",
+     "type": "text"
+    }
+   ],
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1898,
+    "output_tokens": 111,
+    "total_tokens": 2009,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 74
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-TCM_rank_window_31-40_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "31-40",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 TCM",
+  "predicted": "Naive CD4+ T cell",
+  "confidence": 0.7,
+  "raw": "```json\n{\"cell_type\": \"Naive CD4+ T cell\", \"confidence\": 0.7}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2906,
+  "completion_tokens": 284,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008652,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.5
+ }
+}

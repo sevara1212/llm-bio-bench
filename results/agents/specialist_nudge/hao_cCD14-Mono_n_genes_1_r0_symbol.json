@@ -1,0 +1,123 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD14-Mono_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD14 Mono",
+  "genes": [
+   "S100A9"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD14 Mono"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: S100A9",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: S100A9"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EpkCCpABCBIYAipArUHeXxH8j+QFGt+XqQKKN5GFnkOp/v4kI/RU/3WP3uFDmWwrALWtwbowenjZ1VwiFmBY+Nvlocevct0VLchJsjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAanX3tUGEgxrDC8y2lNlordpDYIaDC3tFWmZCJYjZX+yXiIwZmEiVJKamWuuZiWciZyOH5HUZEz4eDuaWpfbshhI2SLXN3chbMBCbtDAIAryfE+hKjZrETsPsvADSeIsRCQBCEJTjNFkRaUEDk60ChSDu3mVTxw1izLSi69kyhSm7Z4oYzbOYtEgwzIYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01VWy2DRjSbXdNRGPzkNc9iw",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "S100A9"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "S100A9"
+      ]
+     },
+     "id": "toolu_01VWy2DRjSbXdNRGPzkNc9iw"
+    }
+   ],
+   "usage": {
+    "input_tokens": 961,
+    "output_tokens": 83,
+    "total_tokens": 1044,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 16
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"S100A9\":{\"symbol\":\"S100A9\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"CD14+ monocyte\",\"rank\":3},{\"cell_type\":\"Classical monocyte\",\"rank\":4},{\"cell_type\":\"CD14 monocyte\",\"rank\":5},{\"cell_type\":\"Monocyte\",\"rank\":8},{\"cell_type\":\"Polymorphonuclear myeloid-derived suppressor cell\",\"rank\":8},{\"cell_type\":\"Neutrophil\",\"rank\":12}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01VWy2DRjSbXdNRGPzkNc9iw"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD14+ monocyte\", \"confidence\": 0.7}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1228,
+    "output_tokens": 30,
+    "total_tokens": 1258,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD14-Mono_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD14 Mono",
+  "predicted": "CD14+ monocyte",
+  "confidence": 0.7,
+  "raw": "{\"cell_type\": \"CD14+ monocyte\", \"confidence\": 0.7}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2189,
+  "completion_tokens": 113,
+  "reasoning_tokens": null,
+  "cost_usd": 0.005508,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.0
+ }
+}

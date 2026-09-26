@@ -1,0 +1,156 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cMAIT_noise_2_r1_symbol",
+  "dataset": "hao",
+  "cluster": "MAIT",
+  "genes": [
+   "KLRB1",
+   "IL7R",
+   "GZMK",
+   "DUSP2",
+   "CNNM3-DT",
+   "ARL4C",
+   "CD69",
+   "NCR3",
+   "CXCR4",
+   "MAGOH-DT"
+  ],
+  "format": "symbol",
+  "knob": "noise",
+  "level": "2",
+  "replicate": 1,
+  "answer": "MAIT"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRB1, IL7R, GZMK, DUSP2, CNNM3-DT, ARL4C, CD69, NCR3, CXCR4, MAGOH-DT",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRB1, IL7R, GZMK, DUSP2, CNNM3-DT, ARL4C, CD69, NCR3, CXCR4, MAGOH-DT"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErkDCpABCBIYAipAGE3wl2CZxeiobevsXIY7xzl5amKQe8B4pCIebhuhsTfI1w3coFGgxNNdDvQh5BnYjK0iMKyc1inUPLgvwULyTzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdTX3tUGEgx7ZhxOP3MzCQSuaLgaDAE+BB/YxoHoPYscBCIwORlLtpF3Gd4KRFQJpR2901krTVfmFXFgHC9Bi7JdsPB1jBsIrvNk77J0TteY1JMPKtUB4Ooke50WXB3OIJ+wIVbFIjdk1kKAQfnxmuuV30fvRe0WeZfqnUX9g0xSD4hEJNBKnHiofQZz6kJhLKmPfcpFL2UFUasM9zNL/0f+0xR6fUtaH9qRabnQQ4WTLIGUwbgL6tk5NrvoiGPNpYPHtcYU/w1cu9xHbug3hBeFy6lKmgk+VZveq0DlDBQcXgaNMVLLai1ZM08W1TcwtJmA7Z7crQolk483EtrWfUOX//CS0AhOQ8dC9qaMrsR6jEHX15PpHvIW7i9qFcbqMucuiuePPb5APMb4GAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01Cos7zcQZ3fqPUuBtubkWiN",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "KLRB1",
+       "IL7R",
+       "GZMK",
+       "DUSP2",
+       "ARL4C",
+       "CD69",
+       "NCR3",
+       "CXCR4"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "KLRB1",
+       "IL7R",
+       "GZMK",
+       "DUSP2",
+       "ARL4C",
+       "CD69",
+       "NCR3",
+       "CXCR4"
+      ]
+     },
+     "id": "toolu_01Cos7zcQZ3fqPUuBtubkWiN"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1017,
+    "output_tokens": 210,
+    "total_tokens": 1227,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 97
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"KLRB1\":{\"symbol\":\"KLRB1\",\"n_cell_types\":20,\"cell_types\":[{\"cell_type\":\"CD4+ T helper cell\",\"rank\":2},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":2},{\"cell_type\":\"Innate lymphoid cell\",\"rank\":3},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":3},{\"cell_type\":\"Effector memory T cell\",\"rank\":4},{\"cell_type\":\"CD8+ mucosal-associated invariant T cell\",\"rank\":5},{\"cell_type\":\"T helper17 cell\",\"rank\":5},{\"cell_type\":\"Natural killer T cell\",\"rank\":6},{\"cell_type\":\"Gamma delta T cell\",\"rank\":10},{\"cell_type\":\"T helper 1 cell\",\"rank\":11},{\"cell_type\":\"T helper 17 cell\",\"rank\":11},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":12},{\"cell_type\":\"Memory T cell\",\"rank\":13},{\"cell_type\":\"Natural killer cell\",\"rank\":13},{\"cell_type\":\"T cell\",\"rank\":13},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":14},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":18},{\"cell_type\":\"Effector T cell\",\"rank\":33},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":38},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":43}]},\"IL7R\":{\"symbol\":\"IL7R\",\"n_cell_types\":27,\"cell_types\":[{\"cell_type\":\"Innate lymphoid cell\",\"rank\":1},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":1},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":1},{\"cell_type\":\"CD4+ T cell\",\"rank\":2},{\"cell_type\":\"Effector memory T cell\",\"rank\":2},{\"cell_type\":\"Memory T cell\",\"rank\":3},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":5},{\"cell_type\":\"CD4 T cell\",\"rank\":5},{\"cell_type\":\"T cell\",\"rank\":5},{\"cell_type\":\"Conventional T cell\",\"rank\":7},{\"cell_type\":\"Effector memory CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Central memory T cell\",\"rank\":8},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":8},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":9},{\"cell_type\":\"Naive T cell\",\"rank\":9},{\"cell_type\":\"Effector T cell\",\"rank\":10},{\"cell_type\":\"CD8+ T cell\",\"rank\":13},{\"cell_type\":\"M1 macrophage\",\"rank\":13},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":15}]},\"GZMK\":{\"symbol\":\"GZMK\",\"n_cell_types\":17,\"cell_types\":[{\"cell_type\":\"Effector T cell\",\"rank\":1},{\"cell_type\":\"Effector memory T cell\",\"rank\":1},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":3},{\"cell_type\":\"CD8 T cell\",\"rank\":4},{\"cell_type\":\"Effector memory CD8 T cell\",\"rank\":4},{\"cell_type\":\"CD8+ T cell\",\"rank\":5},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":5},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":6},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":6},{\"cell_type\":\"Effector memory CD4+ T cell\",\"rank\":6},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":7},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":7},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":11},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":13},{\"cell_type\":\"T cell\",\"rank\":21},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":30},{\"cell_type\":\"Double-negative T cell\",\"rank\":49}]},\"DUSP2\":{\"symbol\":\"DUSP2\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":12},{\"cell_type\":\"Gamma delta T cell\",\"rank\":21},{\"cell_type\":\"Effector T cell\",\"rank\":31}]},\"ARL4C\":{\"symbol\":\"ARL4C\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":8},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":20},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":45}]},\"CD69\":{\"symbol\":\"CD69\",\"n_cell_types\":8,\"cell_types\":[{\"cell_type\":\"Activated B cell\",\"rank\":4},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":4},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":6},{\"cell_type\":\"Eosinophil\",\"rank\":6},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":6},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":8},{\"cell_type\":\"T cell\",\"rank\":8},{\"cell_type\":\"Basophil\",\"rank\":11}]},\"NCR3\":{\"symbol\":\"NCR3\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"CD8+ mucosal-associated invariant T cell\",\"rank\":6},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":10},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":22},{\"cell_type\":\"Natural killer cell\",\"rank\":23}]},\"CXCR4\":{\"symbol\":\"CXCR4\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":9},{\"cell_type\":\"Naive B cell\",\"rank\":19},{\"cell_type\":\"M2 macrophage\",\"rank\":27},{\"cell_type\":\"Effector memory T cell\",\"rank\":48}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01Cos7zcQZ3fqPUuBtubkWiN"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EtEDCpABCBIYAipA9VOGnUYW7Rse1gj4cJYclhXIiGtJayZA2n6TPyLZbjvYC3U+cq4Q/Eq+kF0KiHDyfgGKpU8lj6a3DdzvLJBiwDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdfX3tUGEgzkZyXFubHXOGJN/KUaDDB/W4xfa5g4Av/07CIwEcUSDdrgWORfHVr4ujEsyUuG+Fqbec/3FMVGOInOKzG0IAKApdrAjUBs6aX5Q3AWKu0B1GRdfiYBovLMys76CkFrfm5xaeqazpQogyZB4EhJ4WW/PTrL2jZW+brnlwJxoR04AlHh0Y34UMVj2zkJxEOTt/miAWFbr9/6sAK8WuzJd9VXWu7h+++uxUSbyxINdqBF/UC1yWuKbymKP62iHlMumz2jBxLxyQalK5Jto2rOs/rMtbBLum103vMhA785sTGqwET5Izk241C6TGylTWFuKYT8fAzvU7YLYq0rEp8VAOrebIzM4j8KIdr/1trU5gersfm8Pusv9Xp43rqMGzdh+EYPXgHVuZCgaaZiSuaIZV8F4fJUUN6pN8E3+KRTGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "text": "{\"cell_type\": \"Mucosa-associated invariant T (MAIT) cell\", \"confidence\": 0.8}",
+     "type": "text"
+    }
+   ],
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 3404,
+    "output_tokens": 165,
+    "total_tokens": 3569,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 124
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cMAIT_noise_2_r1_symbol",
+  "format": "symbol",
+  "knob": "noise",
+  "level": "2",
+  "replicate": 1,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "MAIT",
+  "predicted": "Mucosa-associated invariant T (MAIT) cell",
+  "confidence": 0.8,
+  "raw": "{\"cell_type\": \"Mucosa-associated invariant T (MAIT) cell\", \"confidence\": 0.8}",
+  "finish_reason": "ok",
+  "prompt_tokens": 4421,
+  "completion_tokens": 375,
+  "reasoning_tokens": null,
+  "cost_usd": 0.012592,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.4
+ }
+}

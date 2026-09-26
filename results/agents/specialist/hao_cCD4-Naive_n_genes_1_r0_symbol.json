@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-Naive_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 Naive",
+  "genes": [
+   "RPL30"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD4 Naive"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL30",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL30"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EvQCCpABCBIYAipAEmV0280bR5oKDGge7gfjrwqBjbIe+SOtZVMz9HeTWOW7pFyKnp9Z7DfMPvYNDF2o7M3ZB32yhdMC7PDegnjpbzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAbvc3tUGEgws/pbTP2hIwLmZS7saDI4KRnfpZXR2xn3GDiIwDaiVmtnskEz5U3+9KXWTdq25OkoT31/HZV+e2SD4SR3El1HQhTPtdTBTU76hw4w8KpABkee/BeVzWpnrTbm1kQ4LsfAJVtdp4KH/2ePyfJMjGHRF82rMmyJuIu+tv7xt+PGs2sAup/JzzAvaxZQ6Af2DyL3Kg67zaoEGr1TYh/J3uQoA55AajUh6fj2kRhP/paXlNELYXQ1l3nTYID1u+Ag+65/0J7rYwp4X2gYhW4mFEQ92gDlfjb0MevzASugIp6cfGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01N7kd3pefxrTmQ12rNn58CF",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "RPL30"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "RPL30"
+      ]
+     },
+     "id": "toolu_01N7kd3pefxrTmQ12rNn58CF"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 119,
+    "total_tokens": 1055,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 51
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"RPL30\":{\"symbol\":\"RPL30\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":8},{\"cell_type\":\"Plasma cell\",\"rank\":34}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01N7kd3pefxrTmQ12rNn58CF"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Double-negative T cell\", \"confidence\": 0.3}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1139,
+    "output_tokens": 29,
+    "total_tokens": 1168,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-Naive_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 Naive",
+  "predicted": "Double-negative T cell",
+  "confidence": 0.3,
+  "raw": "{\"cell_type\": \"Double-negative T cell\", \"confidence\": 0.3}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2075,
+  "completion_tokens": 148,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00563,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.2
+ }
+}

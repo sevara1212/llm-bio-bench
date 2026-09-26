@@ -1,0 +1,140 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-CTL_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 CTL",
+  "genes": [
+   "GZMH",
+   "FGFBP2",
+   "B2M",
+   "IL32",
+   "NKG7",
+   "CD52",
+   "CST7",
+   "CD3G",
+   "CD2",
+   "CCL5"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "CD4 CTL"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH, FGFBP2, B2M, IL32, NKG7, CD52, CST7, CD3G, CD2, CCL5",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH, FGFBP2, B2M, IL32, NKG7, CD52, CST7, CD3G, CD2, CCL5"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EvADCpABCBIYAipAyEzfsQqUbPC/rmJgrpTqcJjOWczv720aAhY6qE1VXYRlKPCSo68vyfzOv8CiuZK1uoyWFIwrT+5/jutT6UrF0zIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAarc3tUGEgyH8OOVC3EoMYifV7oaDI4VZnYdfC4blNMyxyIw6/5oXwxC2wD25akqnVhJc+gZyTxGnSjYHRL30PsR7/3NCxic0Fr/0QboB4lAV2kKKowCaQALL34sz32dv9ZvKGUq27R5gXmgI++aK73HsGN/NpoqDeF2PkIJ0ud+BvsGluKLgLYX1fRL3qpunpWrkL6HIkp8kB8k85zjWXKB4B8PLx3pZVwjMqh7phuZOHbi5vXa9DXDhNfl24OYZ9wGtZIQn4bZj0/NuiJdSnN3ntgCNiH2jenPap/eFgs7q4E0K9su1kJZuCgkv7u+gRPLAm6+Ymd5G0kX6xAdufRi7bzBRoh74kj94jnLCcFdX/C9w3R3FmL6WXQEjIhwsCM67MkEy3YZwpBEe+h0p1yhtz5ajyXDNN3/55dd6i/IPvIO5GQ4rxslhu7y+gCTAEN6DkDb5S4wo/AozGdZBHxJ/xgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01MALCMuU7rjFztBodUcJMPM",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "GZMH",
+       "FGFBP2",
+       "NKG7",
+       "CST7",
+       "CD3G"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "GZMH",
+       "FGFBP2",
+       "NKG7",
+       "CST7",
+       "CD3G"
+      ]
+     },
+     "id": "toolu_01MALCMuU7rjFztBodUcJMPM"
+    }
+   ],
+   "usage": {
+    "input_tokens": 978,
+    "output_tokens": 221,
+    "total_tokens": 1199,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 132
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"GZMH\":{\"symbol\":\"GZMH\",\"n_cell_types\":16,\"cell_types\":[{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":2},{\"cell_type\":\"Effector T cell\",\"rank\":4},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":5},{\"cell_type\":\"Effector regulatory T cell\",\"rank\":6},{\"cell_type\":\"Activated CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":10},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":10},{\"cell_type\":\"Gamma delta T cell\",\"rank\":12},{\"cell_type\":\"Natural killer T cell\",\"rank\":13},{\"cell_type\":\"CD8+ T cell\",\"rank\":18},{\"cell_type\":\"Cytotoxic CD4+ T cell\",\"rank\":23},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":31},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":31},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":37},{\"cell_type\":\"Natural killer cell\",\"rank\":50}]},\"FGFBP2\":{\"symbol\":\"FGFBP2\",\"n_cell_types\":13,\"cell_types\":[{\"cell_type\":\"Effector memory CD8 T cell\",\"rank\":2},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":3},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":4},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":5},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":8},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":8},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":11},{\"cell_type\":\"Natural killer cell\",\"rank\":18},{\"cell_type\":\"Natural killer T cell\",\"rank\":22},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":24},{\"cell_type\":\"Gamma delta T cell\",\"rank\":30},{\"cell_type\":\"Chondrocyte\",\"rank\":32},{\"cell_type\":\"Effector T cell\",\"rank\":32}]},\"NKG7\":{\"symbol\":\"NKG7\",\"n_cell_types\":16,\"cell_types\":[{\"cell_type\":\"CD56+ natural killer cell\",\"rank\":1},{\"cell_type\":\"Natural killer cell\",\"rank\":2},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":4},{\"cell_type\":\"NK cell\",\"rank\":4},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":5},{\"cell_type\":\"Natural killer T cell\",\"rank\":5},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Activated CD8+ T cell\",\"rank\":9},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":9},{\"cell_type\":\"CD8+ T cell\",\"rank\":11},{\"cell_type\":\"Gamma delta T cell\",\"rank\":11},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":15},{\"cell_type\":\"T cell\",\"rank\":15},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":21},{\"cell_type\":\"Effector T cell\",\"rank\":22},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":47}]},\"CST7\":{\"symbol\":\"CST7\",\"n_cell_types\":9,\"cell_types\":[{\"cell_type\":\"Granulocyte-monocyte progenitor\",\"rank\":8},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Effector T cell\",\"rank\":13},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":14},{\"cell_type\":\"Gamma delta T cell\",\"rank\":17},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":32},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":36},{\"cell_type\":\"Natural killer cell\",\"rank\":46},{\"cell_type\":\"Effector memory T cell\",\"rank\":47}]},\"CD3G\":{\"symbol\":\"CD3G\",\"n_cell_types\":11,\"cell_types\":[{\"cell_type\":\"T cell\",\"rank\":6},{\"cell_type\":\"CD8+ T cell\",\"rank\":12},{\"cell_type\":\"Natural killer T cell\",\"rank\":19},{\"cell_type\":\"CD4+ T cell\",\"rank\":21},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":22},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":29},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":31},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":33},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":34},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":39},{\"cell_type\":\"Effector T cell\",\"rank\":49}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01MALCMuU7rjFztBodUcJMPM"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Effector memory/cytotoxic CD8+ T cell\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 2960,
+    "output_tokens": 41,
+    "total_tokens": 3001,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-CTL_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 CTL",
+  "predicted": "Effector memory/cytotoxic CD8+ T cell",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"Effector memory/cytotoxic CD8+ T cell\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 3938,
+  "completion_tokens": 262,
+  "reasoning_tokens": null,
+  "cost_usd": 0.010496,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 6.8
+ }
+}

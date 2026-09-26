@@ -1,0 +1,135 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cILC_n_genes_5_r0_symbol",
+  "dataset": "hao",
+  "cluster": "ILC",
+  "genes": [
+   "FXYD5",
+   "KLRB1",
+   "TNFRSF18",
+   "DDIT4",
+   "JUND"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "5",
+  "replicate": 0,
+  "answer": "ILC"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: FXYD5, KLRB1, TNFRSF18, DDIT4, JUND",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: FXYD5, KLRB1, TNFRSF18, DDIT4, JUND"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErUCCpABCBIYAipAFP7OGulpm4po1BT/j/lLlZxNqQGMYY8eS/DGf1e3jjK/GGfn7Kdbrd91wnyYcybOUdLLr7Z4PkxlZsbsFkbtNjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdLe3tUGEgyuJ62BUs6x9opu80gaDGLg+vefoVFXCxVZJCIwnYx9/W1zNrAOg6mI0MGoHRMsDtUJERXypNb0j+Bf1fhXzk2SCDnSl/un6JNyrxpvKlK7AQg64wQSB33qCH4Zvg7iBz58b7BP9RW/bCbP7wxFRqnr+iftvjOLsRiK+I2/xudV9B4oKWbZfjGGj/Qzn6zEbcF1vj7XDhif09sKFB9P2xLwGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01SUtZVBaUmzYt9UkXLHCpFt",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "FXYD5",
+       "KLRB1",
+       "TNFRSF18",
+       "DDIT4",
+       "JUND"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "FXYD5",
+       "KLRB1",
+       "TNFRSF18",
+       "DDIT4",
+       "JUND"
+      ]
+     },
+     "id": "toolu_01SUtZVBaUmzYt9UkXLHCpFt"
+    }
+   ],
+   "usage": {
+    "input_tokens": 961,
+    "output_tokens": 120,
+    "total_tokens": 1081,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 24
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"FXYD5\":{\"symbol\":\"FXYD5\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":39}]},\"KLRB1\":{\"symbol\":\"KLRB1\",\"n_cell_types\":20,\"cell_types\":[{\"cell_type\":\"CD4+ T helper cell\",\"rank\":2},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":2},{\"cell_type\":\"Innate lymphoid cell\",\"rank\":3},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":3},{\"cell_type\":\"Effector memory T cell\",\"rank\":4},{\"cell_type\":\"CD8+ mucosal-associated invariant T cell\",\"rank\":5},{\"cell_type\":\"T helper17 cell\",\"rank\":5},{\"cell_type\":\"Natural killer T cell\",\"rank\":6},{\"cell_type\":\"Gamma delta T cell\",\"rank\":10},{\"cell_type\":\"T helper 1 cell\",\"rank\":11},{\"cell_type\":\"T helper 17 cell\",\"rank\":11},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":12},{\"cell_type\":\"Memory T cell\",\"rank\":13},{\"cell_type\":\"Natural killer cell\",\"rank\":13},{\"cell_type\":\"T cell\",\"rank\":13},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":14},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":18},{\"cell_type\":\"Effector T cell\",\"rank\":33},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":38},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":43}]},\"TNFRSF18\":{\"symbol\":\"TNFRSF18\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":12},{\"cell_type\":\"Regulatory T cell\",\"rank\":23},{\"cell_type\":\"Natural killer CD56 bright cell\",\"rank\":33}]},\"DDIT4\":{\"symbol\":\"DDIT4\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Central memory T cell\",\"rank\":12}]},\"JUND\":{\"symbol\":\"JUND\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01SUtZVBaUmzYt9UkXLHCpFt"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Memory CD4+ T cell\", \"confidence\": 0.55}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1883,
+    "output_tokens": 32,
+    "total_tokens": 1915,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cILC_n_genes_5_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "5",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "ILC",
+  "predicted": "Memory CD4+ T cell",
+  "confidence": 0.55,
+  "raw": "{\"cell_type\": \"Memory CD4+ T cell\", \"confidence\": 0.55}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2844,
+  "completion_tokens": 152,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007208,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.9
+ }
+}

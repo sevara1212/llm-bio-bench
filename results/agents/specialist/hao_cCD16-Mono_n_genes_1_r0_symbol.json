@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD16-Mono_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD16 Mono",
+  "genes": [
+   "LST1"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD16 Mono"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LST1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LST1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Er0DCpABCBIYAipALnoas0MhWlKyh9G+EH8O9k+lrORvfie6c7u3OpWLCign0NtMNVc3a7724NMhztHz4QjT21t8D+K6zN6dhKvMFzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAfrb3tUGEgzqqpAWhxB+lQwiTfwaDHxQWpiu3rGV4vcn9CIwMtIZtp+rpHm/icLlst8Rp3mIZP9mpE4+T7tJd5fYm4w60GjHCCYeknCyDY+V8QGYKtkBJCgLfc9dL1WZiQe7PhGXOL7w0Z0TNXNRx7rXyGEDXfaZ2NXf0r81uAWx2juxRaYDlRdjUVuEYSoTqqz3GH+C2kjl9sas3eiQ1LBJJF3Cot4Z3ZNoJwB0d5ZfGzw7xZY+esszsPdXMUGkM8Ayjjav7hyk9dNZIfL93Ga+s/VRE8nhEfPgEKME6bxsy4M5/BKOWgZGID38ztO6ex05TKbUVhOytJ9KSz5NnGnCsmiKTnM/UyivAgdjfUEebbL6UfySkbSE2TKRb4rbquI0hCFOs2dD8gSzvfTV2xgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01VndaCtacrJ73C8KVTXSbNQ",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "LST1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LST1"
+      ]
+     },
+     "id": "toolu_01VndaCtacrJ73C8KVTXSbNQ"
+    }
+   ],
+   "usage": {
+    "input_tokens": 935,
+    "output_tokens": 149,
+    "total_tokens": 1084,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 82
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"LST1\":{\"symbol\":\"LST1\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"CD16 monocyte\",\"rank\":3}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01VndaCtacrJ73C8KVTXSbNQ"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD16+ monocyte\", \"confidence\": 0.85}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1146,
+    "output_tokens": 30,
+    "total_tokens": 1176,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD16-Mono_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD16 Mono",
+  "predicted": "CD16+ monocyte",
+  "confidence": 0.85,
+  "raw": "{\"cell_type\": \"CD16+ monocyte\", \"confidence\": 0.85}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2081,
+  "completion_tokens": 179,
+  "reasoning_tokens": null,
+  "cost_usd": 0.005952,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.6
+ }
+}

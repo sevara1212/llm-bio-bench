@@ -1,0 +1,144 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cNK_rank_window_11-20_r0_symbol",
+  "dataset": "hao",
+  "cluster": "NK",
+  "genes": [
+   "SPON2",
+   "EFHD2",
+   "CTSW",
+   "FCGR3A",
+   "CLIC3",
+   "GZMM",
+   "ABHD17A",
+   "CD7",
+   "HLA-C",
+   "HOPX"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "answer": "NK"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: SPON2, EFHD2, CTSW, FCGR3A, CLIC3, GZMM, ABHD17A, CD7, HLA-C, HOPX",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: SPON2, EFHD2, CTSW, FCGR3A, CLIC3, GZMM, ABHD17A, CD7, HLA-C, HOPX"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eu8CCpABCBIYAipABHyFtQoM6nxJZyBSNVdbwgf/DMwuTVSP49lP+5qEDqL+xK9WWfEZtwV2nAYDfRUfWQHFcfNwDtwcpABe24oCQjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYjf3tUGEgxiKik1GMFad5rAFhsaDIohSOnGiHT00W2UCyIwxjH3YisnqCpi375SAklml9JAv7O9hVKcMydzXMb3IvRyTUj7vjKdvNu3saMqoXh3KosBpm8QWAs5JHPJIiKuHWYgnEpRUPnjo3pNrM9u+JSdoi4/vZ2uZEi3WxCw6PRz9WZ2GTO4mZ74PRG1/u1KJgPrxbfsLt7XVy9ZprRf0tp/Pp/EwFQ9MkCysOuqeAsm9aqktiJAziR+WSDFcE/foCBEAhNMvIMyt0pbQ0oqEk2tc2MDHTmAPPlJ+YDWjBgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01GtoUT1M9PdJ529GRyytUsE",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "SPON2",
+       "FCGR3A",
+       "GZMM",
+       "CTSW",
+       "CLIC3",
+       "HOPX",
+       "CD7"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "SPON2",
+       "FCGR3A",
+       "GZMM",
+       "CTSW",
+       "CLIC3",
+       "HOPX",
+       "CD7"
+      ]
+     },
+     "id": "toolu_01GtoUT1M9PdJ529GRyytUsE"
+    }
+   ],
+   "usage": {
+    "input_tokens": 987,
+    "output_tokens": 172,
+    "total_tokens": 1159,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 66
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"SPON2\":{\"symbol\":\"SPON2\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":7},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":13},{\"cell_type\":\"Natural killer cell\",\"rank\":15}]},\"FCGR3A\":{\"symbol\":\"FCGR3A\",\"n_cell_types\":8,\"cell_types\":[{\"cell_type\":\"CD16+ monocyte\",\"rank\":1},{\"cell_type\":\"Non classical monocyte\",\"rank\":1},{\"cell_type\":\"CD16 monocyte\",\"rank\":2},{\"cell_type\":\"Monocyte\",\"rank\":3},{\"cell_type\":\"Non-classical monocyte\",\"rank\":3},{\"cell_type\":\"Natural killer cell\",\"rank\":7},{\"cell_type\":\"Macrophage\",\"rank\":14},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":21}]},\"GZMM\":{\"symbol\":\"GZMM\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":38},{\"cell_type\":\"Gamma delta T cell\",\"rank\":42},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":50}]},\"CTSW\":{\"symbol\":\"CTSW\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"Effector T cell\",\"rank\":16},{\"cell_type\":\"AXL+ SIGLEC6+ dendritic cell\",\"rank\":22},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":37},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":40},{\"cell_type\":\"Natural killer CD56 bright cell\",\"rank\":44},{\"cell_type\":\"Natural killer cell\",\"rank\":47}]},\"CLIC3\":{\"symbol\":\"CLIC3\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":2},{\"cell_type\":\"Natural killer cell\",\"rank\":37},{\"cell_type\":\"Natural killer CD56 bright cell\",\"rank\":40}]},\"HOPX\":{\"symbol\":\"HOPX\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":16},{\"cell_type\":\"Natural killer CD56 bright cell\",\"rank\":20},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":32},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":39},{\"cell_type\":\"Natural killer cell\",\"rank\":44}]},\"CD7\":{\"symbol\":\"CD7\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Natural killer cell\",\"rank\":16},{\"cell_type\":\"T cell\",\"rank\":29},{\"cell_type\":\"Gamma delta T cell\",\"rank\":37},{\"cell_type\":\"Natural killer CD56 bright cell\",\"rank\":39}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01GtoUT1M9PdJ529GRyytUsE"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD56dim CD16+ Natural Killer (NK) cell\", \"confidence\": 0.9}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 2212,
+    "output_tokens": 43,
+    "total_tokens": 2255,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cNK_rank_window_11-20_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "NK",
+  "predicted": "CD56dim CD16+ Natural Killer (NK) cell",
+  "confidence": 0.9,
+  "raw": "{\"cell_type\": \"CD56dim CD16+ Natural Killer (NK) cell\", \"confidence\": 0.9}",
+  "finish_reason": "ok",
+  "prompt_tokens": 3199,
+  "completion_tokens": 215,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008548,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.5
+ }
+}

@@ -1,0 +1,150 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cASDC_noise_0_r0_symbol",
+  "dataset": "hao",
+  "cluster": "ASDC",
+  "genes": [
+   "PPP1R14A",
+   "SAMHD1",
+   "S100A10",
+   "PLD4",
+   "CST3",
+   "FCGRT",
+   "VIM",
+   "PTPRE",
+   "LILRA4",
+   "IRF8"
+  ],
+  "format": "symbol",
+  "knob": "noise",
+  "level": "0",
+  "replicate": 0,
+  "answer": "ASDC"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A, SAMHD1, S100A10, PLD4, CST3, FCGRT, VIM, PTPRE, LILRA4, IRF8",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A, SAMHD1, S100A10, PLD4, CST3, FCGRT, VIM, PTPRE, LILRA4, IRF8"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EowDCpABCBIYAipAHLboOGuR4XweXcF+SshVMSvrSm7kyEJVlMvxXRikXGdvImQJdxCMki2VisL+BJTfKuk62bO5hhXIBhLlYywloDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAcjX3tUGEgy2KRq0PJdsY+xdO6kaDBn2RtSmHz8HKdxZgyIwKKm5sFwNCm+wYaHK5jpBrmPuDHhSir+T+tMCJeOrOU/I3+fSS1+tqdLsndp6Z6RyKqgBRXkiCIDktig3lKU5kVVS03dX8xnxwIdlfzNGCzvQKdzBFabrKbEohc7tRXxMgjiicYK0d1nQtQIiXM05a/CZVtxh/UIg/sVacBTZVMj3BWJ0tG/8SkSQfGaNgJjabtM2z1gwYtR1e4FJjhbBFFjwplw463+NSW7OicXW13Ur2/4hU+vXUMwSaSF4ewUkRU/HFL4+mAX3m/ZKK0xiYJPIEyk8oPSuaPb6GAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_011fmFs7qyrLeXhoMbVNGXDy",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "PPP1R14A",
+       "SAMHD1",
+       "S100A10",
+       "PLD4",
+       "CST3",
+       "FCGRT",
+       "VIM",
+       "PTPRE",
+       "LILRA4",
+       "IRF8"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "PPP1R14A",
+       "SAMHD1",
+       "S100A10",
+       "PLD4",
+       "CST3",
+       "FCGRT",
+       "VIM",
+       "PTPRE",
+       "LILRA4",
+       "IRF8"
+      ]
+     },
+     "id": "toolu_011fmFs7qyrLeXhoMbVNGXDy"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1012,
+    "output_tokens": 202,
+    "total_tokens": 1214,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 74
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"PPP1R14A\":{\"symbol\":\"PPP1R14A\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"AXL+ SIGLEC6+ dendritic cell\",\"rank\":50}]},\"SAMHD1\":{\"symbol\":\"SAMHD1\",\"n_cell_types\":0,\"cell_types\":[]},\"S100A10\":{\"symbol\":\"S100A10\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Memory T cell\",\"rank\":18}]},\"PLD4\":{\"symbol\":\"PLD4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Dendritic cell\",\"rank\":9},{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":39}]},\"CST3\":{\"symbol\":\"CST3\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Non classical monocyte\",\"rank\":4},{\"cell_type\":\"Monocyte derived dendritic cell\",\"rank\":5},{\"cell_type\":\"Dendritic cell\",\"rank\":6},{\"cell_type\":\"Monocyte\",\"rank\":6},{\"cell_type\":\"CD14+ monocyte\",\"rank\":40}]},\"FCGRT\":{\"symbol\":\"FCGRT\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"CD14+ monocyte\",\"rank\":14}]},\"VIM\":{\"symbol\":\"VIM\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Mesenchymal cell\",\"rank\":2},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":12},{\"cell_type\":\"Effector regulatory T cell\",\"rank\":14}]},\"PTPRE\":{\"symbol\":\"PTPRE\",\"n_cell_types\":0,\"cell_types\":[]},\"LILRA4\":{\"symbol\":\"LILRA4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":3},{\"cell_type\":\"Dendritic cell\",\"rank\":14}]},\"IRF8\":{\"symbol\":\"IRF8\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":8},{\"cell_type\":\"Dendritic cell\",\"rank\":20}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_011fmFs7qyrLeXhoMbVNGXDy"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Plasmacytoid dendritic cell\", \"confidence\": 0.9}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1999,
+    "output_tokens": 35,
+    "total_tokens": 2034,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cASDC_noise_0_r0_symbol",
+  "format": "symbol",
+  "knob": "noise",
+  "level": "0",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "ASDC",
+  "predicted": "Plasmacytoid dendritic cell",
+  "confidence": 0.9,
+  "raw": "{\"cell_type\": \"Plasmacytoid dendritic cell\", \"confidence\": 0.9}",
+  "finish_reason": "ok",
+  "prompt_tokens": 3011,
+  "completion_tokens": 237,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008392,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.4
+ }
+}

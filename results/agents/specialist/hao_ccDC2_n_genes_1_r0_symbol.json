@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_ccDC2_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "cDC2",
+  "genes": [
+   "HLA-DRA"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "cDC2"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DRA",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DRA"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErUDCpABCBIYAipAUMhJaVFyWrIDyZ6JMmqAv6mrnwS4oZ2oIwLLPVvQd7nJzNfJi8Ou4UoNLJ9xzXiOXb0CNDG/5dAQGN3kLwVTNzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdDg3tUGEgwaAbjoIYTV/W0juIYaDKqTvyCSOtfj+uKnNSIwwmVfZ+xk03YYElVuMgSA/cArlbX/SmqtGR9NSqab1AbYOPJZxVhN1wTJ4twOB/LPKtEBNy2Xjn9Kyxc0/OEfDPjI6yHs+S0A0xzAMGlQTvcjt7osbdNtQVBdY2Hb0YwojhWUGfWrXX+9FnDi0jUd6oHxA8Lha4QAf41EED9tBWHDBKhs7o2kOtpAfdfcXjrNx44WdvYhF0Lj0TufpwXv1VFVT5bvGoiyfLr2kE4Bxrfr//NEmgt1WiHmDtcPN09jCrQg5CUuYXeeQZSYJZnGGHiCIoQNErBQ0QI6ezwtrBGlxgzgap6G5h0H6ftDDkcshWnKxzKj1RoS376JOLNJMm50nfcYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_018b795Jc14cJVa4qTAW8Xwf",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "HLA-DRA"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "HLA-DRA"
+      ]
+     },
+     "id": "toolu_018b795Jc14cJVa4qTAW8Xwf"
+    }
+   ],
+   "usage": {
+    "input_tokens": 939,
+    "output_tokens": 150,
+    "total_tokens": 1089,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 79
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"HLA-DRA\":{\"symbol\":\"HLA-DRA\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Mature B cell\",\"rank\":5},{\"cell_type\":\"Immature B cell\",\"rank\":10},{\"cell_type\":\"B cell\",\"rank\":19},{\"cell_type\":\"Dendritic cell\",\"rank\":32},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":38}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_018b795Jc14cJVa4qTAW8Xwf"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"B cell (antigen-presenting cell, MHC class II+; e.g., mature B cell or dendritic cell)\", \"confidence\": 0.45}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1239,
+    "output_tokens": 59,
+    "total_tokens": 1298,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_ccDC2_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "cDC2",
+  "predicted": "B cell (antigen-presenting cell, MHC class II+; e.g., mature B cell or dendritic cell)",
+  "confidence": 0.45,
+  "raw": "{\"cell_type\": \"B cell (antigen-presenting cell, MHC class II+; e.g., mature B cell or dendritic cell)\", \"confidence\": 0.45}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2178,
+  "completion_tokens": 209,
+  "reasoning_tokens": null,
+  "cost_usd": 0.006446,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.6
+ }
+}

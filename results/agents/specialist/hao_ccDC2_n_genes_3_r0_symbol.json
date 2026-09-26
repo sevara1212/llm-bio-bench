@@ -1,0 +1,129 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_ccDC2_n_genes_3_r0_symbol",
+  "dataset": "hao",
+  "cluster": "cDC2",
+  "genes": [
+   "HLA-DRA",
+   "HLA-DPA1",
+   "CST3"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "3",
+  "replicate": 0,
+  "answer": "cDC2"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DRA, HLA-DPA1, CST3",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DRA, HLA-DPA1, CST3"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErMCCpABCBIYAipASncLzDPgqJZBBQ7vAdPvWOWNn2BPKmHcVYvKvyfv2tCxy6nXC3XRpFvg+7NRjM6M1Dnbn1YuI1/hzPp7JfLtXTIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdTg3tUGEgwdNm5RhH5gHAPoAAgaDF4AdTjsyS2ByTkuviIwDurteHcnln4iNU60/E4NCCxiRlMewarhbZRUiG0GZPbGNSpEatQoXellvnhf3OWvKlAk7DUPrF5w3X7wkBnXquC1ZWEzVqL3AQ3+jS6dW7qq8zpkn0T9pYnhzQl+jsTx0Ea/EMuhlN/fDK5M21eR9f6IWnogt0Y1wxi961sU4ff4HBgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_017KuSrxZggkhffJg7Shgc52",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "HLA-DRA",
+       "HLA-DPA1",
+       "CST3"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "HLA-DRA",
+       "HLA-DPA1",
+       "CST3"
+      ]
+     },
+     "id": "toolu_017KuSrxZggkhffJg7Shgc52"
+    }
+   ],
+   "usage": {
+    "input_tokens": 952,
+    "output_tokens": 113,
+    "total_tokens": 1065,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 27
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"HLA-DRA\":{\"symbol\":\"HLA-DRA\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Mature B cell\",\"rank\":5},{\"cell_type\":\"Immature B cell\",\"rank\":10},{\"cell_type\":\"B cell\",\"rank\":19},{\"cell_type\":\"Dendritic cell\",\"rank\":32},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":38}]},\"HLA-DPA1\":{\"symbol\":\"HLA-DPA1\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Dendritic cell\",\"rank\":11},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":37}]},\"CST3\":{\"symbol\":\"CST3\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Non classical monocyte\",\"rank\":4},{\"cell_type\":\"Monocyte derived dendritic cell\",\"rank\":5},{\"cell_type\":\"Dendritic cell\",\"rank\":6},{\"cell_type\":\"Monocyte\",\"rank\":6},{\"cell_type\":\"CD14+ monocyte\",\"rank\":40}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_017KuSrxZggkhffJg7Shgc52"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Dendritic cell\", \"confidence\": 0.6}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1450,
+    "output_tokens": 28,
+    "total_tokens": 1478,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_ccDC2_n_genes_3_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "3",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "cDC2",
+  "predicted": "Dendritic cell",
+  "confidence": 0.6,
+  "raw": "{\"cell_type\": \"Dendritic cell\", \"confidence\": 0.6}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2402,
+  "completion_tokens": 141,
+  "reasoning_tokens": null,
+  "cost_usd": 0.006214,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 2.9
+ }
+}

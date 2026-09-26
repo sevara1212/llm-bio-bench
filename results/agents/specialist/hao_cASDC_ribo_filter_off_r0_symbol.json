@@ -1,0 +1,140 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cASDC_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "ASDC",
+  "genes": [
+   "PPP1R14A",
+   "SAMHD1",
+   "S100A10",
+   "PLD4",
+   "CST3",
+   "FCGRT",
+   "VIM",
+   "PTPRE",
+   "LILRA4",
+   "IRF8"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "ASDC"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A, SAMHD1, S100A10, PLD4, CST3, FCGRT, VIM, PTPRE, LILRA4, IRF8",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: PPP1R14A, SAMHD1, S100A10, PLD4, CST3, FCGRT, VIM, PTPRE, LILRA4, IRF8"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EsICCpABCBIYAipAQVCmdFfZvplKI2gOMSNZG0YI7pJ05fhEOh3JqQ3htX9GxlvkiwpsW2ZhsQRemFCRLUjPPDaqARFQtauoh9jvxjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdva3tUGEgyDtyWeRFon5Sh01OcaDMiIH/16bDUZdfK9ySIw+o4jyptI3iz7ty3fguuZ2jhlTziEnfGERumgeMxAWxXakOTaL+dN1BFDJZZRMu0vKl9EZtI62ZKro4yj4xTGYl9xp9d6PPI5Xrxo7mgWrO1V+jukzaskdMdbbdJ3xQXQjFx8/rfON/ayQerAQeBP5YyKLdwcC1guIP07m2Po9x4UEgfL3AJOLPz5ilmLwn5t8hgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01L6M5dtrF5afohTJkSRveG3",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "LILRA4",
+       "PLD4",
+       "IRF8",
+       "CST3",
+       "SAMHD1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LILRA4",
+       "PLD4",
+       "IRF8",
+       "CST3",
+       "SAMHD1"
+      ]
+     },
+     "id": "toolu_01L6M5dtrF5afohTJkSRveG3"
+    }
+   ],
+   "usage": {
+    "input_tokens": 987,
+    "output_tokens": 141,
+    "total_tokens": 1128,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 48
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"LILRA4\":{\"symbol\":\"LILRA4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":3},{\"cell_type\":\"Dendritic cell\",\"rank\":14}]},\"PLD4\":{\"symbol\":\"PLD4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Dendritic cell\",\"rank\":9},{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":39}]},\"IRF8\":{\"symbol\":\"IRF8\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":8},{\"cell_type\":\"Dendritic cell\",\"rank\":20}]},\"CST3\":{\"symbol\":\"CST3\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Non classical monocyte\",\"rank\":4},{\"cell_type\":\"Monocyte derived dendritic cell\",\"rank\":5},{\"cell_type\":\"Dendritic cell\",\"rank\":6},{\"cell_type\":\"Monocyte\",\"rank\":6},{\"cell_type\":\"CD14+ monocyte\",\"rank\":40}]},\"SAMHD1\":{\"symbol\":\"SAMHD1\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01L6M5dtrF5afohTJkSRveG3"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Plasmacytoid dendritic cell\", \"confidence\": 0.9}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1578,
+    "output_tokens": 35,
+    "total_tokens": 1613,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cASDC_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "ASDC",
+  "predicted": "Plasmacytoid dendritic cell",
+  "confidence": 0.9,
+  "raw": "{\"cell_type\": \"Plasmacytoid dendritic cell\", \"confidence\": 0.9}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2565,
+  "completion_tokens": 176,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00689,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 13.0
+ }
+}

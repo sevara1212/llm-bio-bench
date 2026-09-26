@@ -1,0 +1,135 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-Proliferating_n_genes_5_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 Proliferating",
+  "genes": [
+   "HMGB2",
+   "GAPDH",
+   "MKI67",
+   "HMGN2",
+   "H2AZ1"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "5",
+  "replicate": 0,
+  "answer": "CD4 Proliferating"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HMGB2, GAPDH, MKI67, HMGN2, H2AZ1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HMGB2, GAPDH, MKI67, HMGN2, H2AZ1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eu0DCpABCBIYAipAJFPZdcI5d/WG0dU0vuZlNKWx2qpvkQsClem1is2SlKjvb7yzY3zzc1DNbqy2daf3ietDuHPeh7T+MTi4ryUBXjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdfc3tUGEgyBFNRCtdpwixRFXC8aDC5i405r4v5IKxcZviIwyEq6ihHEbL8zqqMK73UIbaLWc8SdrOD2UEtgLKDp48/PXVJtKTwdlRUdk+k5LipEKokCkhhUfDVt/PeEl46wIOUx7Hgep8F0O8fe07g6EezGTbwzvAFhJ7h4fn2qPeO2oo6nnBVQITsz42s380kf4NDKjjCNgdkpJdncWYlP2VaWACz8ktcm9Un9i0WuleoDR1HIDzVUSs8pz5emH53/g0YxJguGRdPNvWbwjwCqqlNybm/hxXESAb41XvJ8tJsB22/ZUOMFhi4RSF92khS2wA8urHKHWLkyXcPGvpkopgflO/D6iXccNotWyzQGJ4yiJRae/2pP75NnWusQqdpSYFi/gRxHGsA/kok2zTIG1A3X1iYcP7str81brWwkfKH/8UhE8//ZN8Iy/KXB8ZzwXwfMhU0yAJ36YOvsNxgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01LyAL5hm1LS1hannwdbaKDS",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "HMGB2",
+       "MKI67",
+       "HMGN2",
+       "H2AZ1",
+       "GAPDH"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "HMGB2",
+       "MKI67",
+       "HMGN2",
+       "H2AZ1",
+       "GAPDH"
+      ]
+     },
+     "id": "toolu_01LyAL5hm1LS1hannwdbaKDS"
+    }
+   ],
+   "usage": {
+    "input_tokens": 961,
+    "output_tokens": 199,
+    "total_tokens": 1160,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 102
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"HMGB2\":{\"symbol\":\"HMGB2\",\"n_cell_types\":0,\"cell_types\":[]},\"MKI67\":{\"symbol\":\"MKI67\",\"n_cell_types\":9,\"cell_types\":[{\"cell_type\":\"Cycling T cell\",\"rank\":1},{\"cell_type\":\"Cycling cell\",\"rank\":1},{\"cell_type\":\"Proliferative T cell\",\"rank\":1},{\"cell_type\":\"Proliferative cell\",\"rank\":1},{\"cell_type\":\"Proliferative lymphocyte\",\"rank\":1},{\"cell_type\":\"NK cell\",\"rank\":3},{\"cell_type\":\"Proliferative CD4+ T cell\",\"rank\":10},{\"cell_type\":\"Proliferative NK cell\",\"rank\":17},{\"cell_type\":\"Proliferative CD8+ T cell\",\"rank\":20}]},\"HMGN2\":{\"symbol\":\"HMGN2\",\"n_cell_types\":0,\"cell_types\":[]},\"H2AZ1\":{\"symbol\":\"H2AZ1\",\"n_cell_types\":0,\"cell_types\":[]},\"GAPDH\":{\"symbol\":\"GAPDH\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01LyAL5hm1LS1hannwdbaKDS"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Proliferating (cycling) lymphocytes\", \"confidence\": 0.65}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1560,
+    "output_tokens": 37,
+    "total_tokens": 1597,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-Proliferating_n_genes_5_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "5",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 Proliferating",
+  "predicted": "Proliferating (cycling) lymphocytes",
+  "confidence": 0.65,
+  "raw": "{\"cell_type\": \"Proliferating (cycling) lymphocytes\", \"confidence\": 0.65}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2521,
+  "completion_tokens": 236,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007402,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.5
+ }
+}

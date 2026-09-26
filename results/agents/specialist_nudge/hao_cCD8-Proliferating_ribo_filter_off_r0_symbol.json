@@ -1,0 +1,197 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD8-Proliferating_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD8 Proliferating",
+  "genes": [
+   "STMN1",
+   "HMGB2",
+   "DEK",
+   "TUBA1B",
+   "PCNA",
+   "DUT",
+   "GAPDH",
+   "HMGN2",
+   "PFN1",
+   "CFL1"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "CD8 Proliferating"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: STMN1, HMGB2, DEK, TUBA1B, PCNA, DUT, GAPDH, HMGN2, PFN1, CFL1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: STMN1, HMGB2, DEK, TUBA1B, PCNA, DUT, GAPDH, HMGN2, PFN1, CFL1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EooDCpABCBIYAipAHl/K6+FFz025tu4PThD8bcLCJI/TlMRWSX6X2Tb8WEXMzME7VDGkr3JP93dhIQRsJPYoxIXy3I1ZXv5M10v33DIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAY/Y3tUGEgwpLUq/m8CS9RX9WPoaDD9jCTws58OdfVseyiIwM5yF1vw3DldYRrudjueyeCESXvs7LWz2mRRBIF7K77S2t+F60zHzlzfd0G3grZuKKqYB/Kmok6hfdu+8Xowd5tbIi1o4CjbW0/htOQL/+oZL3vYe7dMnvsqQ0k6UvJjDo36mG9DpA36VRtrO05nPsZeVxR7b1uSanIvXo0tcpqyuGWbPZPj0Ic/Vu50OxFmTi6CXYJ6YYVx0YyFXjehvhYXgIopPjgiZfY4HN0ctZPjSv/vQqrcBl9+FQBC45+enTT0B7Qos5tIcBiskyWW2uRuwrnyPvIvuPRgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01XqCEweGajysqs2ZHk1sEsi",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "STMN1",
+       "HMGB2",
+       "DEK",
+       "TUBA1B",
+       "PCNA",
+       "DUT",
+       "GAPDH",
+       "HMGN2",
+       "PFN1",
+       "CFL1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "STMN1",
+       "HMGB2",
+       "DEK",
+       "TUBA1B",
+       "PCNA",
+       "DUT",
+       "GAPDH",
+       "HMGN2",
+       "PFN1",
+       "CFL1"
+      ]
+     },
+     "id": "toolu_01XqCEweGajysqs2ZHk1sEsi"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1009,
+    "output_tokens": 200,
+    "total_tokens": 1209,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 75
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"STMN1\":{\"symbol\":\"STMN1\",\"n_cell_types\":0,\"cell_types\":[]},\"HMGB2\":{\"symbol\":\"HMGB2\",\"n_cell_types\":0,\"cell_types\":[]},\"DEK\":{\"symbol\":\"DEK\",\"n_cell_types\":0,\"cell_types\":[]},\"TUBA1B\":{\"symbol\":\"TUBA1B\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Proliferative lymphocyte\",\"rank\":2}]},\"PCNA\":{\"symbol\":\"PCNA\",\"n_cell_types\":0,\"cell_types\":[]},\"DUT\":{\"symbol\":\"DUT\",\"n_cell_types\":0,\"cell_types\":[]},\"GAPDH\":{\"symbol\":\"GAPDH\",\"n_cell_types\":0,\"cell_types\":[]},\"HMGN2\":{\"symbol\":\"HMGN2\",\"n_cell_types\":0,\"cell_types\":[]},\"PFN1\":{\"symbol\":\"PFN1\",\"n_cell_types\":0,\"cell_types\":[]},\"CFL1\":{\"symbol\":\"CFL1\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01XqCEweGajysqs2ZHk1sEsi"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "id": "toolu_01WATkPF2EobhHBHtbqqu37g",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "cell_type": "Proliferative lymphocyte"
+     },
+     "name": "cellmarker_cell_type_markers",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Proliferative lymphocyte"
+     },
+     "id": "toolu_01WATkPF2EobhHBHtbqqu37g"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1606,
+    "output_tokens": 70,
+    "total_tokens": 1676,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Proliferative lymphocyte\", \"markers\": [\"MKI67\", \"TUBA1B\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "toolu_01WATkPF2EobhHBHtbqqu37g"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Proliferating lymphocyte (cycling T/NK or B cell population)\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1722,
+    "output_tokens": 46,
+    "total_tokens": 1768,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD8-Proliferating_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD8 Proliferating",
+  "predicted": "Proliferating lymphocyte (cycling T/NK or B cell population)",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"Proliferating lymphocyte (cycling T/NK or B cell population)\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 4337,
+  "completion_tokens": 316,
+  "reasoning_tokens": null,
+  "cost_usd": 0.011834,
+  "n_tool_calls": 2,
+  "n_model_calls": 3,
+  "latency_s": 6.1
+ }
+}

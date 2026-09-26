@@ -1,0 +1,136 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cPlasmablast_n_genes_10_r0_symbol",
+  "dataset": "hao",
+  "cluster": "Plasmablast",
+  "genes": [
+   "MZB1",
+   "HSP90B1",
+   "JCHAIN",
+   "PPIB",
+   "SEC11C",
+   "TNFRSF17",
+   "SSR4",
+   "PDIA4",
+   "SPCS2",
+   "ITM2C"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "10",
+  "replicate": 0,
+  "answer": "Plasmablast"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MZB1, HSP90B1, JCHAIN, PPIB, SEC11C, TNFRSF17, SSR4, PDIA4, SPCS2, ITM2C",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: MZB1, HSP90B1, JCHAIN, PPIB, SEC11C, TNFRSF17, SSR4, PDIA4, SPCS2, ITM2C"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EooDCpABCBIYAipAsGzgE5ZRq/IPbLC0YPrZZ48QRSTN2ySMYimlmfvjBfhgbHl3Rs+407L40svMBZ3vS/PXoYh0JuTO92sP6UPtVzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAeXf3tUGEgxD/XsyiD1hJfmiWIoaDP2gXVq++XgA9K6i1CIwkk34Mu6LqJ5j/930WJeDGNL+2tW6RpaadEYoJYyr10Msuq7podzK5sW1hjEBoSRDKqYBlga1UMxkRA5piNU3mxw0JRDl/QixOR3r0RZSxkwoXGPjSaoqWT3nQniSCNmtTNDPEdaCrO2TxlTOkZOissXomPfBhCbD0Diw40F+Rrb+RJHINXzSEqjt9aZfxARVlUy6JSLFGu5qzbIZit9MDebeG37qQPAlvfu9zO6O7qMlbZ3DiurWtpUxWWhYAE39zVt6+6tu9pzG5rfULRP1uFVMkhYKdbB54hgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01J99tzyW7WimngkACz4ewEW",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "MZB1",
+       "JCHAIN",
+       "TNFRSF17"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "MZB1",
+       "JCHAIN",
+       "TNFRSF17"
+      ]
+     },
+     "id": "toolu_01J99tzyW7WimngkACz4ewEW"
+    }
+   ],
+   "usage": {
+    "input_tokens": 992,
+    "output_tokens": 166,
+    "total_tokens": 1158,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 81
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"MZB1\":{\"symbol\":\"MZB1\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Plasma cell\",\"rank\":2},{\"cell_type\":\"Plasmablast\",\"rank\":5},{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":37}]},\"JCHAIN\":{\"symbol\":\"JCHAIN\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"Plasma cell\",\"rank\":5},{\"cell_type\":\"B cell\",\"rank\":10},{\"cell_type\":\"Plasmablast\",\"rank\":11},{\"cell_type\":\"Memory B cell\",\"rank\":17},{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":32}]},\"TNFRSF17\":{\"symbol\":\"TNFRSF17\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmablast\",\"rank\":4},{\"cell_type\":\"Plasma cell\",\"rank\":10}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01J99tzyW7WimngkACz4ewEW"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Plasma cell\", \"confidence\": 0.95}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1495,
+    "output_tokens": 27,
+    "total_tokens": 1522,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cPlasmablast_n_genes_10_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "10",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Plasmablast",
+  "predicted": "Plasma cell",
+  "confidence": 0.95,
+  "raw": "{\"cell_type\": \"Plasma cell\", \"confidence\": 0.95}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2487,
+  "completion_tokens": 193,
+  "reasoning_tokens": null,
+  "cost_usd": 0.006904,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.2
+ }
+}

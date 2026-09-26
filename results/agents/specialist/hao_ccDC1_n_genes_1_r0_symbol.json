@@ -1,0 +1,123 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_ccDC1_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "cDC1",
+  "genes": [
+   "CD74"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "cDC1"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CD74",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CD74"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eq4CCpABCBIYAipAvRW4TIQ9eDUYKgv5RL8132tljYpsMVgzileSIZN8pGsOAsz0CMSiWrUGf1ZDNo95LO0MI8UioSpt0dWpUIkbTDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAbrg3tUGEgwmSQrSR5ySTbIDnSsaDAO+lK6xt8U7a3AxaiIwIfZRAa+xpG10D2cU8bxbCrmhT7J2i937DaQp3YDzLhSS+ugtqpOEJldoZfCBW1EpKkv+02cp2dpo0Fll/ytQ1kysNR+xLcS7s0frHvkLpTiAVFhH39W27Q3Xd8Kk/96kGFNWCBgNj+xF2tgtFoAilSnI92QaoQz9+1Bel0oYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01XQrxX4ruC6YBYc7Eo8UCZv",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "CD74"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "CD74"
+      ]
+     },
+     "id": "toolu_01XQrxX4ruC6YBYc7Eo8UCZv"
+    }
+   ],
+   "usage": {
+    "input_tokens": 935,
+    "output_tokens": 94,
+    "total_tokens": 1029,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 27
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"CD74\":{\"symbol\":\"CD74\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"Mature B cell\",\"rank\":3},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":4},{\"cell_type\":\"Immature B cell\",\"rank\":6},{\"cell_type\":\"B cell\",\"rank\":11},{\"cell_type\":\"Dendritic cell\",\"rank\":18},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":23}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01XQrxX4ruC6YBYc7Eo8UCZv"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"B cell\", \"confidence\": 0.5}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1195,
+    "output_tokens": 24,
+    "total_tokens": 1219,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_ccDC1_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "cDC1",
+  "predicted": "B cell",
+  "confidence": 0.5,
+  "raw": "{\"cell_type\": \"B cell\", \"confidence\": 0.5}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2130,
+  "completion_tokens": 118,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00544,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 2.8
+ }
+}

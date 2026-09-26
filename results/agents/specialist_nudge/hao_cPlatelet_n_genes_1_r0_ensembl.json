@@ -1,0 +1,184 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cPlatelet_n_genes_1_r0_ensembl",
+  "dataset": "hao",
+  "cluster": "Platelet",
+  "genes": [
+   "ENSG00000154146"
+  ],
+  "format": "ensembl",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "Platelet"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000154146",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000154146"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErUCCpABCBIYAipAX7aOOtZRLHmAJWBxTJNU2HBfN2VMiH9mLLu/uEZcvYVHd2CwI62nzGZmDQsMOzDf9OTpbVRQh390oAeMjCs29zIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAaXX3tUGEgx31qI1/xA3HL9kCV4aDNin8G0TpcmOF/HN4iIwzkfUU0zlQInOkD7KiJ1AUFABQKMvKPLF6Zu3XZdsKzkuPZSqahn7bZRskXHuY2AWKlJFUlbIVGCEaVj00fd5XlHyFfmxhBuEG2PD/nSBKW/9WGgyLaiB2PQeP7LUaftkEM95r8Rwro6+vZdHK7521N10aH96xWPUHUYZGgRz965JWJAiGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_0185SQz8GgxYf5KP9Bcvy4QK",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "ENSG00000154146"
+      ]
+     },
+     "name": "gene_info",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "gene_info",
+     "args": {
+      "genes": [
+       "ENSG00000154146"
+      ]
+     },
+     "id": "toolu_0185SQz8GgxYf5KP9Bcvy4QK"
+    }
+   ],
+   "usage": {
+    "input_tokens": 965,
+    "output_tokens": 89,
+    "total_tokens": 1054,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 28
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"ENSG00000154146\":{\"symbol\":\"NRGN\",\"name\":\"neurogranin\",\"summary\":\"Neurogranin (NRGN) is the human homolog of the neuron-specific rat RC3/neurogranin gene. This gene encodes a postsynaptic protein kinase substrate that binds calmodulin in the absence of calcium. The NRGN gene contains four exons and three introns. The exons 1 and 2 encode the protein and exons 3 and 4 contain untranslated sequences. It is suggested that the NRGN is a direct target for thyroid hor\"}}",
+   "tool_name": "gene_info",
+   "tool_call_id": "toolu_0185SQz8GgxYf5KP9Bcvy4QK"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "id": "toolu_01JAmC2ivWYazyjEc2DT9WhK",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "NRGN"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "NRGN"
+      ]
+     },
+     "id": "toolu_01JAmC2ivWYazyjEc2DT9WhK"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1250,
+    "output_tokens": 66,
+    "total_tokens": 1316,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"NRGN\":{\"symbol\":\"NRGN\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Megakaryocyte\",\"rank\":19}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01JAmC2ivWYazyjEc2DT9WhK"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErwCCpABCBIYAipAF5Aid/Rjn8dgTM4fiQrHPPMmK34b7BCx3KA73hgBApHhmhvmgwSMSFCBXBbmTHZrBvt2nZMSGgoz5Sp395XSezIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAanX3tUGEgzom5No1cMRkZHpJeEaDJHv8fzEYWUAI8XWWCIweIN7+aa1lHgpdpp6O8tbf3swmNXOhfgUvERGjTKDwNreJ0Z58JHBhQruPWxXf4WdKllYce1bR0BCL0/irQFi49R5ldrY7QGTe8k9HyQVp00wSCK0F7mIyBSfVclPUfFGJLhFSzD2TXupGwHErtnnT23el+s2yH4pnYMWt7W3/6l6U8fW+PNiaRT8GBgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "text": "{\"cell_type\": \"Megakaryocyte\", \"confidence\": 0.75}",
+     "type": "text"
+    }
+   ],
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1381,
+    "output_tokens": 65,
+    "total_tokens": 1446,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 36
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cPlatelet_n_genes_1_r0_ensembl",
+  "format": "ensembl",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Platelet",
+  "predicted": "Megakaryocyte",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"Megakaryocyte\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 3596,
+  "completion_tokens": 220,
+  "reasoning_tokens": null,
+  "cost_usd": 0.009392,
+  "n_tool_calls": 2,
+  "n_model_calls": 3,
+  "latency_s": 5.9
+ }
+}

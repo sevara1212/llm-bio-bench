@@ -1,0 +1,138 @@
+{
+ "condition": "specialist_nudge",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD8-TCM_rank_window_11-20_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD8 TCM",
+  "genes": [
+   "RPL34",
+   "RPL13",
+   "RPLP2",
+   "TRAC",
+   "RPL38",
+   "RPL14",
+   "RPL32",
+   "RPL13A",
+   "LDHB",
+   "RPL39"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "answer": "CD8 TCM"
+ },
+ "system_prompt": "After converting any Ensembl IDs, always query CellMarker before answering.",
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL34, RPL13, RPLP2, TRAC, RPL38, RPL14, RPL32, RPL13A, LDHB, RPL39",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL34, RPL13, RPLP2, TRAC, RPL38, RPL14, RPL32, RPL13A, LDHB, RPL39"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eq4DCpABCBIYAipAblGG8e4Sp1HxnKEuJtVXKq4nXaOv43Y7N4Dcm7crx6amrtqZNtp/2T1ZhmjqxFe8CNYaAXyrwMIfLenTAk8yjjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAfrW3tUGEgxvm4ecCHKhWm7yFPAaDJ+KhBWKKfHcbF5nHyIw0kCdAvmQOq3QiLjMtGEYla+bFu8rrhQKVGvtwssdFXlX4L80aITBcvMC1ma/jINpKsoBXqIYQPsW/xk2CZdT1zcUN1eM5zU+MXBblYikNwFDwbZw72CiqkKgAHAVtte/DBowhcumQzpmr4fxf6NgC6idKumWVX9QNMCNlfXWJ5FeQ/Je2ytYV7/3SHUcxlNX1qgUlTI0XA1fB4Q0QgBQHZSuNxfv7+bp3wIL2UKXxTQM5ZQgS0vSzfKkAFZ6oprMWuldl0VvCH98czvAKx8dmJdIGUrjonDtscwklFNrUA/ZnOJyrs3MkW7otXZHB6Okcwpl7JpNTUI79y6FfhgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01CT7y4SG21vXZW9eBSKtgZH",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "TRAC",
+       "LDHB",
+       "RPL34",
+       "RPL13"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "TRAC",
+       "LDHB",
+       "RPL34",
+       "RPL13"
+      ]
+     },
+     "id": "toolu_01CT7y4SG21vXZW9eBSKtgZH"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1008,
+    "output_tokens": 160,
+    "total_tokens": 1168,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 74
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"TRAC\":{\"symbol\":\"TRAC\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"CD4 T cell\",\"rank\":7},{\"cell_type\":\"Gamma delta T cell\",\"rank\":35},{\"cell_type\":\"CD8+ T cell\",\"rank\":37},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":40},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":48},{\"cell_type\":\"Regulatory T cell\",\"rank\":49}]},\"LDHB\":{\"symbol\":\"LDHB\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Naive CD8+ T cell\",\"rank\":15},{\"cell_type\":\"Naive T cell\",\"rank\":15},{\"cell_type\":\"CD4+ T cell\",\"rank\":18},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":28}]},\"RPL34\":{\"symbol\":\"RPL34\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":25},{\"cell_type\":\"Plasma cell\",\"rank\":36}]},\"RPL13\":{\"symbol\":\"RPL13\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"CD8+ T cell\",\"rank\":24},{\"cell_type\":\"Plasma cell\",\"rank\":31},{\"cell_type\":\"Naive T cell\",\"rank\":40}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01CT7y4SG21vXZW9eBSKtgZH"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\"cell_type\": \"CD4 T cell (likely naive)\", \"confidence\": 0.65}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1650,
+    "output_tokens": 39,
+    "total_tokens": 1689,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD8-TCM_rank_window_11-20_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD8 TCM",
+  "predicted": "CD4 T cell (likely naive)",
+  "confidence": 0.65,
+  "raw": "```json\n{\"cell_type\": \"CD4 T cell (likely naive)\", \"confidence\": 0.65}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2658,
+  "completion_tokens": 199,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007306,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.0
+ }
+}
