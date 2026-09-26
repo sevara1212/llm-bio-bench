@@ -25,6 +25,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from prices import cost_usd
+from prompts import make_prompt
 
 load_dotenv()
 
@@ -47,13 +48,6 @@ API_MODEL = MODEL if PROVIDER == "openrouter" else MODEL.split("/", 1)[1]  # "go
 REQUESTS_PER_MIN = {"anthropic": 50, "openrouter": 18, "google": 60}[PROVIDER]
 WORKERS = 8
 MAX_TOKENS = 4000  # same cap for every model; reasoning models need the room
-# PBMC3k keeps its original wording so old and new runs stay comparable.
-# The Hao prompt names the sample type, so answers like "neutrophil" count as ignoring context.
-SAMPLE = {"pbmc": "human blood", "hao": "human peripheral blood mononuclear cells (PBMCs)"}[DATASET]
-PROMPT = (
-    f"These are the top marker genes of a cluster from {SAMPLE}. What cell type is it? "
-    'Reply as JSON: {{"cell_type": ..., "confidence": 0-1}}\n\nGenes: {genes}'
-)
 
 if PROVIDER == "anthropic":
     from claude_client import ask_claude
@@ -112,7 +106,7 @@ def call_openai_compatible(prompt):
 
 def ask(q, run, test=False):
     limiter.wait()
-    prompt = PROMPT.format(genes=", ".join(q["genes"]))
+    prompt = make_prompt(DATASET, q["genes"])
     if PROVIDER == "anthropic":
         raw, finish_reason, usage = ask_claude(API_MODEL, prompt, MAX_TOKENS)
         raw_usage = usage

@@ -1,0 +1,122 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cPlatelet_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "Platelet",
+  "genes": [
+   "NRGN"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "Platelet"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NRGN",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NRGN"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EtACCpABCBIYAipAulszywvxaClyUItDVBu9LnOIlWNW3ktAV8JcfRSGzzCWe35Azva81API+oPwCNUOtOMyN9wy1JK25+eDhZhaFjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAb/S3tUGEgwlwAmAoNPrTyM5j8UaDMSWCV+OQKrGHGrDDSIw4HCg09pNoUIHnynyqr8Dq2Vnzkvz0L1vOV1vFQMRNrxu0Nl2mOzcfHGts4/WulUdKm2Y0F3IeW6as0dkP5vP93GrqnulbD/ManGDeT/Up5nCg/7cNXO96xVtBQ20lnTivQ+bZQ0sBIqCJWLlUFfIeDsFpUYcSrB4+KdGrUqSngi7AE4nWiE2oz30z/6jl1+hpDMcnq35zvUdN+K4s3RnGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01Mc76pQFmk7Um3PYqyMikXR",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "NRGN"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "NRGN"
+      ]
+     },
+     "id": "toolu_01Mc76pQFmk7Um3PYqyMikXR"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 109,
+    "total_tokens": 1045,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 41
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"NRGN\":{\"symbol\":\"NRGN\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Megakaryocyte\",\"rank\":19}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01Mc76pQFmk7Um3PYqyMikXR"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Platelet (Megakaryocyte-derived)\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1109,
+    "output_tokens": 38,
+    "total_tokens": 1147,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cPlatelet_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "Platelet",
+  "predicted": "Platelet (Megakaryocyte-derived)",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"Platelet (Megakaryocyte-derived)\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2045,
+  "completion_tokens": 147,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00556,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.7
+ }
+}

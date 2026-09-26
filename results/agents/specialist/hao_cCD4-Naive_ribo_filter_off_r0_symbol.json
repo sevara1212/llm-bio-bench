@@ -1,0 +1,149 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-Naive_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 Naive",
+  "genes": [
+   "RPL30",
+   "RPS13",
+   "RPL21",
+   "RPS27",
+   "RPL32",
+   "RPL9",
+   "RPL13",
+   "RPL35A",
+   "RPS25",
+   "RPL11"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "CD4 Naive"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL30, RPS13, RPL21, RPS27, RPL32, RPL9, RPL13, RPL35A, RPS25, RPL11",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPL30, RPS13, RPL21, RPS27, RPL32, RPL9, RPL13, RPL35A, RPS25, RPL11"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EuMDCpABCBIYAipAABa6hmCxAh4ABCQyoS4fI5pkxY+M7+3TgNvtU+9W8mn6Q7VpfiN6mukH5IPRqzzwYW0iy1PCSp0xr3XG99TtQDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAY/T3tUGEgwab8ZJh+VIYNcd/vUaDEed/TaLeYO88C7rqyIw5z4HTBNP9tDQ8Kh8r7hVpOS+2oz1gUcM6larWJHGvdx2KI7wdzF+7P2wOXZghlGMKv8BwJ/nyymlbiN8gBfDpEjaxGNCpPm2brL2PvW+zZFap2mBvXbCGmrBXQGgDB+uYKJ5sODTjPSDCOdmD/agAXuphXD+TGy6Aeuc2exGjloScGUMdYLXtxRTsKUZtWLRHGqRKFZM8x9UpmSXHtLBKapn8nx2gG8LKro6Q2FRs1d3k7+yTgfHg1slBhG8I3MscmnugwzaXWeT/8EjD3BcdcaMusXAhv7h+a+NMAkrWUQ1E5v4FU4rkJy4HS3GzEYhEwssgoryBk8WhaqHoQX5Xkg6yb/nHCKkzLemlM84D9+j32e4JG3gSODyfzEdc25783pQWlOTUnRKlhNsQ2j97I47GAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01EXVA37Hm3TQzmaCXJavwvP",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "RPL30",
+       "RPS13",
+       "RPL21",
+       "RPS27",
+       "RPL32",
+       "RPL9",
+       "RPL13",
+       "RPL35A",
+       "RPS25",
+       "RPL11"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "RPL30",
+       "RPS13",
+       "RPL21",
+       "RPS27",
+       "RPL32",
+       "RPL9",
+       "RPL13",
+       "RPL35A",
+       "RPS25",
+       "RPL11"
+      ]
+     },
+     "id": "toolu_01EXVA37Hm3TQzmaCXJavwvP"
+    }
+   ],
+   "usage": {
+    "input_tokens": 982,
+    "output_tokens": 200,
+    "total_tokens": 1182,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 77
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"RPL30\":{\"symbol\":\"RPL30\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":8},{\"cell_type\":\"Plasma cell\",\"rank\":34}]},\"RPS13\":{\"symbol\":\"RPS13\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":33}]},\"RPL21\":{\"symbol\":\"RPL21\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"CD8+ T cell\",\"rank\":27}]},\"RPS27\":{\"symbol\":\"RPS27\",\"n_cell_types\":0,\"cell_types\":[]},\"RPL32\":{\"symbol\":\"RPL32\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":9},{\"cell_type\":\"Plasma cell\",\"rank\":35}]},\"RPL9\":{\"symbol\":\"RPL9\",\"n_cell_types\":0,\"cell_types\":[]},\"RPL13\":{\"symbol\":\"RPL13\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"CD8+ T cell\",\"rank\":24},{\"cell_type\":\"Plasma cell\",\"rank\":31},{\"cell_type\":\"Naive T cell\",\"rank\":40}]},\"RPL35A\":{\"symbol\":\"RPL35A\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":26},{\"cell_type\":\"Plasma cell\",\"rank\":38}]},\"RPS25\":{\"symbol\":\"RPS25\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Plasma cell\",\"rank\":50}]},\"RPL11\":{\"symbol\":\"RPL11\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Double-negative T cell\",\"rank\":5},{\"cell_type\":\"Plasma cell\",\"rank\":29},{\"cell_type\":\"Naive T cell\",\"rank\":38}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01EXVA37Hm3TQzmaCXJavwvP"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"T cell (likely naive/double-negative T lymphocyte subset)\", \"confidence\": 0.4}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1864,
+    "output_tokens": 44,
+    "total_tokens": 1908,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-Naive_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 Naive",
+  "predicted": "T cell (likely naive/double-negative T lymphocyte subset)",
+  "confidence": 0.4,
+  "raw": "{\"cell_type\": \"T cell (likely naive/double-negative T lymphocyte subset)\", \"confidence\": 0.4}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2846,
+  "completion_tokens": 244,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008132,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.2
+ }
+}

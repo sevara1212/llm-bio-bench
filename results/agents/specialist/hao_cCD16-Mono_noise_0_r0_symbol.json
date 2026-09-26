@@ -1,0 +1,139 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD16-Mono_noise_0_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD16 Mono",
+  "genes": [
+   "LST1",
+   "AIF1",
+   "MS4A7",
+   "SERPINA1",
+   "FTL",
+   "COTL1",
+   "FCGR3A",
+   "CFD",
+   "S100A11",
+   "FCER1G"
+  ],
+  "format": "symbol",
+  "knob": "noise",
+  "level": "0",
+  "replicate": 0,
+  "answer": "CD16 Mono"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LST1, AIF1, MS4A7, SERPINA1, FTL, COTL1, FCGR3A, CFD, S100A11, FCER1G",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: LST1, AIF1, MS4A7, SERPINA1, FTL, COTL1, FCGR3A, CFD, S100A11, FCER1G"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EvYCCpABCBIYAipAk/uvChroGI8ZcfV9jQACaAX0pHK3KKPgM0uqcLeuioQcEK2aXOMmWn0h0O/MWUKG2RR9A04uvdpBzhx/Qh+rpjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAdzS3tUGEgzrOiDCLynITTsCkcgaDMEDXDu/EF+wm1KkmiIw7sASJV27hW+5dh3zfd4WTmkvtnXf8i9bL5PRtv10HC2eGlEO8R8DSEE/vd0TcD0/KpIBnrdia6CXmHenajfSEq34u5KNy6lH+WWcXPq1+OsFWgS4Pt2oQqTdFuUOJL75XguDhwF1Gr/NrW9l5+SsKZepZgLYLj1BYF0rJY8b8V2y+rn70tgH6MwFbG1kZ2eZhUucuNKbz1+5ihgLyhP0rOn8bQ7oW1xcLGVMJpxq0ffDUjmoya/arjzArutBeQ0ic9R0L/sYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_011xR9aZWUPGiuJBAREX4G7z",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "LST1",
+       "AIF1",
+       "MS4A7",
+       "FCGR3A",
+       "FCER1G"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LST1",
+       "AIF1",
+       "MS4A7",
+       "FCGR3A",
+       "FCER1G"
+      ]
+     },
+     "id": "toolu_011xR9aZWUPGiuJBAREX4G7z"
+    }
+   ],
+   "usage": {
+    "input_tokens": 984,
+    "output_tokens": 169,
+    "total_tokens": 1153,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 74
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"LST1\":{\"symbol\":\"LST1\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"CD16 monocyte\",\"rank\":3}]},\"AIF1\":{\"symbol\":\"AIF1\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Naive CD8 T cell\",\"rank\":5},{\"cell_type\":\"CD16 monocyte\",\"rank\":6},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":27},{\"cell_type\":\"CD14+ monocyte\",\"rank\":30}]},\"MS4A7\":{\"symbol\":\"MS4A7\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"CD16+ monocyte\",\"rank\":2},{\"cell_type\":\"CD16 monocyte\",\"rank\":4},{\"cell_type\":\"Non classical monocyte\",\"rank\":9},{\"cell_type\":\"Monocyte\",\"rank\":12},{\"cell_type\":\"CD14+ monocyte\",\"rank\":20},{\"cell_type\":\"Nonclassical monocyte\",\"rank\":27}]},\"FCGR3A\":{\"symbol\":\"FCGR3A\",\"n_cell_types\":8,\"cell_types\":[{\"cell_type\":\"CD16+ monocyte\",\"rank\":1},{\"cell_type\":\"Non classical monocyte\",\"rank\":1},{\"cell_type\":\"CD16 monocyte\",\"rank\":2},{\"cell_type\":\"Monocyte\",\"rank\":3},{\"cell_type\":\"Non-classical monocyte\",\"rank\":3},{\"cell_type\":\"Natural killer cell\",\"rank\":7},{\"cell_type\":\"Macrophage\",\"rank\":14},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":21}]},\"FCER1G\":{\"symbol\":\"FCER1G\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_011xR9aZWUPGiuJBAREX4G7z"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD16+ (non-classical) monocyte\", \"confidence\": 0.92}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1769,
+    "output_tokens": 36,
+    "total_tokens": 1805,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD16-Mono_noise_0_r0_symbol",
+  "format": "symbol",
+  "knob": "noise",
+  "level": "0",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD16 Mono",
+  "predicted": "CD16+ (non-classical) monocyte",
+  "confidence": 0.92,
+  "raw": "{\"cell_type\": \"CD16+ (non-classical) monocyte\", \"confidence\": 0.92}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2753,
+  "completion_tokens": 205,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007556,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.9
+ }
+}

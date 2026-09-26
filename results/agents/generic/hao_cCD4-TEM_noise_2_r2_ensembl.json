@@ -1,0 +1,162 @@
+{
+ "condition": "generic",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-TEM_noise_2_r2_ensembl",
+  "dataset": "hao",
+  "cluster": "CD4 TEM",
+  "genes": [
+   "ENSG00000168685",
+   "ENSG00000008517",
+   "ENSG00000227507",
+   "ENSG00000213741",
+   "ENSG00000133466",
+   "ENSG00000152518",
+   "ENSG00000133112",
+   "ENSG00000258102",
+   "ENSG00000118181",
+   "ENSG00000130255"
+  ],
+  "format": "ensembl",
+  "knob": "noise",
+  "level": "2",
+  "replicate": 2,
+  "answer": "CD4 TEM"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000168685, ENSG00000008517, ENSG00000227507, ENSG00000213741, ENSG00000133466, ENSG00000152518, ENSG00000133112, ENSG00000258102, ENSG00000118181, ENSG00000130255",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000168685, ENSG00000008517, ENSG00000227507, ENSG00000213741, ENSG00000133466, ENSG00000152518, ENSG00000133112, ENSG00000258102, ENSG00000118181, ENSG00000130255"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eq0FCpABCBIYAipAabTiH2NBaimFjiunf7KDahwYd6cGuxLrOVW+C1xJmGuLA8hytOFnkemQXBPDH3oR8qL+9kESW5YJSL3Ph0JbpTIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAf/Q3tUGEgw7Or9Ej2Qhz62YaBcaDHuUDQ4nnmx1inYVjSIwpEuHMsIW6TjsT+OEVlHE3m8VHiZntZAyJJ6wF0n8orUQnM9rM7t7WwQSGvQjKzwhKskD3LlVx6BysnopKSvOxuqS5BWvX3OZ5cajCMBQjexezpaWpaFthznP0E43Povum8Yt0PSVnrri6W3VALtpMieAOmrDcEYX8eOfke4j6bytKJw/t6/wzpWvgLCg51B1+vHVUmwUpiQkFHczkgioJuQP8YGcMKnK80DFY7PuZYG6mhyPtbei13+4P6LzOenZajI8+r68n/XJG5ridPDH4mzwJUrpeIG8I/lLZtV+QaKkM4vN0UBSiN2oV6v6xfTxhT5TMZ/9cqsPi9856nTjG1NPjZzc+F7Jn2ChqNSWYePSQ4bCLI9BrOpPai5s9qc2z3hU+4s0YxXivDAuGOnGe68tR/T2d9pbuLJUcoS/Oga5LKTCDEsrJWQoJKCWcmkALMyTNd3TvrJqoqjmkd+cBzQgwx3JRh3OoYfovFmzgPeB/dqTqQ+7hs9FIYGiYz2Rcm/sihF7G0C02TT2YlRs7DYshXqhXnkvbn9hQ9pTCC6FB6aIYwOyYVaJGi5/EY+5pi8esdRGRHyWX2O4ulQ+NJi6jfYi8+dt0ZZCQNaHwHwHQpN5sxDWAyJpfUFo/NlhWtcSvI/W+LIWbUNS4vfAhRB95qI9nnDISSYLMxgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_015FqeLPSt56W3CVWU41LCrr",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "query": "ENSG00000133466 gene symbol"
+     },
+     "name": "web_search",
+     "type": "tool_use",
+     "toolset_name": null
+    },
+    {
+     "id": "toolu_01X7ofqeJiXUZSbE16DobJ11",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "query": "ENSG00000258102 gene symbol"
+     },
+     "name": "web_search",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "web_search",
+     "args": {
+      "query": "ENSG00000133466 gene symbol"
+     },
+     "id": "toolu_015FqeLPSt56W3CVWU41LCrr"
+    },
+    {
+     "name": "web_search",
+     "args": {
+      "query": "ENSG00000258102 gene symbol"
+     },
+     "id": "toolu_01X7ofqeJiXUZSbE16DobJ11"
+    }
+   ],
+   "usage": {
+    "input_tokens": 617,
+    "output_tokens": 346,
+    "total_tokens": 963,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 228
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "[{\"snippet\":\"April 15, 2026 - The C5a receptor also known as complement component 5a receptor 1 (C5AR1) or CD88 (Cluster of Differentiation 88) is a G protein-coupled receptor for C5a. It functions as a complement receptor. C5a receptor 1 modulates inflammatory responses, obesity, development and cancers.\",\"title\":\"C5a receptor - Wikipedia\",\"link\":\"https://en.wikipedia.org/wiki/CD88\"},{\"snippet\":\"2 days ago - Use HGNC ID instead (or together with?) gene symbol on ClinVar submissions#6588 \\u00b7 Copy link \\u00b7 Labels \\u00b7 enhancement \\u00b7 northwestwitch \\u00b7 opened \\u00b7 on Sep 24, 2026 \\u00b7 Issue body actions \\u00b7 It will make the content of the submissions less readable but more useful on the long run \\u00b7\",\"title\":\"Use HGNC ID instead (or together with?) gene symbol on ClinVar submissions \\u00b7 Issue #6588 \\u00b7 Clinical-Genomics/scout\",\"link\":\"https://github.com/Clinical-Genomics/scout/issues/6588\"},{\"snippet\":\"May 29, 2026 - The UniProt accession Q9BUE6 has been placed under the ensembl list, and the uniprot, hgnc.symbol and ncbigene fields contain swapped/incorrect values. This appears to be present across the files: genes.tsv, Human-GEM.xml, Human-GEM.xlsx.\",\"title\":\"Wrong gene annotation for ENSG00000135070 (ISCA1) \\u00b7 Issue #1016 \\u00b7 SysBioChalmers/Human-GEM\",\"link\":\"https://github.com/SysBioChalmers/Human-GEM/issues/1016\"},{\"snippet\":\"4 days ago - Written from the ARF family dossier in examples/arf_family/, re-run at server commit 967bc36 (release 1.21.0): 400 MCP calls over 48 genes x 16 tools, the family itself from a 742-call enumeration through the same tools. Each section below is one row of gaps.jsonl, quoted as logged; Check names the captured response to read it back from. Both rows are the same input \\u2014 a symbol where an AGI locus code is expected \\u2014 and the same missing behaviour: nothing on the tool surface decides whether a symbol is a legal locus value.\",\"title\":\"A gene symbol in a `locus` argument is answered by one tool and rejected by three \\u00b7 Issue #128 \\u00b7 musharna/plant-genomics-mcp\",\"link\":\"https://github.com/musharna/plant-genomics-mcp/issues/128\"},{\"snippet\":\"4 days ago - Parent #125; source #127; research #24/#25. Exact personal variant identifiers, sample results and source locators remain in the restricted ledger. Claims SOC-C057\\u2013SOC-C066: (057) correct gene symbol versus a similarly named different tr...\",\"title\":\"[VERIFY] SOC-V07 \\u2014 Genetic identifiers, variant classifications and actual follow-up \\u00b7 Issue #133 \\u00b7 grwtsk/huey\",\"link\":\"https://github.com/grwtsk/huey/issues/133\"}]",
+   "tool_name": "web_search",
+   "tool_call_id": "toolu_015FqeLPSt56W3CVWU41LCrr"
+  },
+  {
+   "type": "tool",
+   "content": "[{\"snippet\":\"This section includes genomic Reference Sequences (RefSeqs) from all assemblies on which this gene is annotated, such as RefSeqs for chromosomes and scaffolds (contigs) from both reference and alternate assemblies.\",\"title\":\"www.ncbi.nlm.nih.gov \\u203a geneMAP1LC3B2 microtubule associated protein 1 light chain 3 beta 2...\",\"link\":\"https://www.ncbi.nlm.nih.gov/gene/?term=ENSG00000258102\"},{\"snippet\":\"General description of the gene and the encoded protein (s) using information from HGNC and Ensembl, as well as predictions made by the Human Protein Atlas project. Official gene symbol, which is typically a short form of the gene name, according to HGNC. Full gene name according to HGNC. Gene information from Ensembl and Entrez, as well as links to available gene identifiers are displayed here. Information was retrieved from Ensembl if not indicated otherwise. Official gene symbol, which is typically a short form of the gene name, according to HGNC. Assigned HPA protein class (es) for the encoded protein (s). Number of protein-coding transcripts from the gene as defined by Ensembl. A single transcript chosen for a gene which is the most conserved, most highly expressed, has the longest coding sequence and is represented in other key resources, such as NCBI and UniProt.\",\"title\":\"www.proteinatlas.org \\u203a ENSG00000258102-MAP1LC3B2 \\u203a summaryMAP1LC3B2 gene information - The Human Protein Atlasv19.proteinatlas.org \\u203a ENSG00000258102-MAP1LC3B2MAP1LC3B2 protein expression summary - The Human Protein Atlaswww.proteinatlas.org \\u203a ENSG00000258102-MAP1LC3B2MAP1LC3B2 protein expression summary - The Human Protein Atlasgrch37.ensembl.org \\u203a Homo_sapiens \\u203a GeneGene: RP11-809C9.2 (ENSG00000258102) - Summary - Homo_sapiens -...\",\"link\":\"https://www.proteinatlas.org/ENSG00000258102-MAP1LC3B2/summary/gene\"},{\"snippet\":\"Gene information from Ensembl and Entrez, as well as links to available gene identifiers are displayed here. Information was retrieved from Ensembl if not indicated otherwise.\",\"title\":\"v19.proteinatlas.org \\u203a ENSG00000258102-MAP1LC3B2MAP1LC3B2 protein expression summary - The Human Protein Atlas\",\"link\":\"https://v19.proteinatlas.org/ENSG00000258102-MAP1LC3B2\"},{\"snippet\":\"Official gene symbol, which is typically a short form of the gene name, according to HGNC. Assigned HPA protein class (es) for the encoded protein (s). Number of protein-coding transcripts from the gene as defined by Ensembl.\",\"title\":\"www.proteinatlas.org \\u203a ENSG00000258102-MAP1LC3B2MAP1LC3B2 protein expression summary - The Human Protein Atlas\",\"link\":\"https://www.proteinatlas.org/ENSG00000258102-MAP1LC3B2\"},{\"snippet\":\"A single transcript chosen for a gene which is the most conserved, most highly expressed, has the longest coding sequence and is represented in other key resources, such as NCBI and UniProt.\",\"title\":\"grch37.ensembl.org \\u203a Homo_sapiens \\u203a GeneGene: RP11-809C9.2 (ENSG00000258102) - Summary - Homo_sapiens -...\",\"link\":\"https://grch37.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000258102;r=12:116985911-116992186;t=ENST00000547114\"}]",
+   "tool_name": "web_search",
+   "tool_call_id": "toolu_01X7ofqeJiXUZSbE16DobJ11"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EtwDCpABCBIYAipAU/hHnDjjfbln0g4WDWVJcgYQQkew1LkMUlC8cGmdmPusbdNxyzxKfHDhyRoNBqwdbRIaDBoivJpRAzrvzRwLjjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYbR3tUGEgwMH0fmykb5Awu29LIaDDz1uhHBYqp4UL9PASIw1bkVZL2YL3pxMEP9QT9HBy5yUFLf+lB1QTY+je62WJm+vetDkupJDVHWpyfkaKDIKvgBZ3pfE5AnAoUVx0zoSRnX/KGNiob4H4PRglO3uWCdla5m/GLhCT0+CKfU0rRGDRP7IGxCDj9Y3P5HEu5YattG4roPzPf6C/nvtfFQRYs76+g1mOyWV/ok6gEubN7F1wfMwHLHbYEQd4njZsjppEFTE/HaPfoD9cRT8pVJgaCv1i0RfoAd44TIPRZ7gh1SyJsfUE9Br0SPVjtH26+gWYF8bZIbSQGGGalzpoWnQYbnRfMULG7mNzb+MJR5Cr4e42bQohCJqRJCjAF3GA63scYdTl28e+OU2VYitcy17puwvB6kzvWZv/wVxoRIM+qSqo1oNbA8qK1OX7sYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "text": "{\"cell_type\": \"T cell (CD4+ T lymphocyte)\", \"confidence\": 0.75}",
+     "type": "text"
+    }
+   ],
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 3471,
+    "output_tokens": 159,
+    "total_tokens": 3630,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 121
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-TEM_noise_2_r2_ensembl",
+  "format": "ensembl",
+  "knob": "noise",
+  "level": "2",
+  "replicate": 2,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 TEM",
+  "predicted": "T cell (CD4+ T lymphocyte)",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"T cell (CD4+ T lymphocyte)\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 4088,
+  "completion_tokens": 505,
+  "reasoning_tokens": null,
+  "cost_usd": 0.013226,
+  "n_tool_calls": 2,
+  "n_model_calls": 2,
+  "latency_s": 10.3
+ }
+}

@@ -148,8 +148,8 @@ def judge(answer):
 
 
 def results_files():
-    """Model results files only (not scores_hao.csv or the hand-check sheet)."""
-    return [p for p in glob.glob("results/*_hao.csv")
+    """Model and agent results files only (not scores_hao.csv or the hand-check sheet)."""
+    return [p for p in glob.glob("results/*_hao.csv") + glob.glob("results/agents/*_hao.csv")
             if "knob" in pd.read_csv(p, nrows=0).columns]
 
 

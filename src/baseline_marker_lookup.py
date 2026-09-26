@@ -63,9 +63,9 @@ HAO_TO_PBMC = {
 }
 
 
-def load_markers():
+def load_markers(db_name=None):
     """Return ({db cell type: [top-N marker symbols, strongest first]}, {db cell type: Hao label})."""
-    if DB == "panglaodb":
+    if (db_name or DB) == "panglaodb":
         db = pd.read_csv(PANGLAO, sep="\t")
         db = db[db.species.str.contains("Hs") & db["cell type"].isin(PANGLAO_TO_HAO)]
         db = db.assign(symbol=db["official gene symbol"].str.upper())

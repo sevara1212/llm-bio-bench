@@ -113,6 +113,26 @@ points below the lookup (tie-break) and 0.5 points above it (fractional); Gemini
 points below it (5.5-5.8 fractional, 6.7-7.0 tie-break). Each LLM loses 9.0-15.7 points when the same genes are given as
 Ensembl IDs instead of symbols; the lookup loses nothing, because it converts IDs to symbols first.
 
+## Agent conditions (Hao, Claude only)
+
+- **Subset** (`src/agent_subset.py`, seed 0, `data/agent_subset_hao.json`): 48 base questions, each in
+  both formats (96 total, paired by format); 12 base questions per knob, spread evenly over levels;
+  cell types dealt from a shuffled deck, so all 30 appear (2-4 questions each). Noise is included.
+- **Agents** (`src/run_agent.py`): LangGraph prebuilt ReAct agent (`create_react_agent`, LangGraph
+  1.2.12; marked deprecated in favour of `langchain.agents.create_agent` but functional) around
+  `claude-sonnet-5` via the Anthropic API (langchain-anthropic 1.7.4), same prompt (`src/prompts.py`,
+  shared with plain Claude), no temperature, default thinking, max_tokens 4000, same JSON parsing.
+  At most 5 tool calls per question (later calls get a "budget used up" reply), 2-minute timeout.
+  - generic: `web_search` (DuckDuckGo via langchain-community, top 5 results).
+  - specialist: `gene_info` (MyGene.info: symbol/Ensembl -> symbol, name, summary);
+    `cellmarker_gene_to_cell_types` and `cellmarker_cell_type_markers`, built from the same CellMarker
+    marker lists as the lookup baseline (Hao 2021 excluded, top 50 per type, the 160 mapped names).
+    The tools return CellMarker's own cell-type names, never the 30 Hao labels.
+- Full trajectories: `results/agents/<condition>/<question id>.json`. Scored with `src/scoring.py`
+  and the same judge (`src/score_agents.py`); one run per question.
+- Tool quirk found: MyGene.info returns "TARP" for ENSG00000211689 (TRGC1, a gamma-delta T marker);
+  in the one affected question the agent still answered correctly.
+
 ## Open decision
 
 - **"likely X" is currently treated as part of the primary answer** in the hand-written test cases

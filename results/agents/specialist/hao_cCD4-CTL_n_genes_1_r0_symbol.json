@@ -1,0 +1,122 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD4-CTL_n_genes_1_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 CTL",
+  "genes": [
+   "GZMH"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD4 CTL"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: GZMH"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Eq4CCpABCBIYAipA5WBHBHM+8YQdf+210bj7r4wO+n0YR0fm5Klb8fSGOXh8QjLnFbbOZFaqX94e4GxVh9VzzaCrDqSKI60Em4sjczIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAb3S3tUGEgyiIfkkg2FHS6EimuQaDDKzDRis9KNaiWXrpyIw3oUbErNMSSUfNHJhDtfit//f/ZgfxuSwHDB3yp+T3hujwleyphfsrbQ0t5PK8zOnKksfke2PQi23GsEakscBm/Xae9Ts7xkGk493IkVgBuwn+n81eermwqW/ZBTlxIq4JfzXHBodCRi2zevI05/6TWv29jPuN+Srgo8sa48YAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01JTmsjtY8Kfuw36jkFX3ffn",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "GZMH"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "GZMH"
+      ]
+     },
+     "id": "toolu_01JTmsjtY8Kfuw36jkFX3ffn"
+    }
+   ],
+   "usage": {
+    "input_tokens": 936,
+    "output_tokens": 97,
+    "total_tokens": 1033,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 29
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"GZMH\":{\"symbol\":\"GZMH\",\"n_cell_types\":16,\"cell_types\":[{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":2},{\"cell_type\":\"Effector T cell\",\"rank\":4},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":5},{\"cell_type\":\"Effector regulatory T cell\",\"rank\":6},{\"cell_type\":\"Activated CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"CD56dim natural killer cell\",\"rank\":10},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":10},{\"cell_type\":\"Gamma delta T cell\",\"rank\":12},{\"cell_type\":\"Natural killer T cell\",\"rank\":13},{\"cell_type\":\"CD8+ T cell\",\"rank\":18},{\"cell_type\":\"Cytotoxic CD4+ T cell\",\"rank\":23},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":31},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":31},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":37},{\"cell_type\":\"Natural killer cell\",\"rank\":50}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01JTmsjtY8Kfuw36jkFX3ffn"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Cytotoxic/effector memory CD8+ T cell\", \"confidence\": 0.6}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1474,
+    "output_tokens": 41,
+    "total_tokens": 1515,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-CTL_n_genes_1_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD4 CTL",
+  "predicted": "Cytotoxic/effector memory CD8+ T cell",
+  "confidence": 0.6,
+  "raw": "{\"cell_type\": \"Cytotoxic/effector memory CD8+ T cell\", \"confidence\": 0.6}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2410,
+  "completion_tokens": 138,
+  "reasoning_tokens": null,
+  "cost_usd": 0.0062,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.5
+ }
+}

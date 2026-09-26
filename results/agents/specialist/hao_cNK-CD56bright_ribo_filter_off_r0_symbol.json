@@ -1,0 +1,152 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cNK-CD56bright_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "NK_CD56bright",
+  "genes": [
+   "KLRD1",
+   "GNLY",
+   "IL2RB",
+   "CTSW",
+   "XCL2",
+   "CMC1",
+   "KLRF1",
+   "XCL1",
+   "KLRC1",
+   "SELL"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "NK_CD56bright"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRD1, GNLY, IL2RB, CTSW, XCL2, CMC1, KLRF1, XCL1, KLRC1, SELL",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: KLRD1, GNLY, IL2RB, CTSW, XCL2, CMC1, KLRF1, XCL1, KLRC1, SELL"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "ErYECpABCBIYAipASgBNMxb3bwODaKNFaqjj9pNCSr/G2V1TOQXjB7PFLXDxLCbO0jFPX5xSU1qdqWYsUcN9Bm7Jq/CHQymVrjbi3DIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAZXT3tUGEgyGJcbi6X5tHxHm+9kaDLckopEUVbBMIX7XsCIwb3K4N2hQddtCR+TcLoAqBqIYv6s+l3UNRCB+6Re2sj4CT3DD6LHvlgg7jkWtrFB8KtIClt0LDtfI5Npc3X96Cu4AYQTTBRNY38RwUVv5U/s4PcGhvF1UHxXV1dcTAWjR9uOwT5H5El0enjkU0xivjJDUcJYuEze28MYazy3e365W0Ijg5Iyf/k1X7jK2buXxlcW+dRHsXZT4yB+GH62TbcuO7odEOqv6EiwM5OyatV9jh4v8o0Mby/6vEeLF/w0yC7FzQE5rcMgnDX3oxUhpIBMrZZTRD4tMfVRvnj+FgbLaVGPTWYbzvsCWqRoDLL+e9k+FAfwR93iVu0WHUe2UjP2OZrsBO/RGQtXweAApouMFM9EDnfffPj9Aa+SDVXcZzHxLyqp0/sRt+cMjZRvQFKHjZRKzIl8C0XEX5Tn90YMW6sLSUnrXVKTstUD+cAyYuwurjz/jkkZq7jdXw+ZIKzPV9Vuyocy1p8t7ePgWjQLpfVf7j680ioB4fXfdJ3Tisx5uhjgYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01XbgcBru1WZhrEyL1yHZgvJ",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "cell_type": "CD56bright NK cell"
+     },
+     "name": "cellmarker_cell_type_markers",
+     "type": "tool_use",
+     "toolset_name": null
+    },
+    {
+     "id": "toolu_0127P9XnyhBCdbe73dQ1sxvC",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "cell_type": "Natural killer cell"
+     },
+     "name": "cellmarker_cell_type_markers",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "CD56bright NK cell"
+     },
+     "id": "toolu_01XbgcBru1WZhrEyL1yHZgvJ"
+    },
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Natural killer cell"
+     },
+     "id": "toolu_0127P9XnyhBCdbe73dQ1sxvC"
+    }
+   ],
+   "usage": {
+    "input_tokens": 984,
+    "output_tokens": 306,
+    "total_tokens": 1290,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 173
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"CD56bright NK cell\", \"markers\": [\"NCAM1\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "toolu_01XbgcBru1WZhrEyL1yHZgvJ"
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Natural killer cell\", \"markers\": [\"NCAM1\", \"NKG7\", \"GNLY\", \"FCGR3B\", \"KLRF1\", \"KLRD1\", \"FCGR3A\", \"KLRC1\", \"GZMB\", \"NCR1\", \"PRF1\", \"CD3E\", \"KLRB1\", \"KLRC2\", \"SPON2\", \"CD7\", \"B3GAT1\", \"FGFBP2\", \"XCL1\", \"CD247\", \"KLRK1\", \"GZMA\", \"NCR3\", \"IL2RB\", \"CD160\", \"CX3CR1\", \"CD3D\", \"PRSS23\", \"KLRC3\", \"IL18RAP\", \"CHST2\", \"KIR3DL1\", \"TYROBP\", \"CCL5\", \"CD38\", \"IL32\", \"CLIC3\", \"SH2D1B\", \"S1PR5\", \"ADGRG1\", \"PTGDR\", \"TBX21\", \"FCRL6\", \"HOPX\", \"XCL2\", \"CST7\", \"CTSW\", \"NMUR1\", \"TGFBR3\", \"GZMH\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "toolu_0127P9XnyhBCdbe73dQ1sxvC"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"CD56bright Natural Killer (NK) cell\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1751,
+    "output_tokens": 38,
+    "total_tokens": 1789,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cNK-CD56bright_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "NK_CD56bright",
+  "predicted": "CD56bright Natural Killer (NK) cell",
+  "confidence": 0.75,
+  "raw": "{\"cell_type\": \"CD56bright Natural Killer (NK) cell\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2735,
+  "completion_tokens": 344,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00891,
+  "n_tool_calls": 2,
+  "n_model_calls": 2,
+  "latency_s": 5.1
+ }
+}

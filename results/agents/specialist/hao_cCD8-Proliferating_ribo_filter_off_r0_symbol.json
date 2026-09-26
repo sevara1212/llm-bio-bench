@@ -1,0 +1,147 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cCD8-Proliferating_ribo_filter_off_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD8 Proliferating",
+  "genes": [
+   "STMN1",
+   "HMGB2",
+   "DEK",
+   "TUBA1B",
+   "PCNA",
+   "DUT",
+   "GAPDH",
+   "HMGN2",
+   "PFN1",
+   "CFL1"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "answer": "CD8 Proliferating"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: STMN1, HMGB2, DEK, TUBA1B, PCNA, DUT, GAPDH, HMGN2, PFN1, CFL1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: STMN1, HMGB2, DEK, TUBA1B, PCNA, DUT, GAPDH, HMGN2, PFN1, CFL1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Ev8CCpABCBIYAipA7LKavqD55yu+TC2OPJf1zkNFuwQgY7orEgam9HALW0HK3VHbbAUIEJAj9lHZs4uAw1pPJse/GaCqEr0YniBWbDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYnT3tUGEgy6pEY9HOAigoad+bIaDHuBLXjeMT0ZbuQZUiIw5RreNNAHVNGbNfy9Ev9NaR4Ngic+Bbiulu+ZrNaBFI8CPUgbFdJrSkPvXz+xwTd+KpsBLUDN1HWC9arTKqBsAJdNCOJY1wg6PixR46MeCGwh3n5pCGurlJVGqCxYn9zlWycoKSMsAaXGRodTO7VK07IXZcJO6TtEN8ZNqACsvxsGzxr9fRsi5h3q+8E5R30ivYJYkBERwPvfw+spy3kun43CNFl+Wo/v1wi0leUpkg+430mk0GGtCn3BfqlyH3DtMdN7xcOT19uYTPsI+hoYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_0183UL5mD9PQSMZmrnjRaP5h",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "STMN1",
+       "HMGB2",
+       "DEK",
+       "TUBA1B",
+       "PCNA",
+       "DUT",
+       "HMGN2",
+       "PFN1",
+       "CFL1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "STMN1",
+       "HMGB2",
+       "DEK",
+       "TUBA1B",
+       "PCNA",
+       "DUT",
+       "HMGN2",
+       "PFN1",
+       "CFL1"
+      ]
+     },
+     "id": "toolu_0183UL5mD9PQSMZmrnjRaP5h"
+    }
+   ],
+   "usage": {
+    "input_tokens": 984,
+    "output_tokens": 187,
+    "total_tokens": 1171,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 69
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"STMN1\":{\"symbol\":\"STMN1\",\"n_cell_types\":0,\"cell_types\":[]},\"HMGB2\":{\"symbol\":\"HMGB2\",\"n_cell_types\":0,\"cell_types\":[]},\"DEK\":{\"symbol\":\"DEK\",\"n_cell_types\":0,\"cell_types\":[]},\"TUBA1B\":{\"symbol\":\"TUBA1B\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Proliferative lymphocyte\",\"rank\":2}]},\"PCNA\":{\"symbol\":\"PCNA\",\"n_cell_types\":0,\"cell_types\":[]},\"DUT\":{\"symbol\":\"DUT\",\"n_cell_types\":0,\"cell_types\":[]},\"HMGN2\":{\"symbol\":\"HMGN2\",\"n_cell_types\":0,\"cell_types\":[]},\"PFN1\":{\"symbol\":\"PFN1\",\"n_cell_types\":0,\"cell_types\":[]},\"CFL1\":{\"symbol\":\"CFL1\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_0183UL5mD9PQSMZmrnjRaP5h"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Proliferative lymphocyte (cycling T/NK or progenitor cells)\", \"confidence\": 0.7}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1530,
+    "output_tokens": 48,
+    "total_tokens": 1578,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD8-Proliferating_ribo_filter_off_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "off",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "CD8 Proliferating",
+  "predicted": "Proliferative lymphocyte (cycling T/NK or progenitor cells)",
+  "confidence": 0.7,
+  "raw": "{\"cell_type\": \"Proliferative lymphocyte (cycling T/NK or progenitor cells)\", \"confidence\": 0.7}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2514,
+  "completion_tokens": 235,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007378,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.0
+ }
+}

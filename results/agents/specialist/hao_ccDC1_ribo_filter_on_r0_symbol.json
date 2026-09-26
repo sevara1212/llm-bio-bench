@@ -1,0 +1,137 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_ccDC1_ribo_filter_on_r0_symbol",
+  "dataset": "hao",
+  "cluster": "cDC1",
+  "genes": [
+   "CD74",
+   "HLA-DPA1",
+   "HLA-DPB1",
+   "WDFY4",
+   "C1orf54",
+   "CPVL",
+   "CLEC9A",
+   "HLA-DRA",
+   "SNX3",
+   "HLA-DQB1"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "answer": "cDC1"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CD74, HLA-DPA1, HLA-DPB1, WDFY4, C1orf54, CPVL, CLEC9A, HLA-DRA, SNX3, HLA-DQB1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CD74, HLA-DPA1, HLA-DPB1, WDFY4, C1orf54, CPVL, CLEC9A, HLA-DRA, SNX3, HLA-DQB1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EqMDCpABCBIYAipACC0WWcjPpF+AymuOqWkhDmtLZ1GmGANlAbsGAIZbqatqZPVlt6aBgS6fe2+l8DQFM+/aeYq7GFd9aNzf8ZNbzzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAfzS3tUGEgyjkDYebaEG7fuW/WcaDCE15g9FfTcyBEoWwSIwfDDOJpM4KvW9YgagYvaP7GpHLAVqga22iHhiF+fcGddC2VEqIA5zNOmzzL9MdonUKr8B0QNjuH44/o5MHZ893mO4MlNyAcaSepXV+zZiMh7A5kZOwpO9DErcNp72Utx6pCIlzxT1MhPyXOlAY4yu72lWH4OZnt2lBLRsMmnTPHA5NOqCYbkbNwfAyt+s5gxGRldLEsFc0y0X6yZZcMd4vvcLL7sM7zASrQfHtVhSetJ7FAon/1hIdPLE3SkcnRKSB2a/6TtqFHldX35BP3FNZii7dmSIETe2SjiqKOF2xwdkYArO1JLjFsz89mtCogh406QYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01BJ2JUkddT9Rd9nuLP2cAiW",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "CLEC9A",
+       "WDFY4",
+       "C1orf54",
+       "CPVL"
+      ]
+     },
+     "name": "gene_info",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "gene_info",
+     "args": {
+      "genes": [
+       "CLEC9A",
+       "WDFY4",
+       "C1orf54",
+       "CPVL"
+      ]
+     },
+     "id": "toolu_01BJ2JUkddT9Rd9nuLP2cAiW"
+    }
+   ],
+   "usage": {
+    "input_tokens": 999,
+    "output_tokens": 181,
+    "total_tokens": 1180,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 103
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"CLEC9A\":{\"symbol\":\"CLEC9A\",\"name\":\"C-type lectin domain containing 9A\",\"summary\":\"CLEC9A is a group V C-type lectin-like receptor (CTLR) that functions as an activation receptor and is expressed on myeloid lineage cells (Huysamen et al., 2008 [PubMed 18408006]).[supplied by OMIM, Aug 2008].\"},\"WDFY4\":{\"symbol\":\"WDFY4\",\"name\":\"WDFY family member 4\",\"summary\":\"Predicted to be involved in autophagy. Predicted to act upstream of or within with a positive effect on CD8-positive, alpha-beta T cell activation. Predicted to act upstream of or within antigen processing and presentation and cellular response to virus. Predicted to be located in early endosome and endoplasmic reticulum. [provided by Alliance of Genome Resources, Apr 2022]\"},\"C1orf54\":{\"symbol\":\"C1orf54\",\"name\":\"chromosome 1 open reading frame 54\",\"summary\":\"Predicted to be located in extracellular region. [provided by Alliance of Genome Resources, Apr 2022]\"},\"CPVL\":{\"symbol\":\"CPVL\",\"name\":\"carboxypeptidase vitellogenic like\",\"summary\":\"The protein encoded by this gene is a carboxypeptidase and bears strong sequence similarity to serine carboxypeptidases. Carboxypeptidases are a large class of proteases that act to cleave a single amino acid from the carboxy termini of proteins or peptides. The exact function of this protein, however, has not been determined. [provided by RefSeq, Jan 2017].\"}}",
+   "tool_name": "gene_info",
+   "tool_call_id": "toolu_01BJ2JUkddT9Rd9nuLP2cAiW"
+  },
+  {
+   "type": "ai",
+   "content": "This gene combination is highly characteristic: MHC class II genes (CD74, HLA-DPA1, HLA-DPB1, HLA-DRA, HLA-DQB1, SNX3) indicate professional antigen-presenting cells, while CLEC9A, WDFY4, C1orf54, and CPVL are well-established specific markers of conventional dendritic cell type 1 (cDC1), a rare DC subset specialized in cross-presentation to CD8+ T cells.\n\n```json\n{\"cell_type\": \"Conventional dendritic cell type 1 (cDC1)\", \"confidence\": 0.9}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1739,
+    "output_tokens": 207,
+    "total_tokens": 1946,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_ccDC1_ribo_filter_on_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "cDC1",
+  "predicted": "Conventional dendritic cell type 1 (cDC1)",
+  "confidence": 0.9,
+  "raw": "This gene combination is highly characteristic: MHC class II genes (CD74, HLA-DPA1, HLA-DPB1, HLA-DRA, HLA-DQB1, SNX3) indicate professional antigen-presenting cells, while CLEC9A, WDFY4, C1orf54, and CPVL are well-established specific markers of conventional dendritic cell type 1 (cDC1), a rare DC subset specialized in cross-presentation to CD8+ T cells.\n\n```json\n{\"cell_type\": \"Conventional dendritic cell type 1 (cDC1)\", \"confidence\": 0.9}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2738,
+  "completion_tokens": 388,
+  "reasoning_tokens": null,
+  "cost_usd": 0.009356,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 6.4
+ }
+}

@@ -1,0 +1,128 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cNK_n_genes_3_r0_symbol",
+  "dataset": "hao",
+  "cluster": "NK",
+  "genes": [
+   "NKG7",
+   "PRF1",
+   "CST7"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "3",
+  "replicate": 0,
+  "answer": "NK"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NKG7, PRF1, CST7",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NKG7, PRF1, CST7"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EqwCCpABCBIYAipAoyB1QuctjjyHTr+40htqYg5caGDL/bNnIABTAgiayggB7RnkWGa4bOjerANVrrggbzCvn2xKbF5L8v5YLQWJ3DIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAcPS3tUGEgwUVqYakDOVBm7dYJ8aDKBW6iAOXLIItS2vCCIwli4B6+pBxyNEw+pSyiJHkAdSF35PPlE20oA1vK6SlESuOty0R/CMLAr6FOZ5FJcZKklRgjHFxHqNi9w3w+WPJzNTkUvPTgIUF23s/EOHA2jLU/GKxqCuinmvOaFIHYqHcEbdY6FkOE85/V2Z4gHHKoU1MA/7j4guSEUhGAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01X8iiLVLkcNNKyof6zGTeh4",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "NKG7",
+       "PRF1",
+       "CST7"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "NKG7",
+       "PRF1",
+       "CST7"
+      ]
+     },
+     "id": "toolu_01X8iiLVLkcNNKyof6zGTeh4"
+    }
+   ],
+   "usage": {
+    "input_tokens": 945,
+    "output_tokens": 98,
+    "total_tokens": 1043,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 20
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"NKG7\":{\"symbol\":\"NKG7\",\"n_cell_types\":16,\"cell_types\":[{\"cell_type\":\"CD56+ natural killer cell\",\"rank\":1},{\"cell_type\":\"Natural killer cell\",\"rank\":2},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":4},{\"cell_type\":\"NK cell\",\"rank\":4},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":5},{\"cell_type\":\"Natural killer T cell\",\"rank\":5},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Activated CD8+ T cell\",\"rank\":9},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":9},{\"cell_type\":\"CD8+ T cell\",\"rank\":11},{\"cell_type\":\"Gamma delta T cell\",\"rank\":11},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":15},{\"cell_type\":\"T cell\",\"rank\":15},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":21},{\"cell_type\":\"Effector T cell\",\"rank\":22},{\"cell_type\":\"Effector CD8+ memory T cell\",\"rank\":47}]},\"PRF1\":{\"symbol\":\"PRF1\",\"n_cell_types\":9,\"cell_types\":[{\"cell_type\":\"Cytotoxic CD4+ T cell\",\"rank\":1},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":4},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":4},{\"cell_type\":\"Effector CD8+ T cell\",\"rank\":4},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":6},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Effector regulatory T cell\",\"rank\":11},{\"cell_type\":\"Natural killer cell\",\"rank\":11},{\"cell_type\":\"Gamma delta T cell\",\"rank\":25}]},\"CST7\":{\"symbol\":\"CST7\",\"n_cell_types\":9,\"cell_types\":[{\"cell_type\":\"Granulocyte-monocyte progenitor\",\"rank\":8},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Effector T cell\",\"rank\":13},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":14},{\"cell_type\":\"Gamma delta T cell\",\"rank\":17},{\"cell_type\":\"CD16 bright CD56 dim natural killer cell\",\"rank\":32},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":36},{\"cell_type\":\"Natural killer cell\",\"rank\":46},{\"cell_type\":\"Effector memory T cell\",\"rank\":47}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01X8iiLVLkcNNKyof6zGTeh4"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Natural killer (NK) cell / cytotoxic lymphocyte (NK or CD8+ cytotoxic T cell)\", \"confidence\": 0.65}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1988,
+    "output_tokens": 64,
+    "total_tokens": 2052,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cNK_n_genes_3_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "3",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "NK",
+  "predicted": "Natural killer (NK) cell / cytotoxic lymphocyte (NK or CD8+ cytotoxic T cell)",
+  "confidence": 0.65,
+  "raw": "{\"cell_type\": \"Natural killer (NK) cell / cytotoxic lymphocyte (NK or CD8+ cytotoxic T cell)\", \"confidence\": 0.65}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2933,
+  "completion_tokens": 162,
+  "reasoning_tokens": null,
+  "cost_usd": 0.007486,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 3.4
+ }
+}

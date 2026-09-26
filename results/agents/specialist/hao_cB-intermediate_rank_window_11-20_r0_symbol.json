@@ -1,0 +1,137 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cB-intermediate_rank_window_11-20_r0_symbol",
+  "dataset": "hao",
+  "cluster": "B intermediate",
+  "genes": [
+   "HLA-DPB1",
+   "CD74",
+   "HLA-DQA1",
+   "SWAP70",
+   "LINC00926",
+   "CD22",
+   "HLA-DPA1",
+   "ARHGAP24",
+   "HLA-DRB1",
+   "MARCHF1"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "answer": "B intermediate"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DPB1, CD74, HLA-DQA1, SWAP70, LINC00926, CD22, HLA-DPA1, ARHGAP24, HLA-DRB1, MARCHF1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: HLA-DPB1, CD74, HLA-DQA1, SWAP70, LINC00926, CD22, HLA-DPA1, ARHGAP24, HLA-DRB1, MARCHF1"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "Ev0DCpABCBIYAipA4Z4KUklTljufOJtHaGUnyezEI93Yze87Y8GQjuv9JB3mi588KzZt4bKrwtyoCWH0s8O/UV5TJuCyaIDu8xdRMzIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAaTS3tUGEgzFnOwjCEnPiizt3egaDJxdvWjPfe2a+I9dAiIwnk0kYK+onaqXnYKPi59cj1Wg9suQrpeBbJlKL4Av5Ma1lTCjkQQqh2GOpmBsYiv/KpkCmqCJB4oZqSD7pIP40sLgW5b3AXEGHiPEkpsbvoTeRFU/u3t1LsSirTVEsEomEqXfAOWcygiIB6Y0OtigCNigY98R8Gn+2JGMaEu2JVz9+5rsjyiPtEgKV/fiqObdSn3TkZ2+vHSYHnf7M2ZT2r1aYOZmV23uq/KWUdGmpumHa64tWjuQXRrANP6JoUXRdSRVtoxORxnN/tQeHlbaFUmspGCkWu2gAlEatCpxCanD2ZS15clyREwaIknjykN30IPjwdYWAylM85Un5Mh7yAm4xtBikD5t7s8ugBBhlckGCP7mMN9uGggQrL88SZDp/d20GBaLshXgM/Fr1G9X7AMzvBrw9pRK5qKOiIQQYRF2nlWG9SUZCLrWzUkYAQ==",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_01Gson2AhWtHmNLyCA1MrBL2",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "CD22",
+       "LINC00926",
+       "CD74",
+       "HLA-DPB1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "CD22",
+       "LINC00926",
+       "CD74",
+       "HLA-DPB1"
+      ]
+     },
+     "id": "toolu_01Gson2AhWtHmNLyCA1MrBL2"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1002,
+    "output_tokens": 232,
+    "total_tokens": 1234,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 143
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"CD22\":{\"symbol\":\"CD22\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"B cell\",\"rank\":6},{\"cell_type\":\"Memory B cell\",\"rank\":9},{\"cell_type\":\"Basophil\",\"rank\":10},{\"cell_type\":\"AXL+ SIGLEC6+ dendritic cell\",\"rank\":13},{\"cell_type\":\"Naive B cell\",\"rank\":21}]},\"LINC00926\":{\"symbol\":\"LINC00926\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Naive B cell\",\"rank\":26},{\"cell_type\":\"Memory B cell\",\"rank\":34},{\"cell_type\":\"B cell\",\"rank\":44}]},\"CD74\":{\"symbol\":\"CD74\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"Mature B cell\",\"rank\":3},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":4},{\"cell_type\":\"Immature B cell\",\"rank\":6},{\"cell_type\":\"B cell\",\"rank\":11},{\"cell_type\":\"Dendritic cell\",\"rank\":18},{\"cell_type\":\"Conventional dendritic cell\",\"rank\":23}]},\"HLA-DPB1\":{\"symbol\":\"HLA-DPB1\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Natural regulatory T cell\",\"rank\":7},{\"cell_type\":\"Immature B cell\",\"rank\":9},{\"cell_type\":\"Dendritic cell\",\"rank\":33},{\"cell_type\":\"B cell\",\"rank\":43}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_01Gson2AhWtHmNLyCA1MrBL2"
+  },
+  {
+   "type": "ai",
+   "content": "This gene signature is dominated by MHC class II genes (HLA-DPB1, CD74, HLA-DQA1, HLA-DPA1, HLA-DRB1) combined with classic B-cell markers (CD22, LINC00926, SWAP70), which together are highly characteristic of B lymphocytes in PBMC data.\n\n```json\n{\"cell_type\": \"B cell\", \"confidence\": 0.85}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1764,
+    "output_tokens": 140,
+    "total_tokens": 1904,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cB-intermediate_rank_window_11-20_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "11-20",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "B intermediate",
+  "predicted": "B cell",
+  "confidence": 0.85,
+  "raw": "This gene signature is dominated by MHC class II genes (HLA-DPB1, CD74, HLA-DQA1, HLA-DPA1, HLA-DRB1) combined with classic B-cell markers (CD22, LINC00926, SWAP70), which together are highly characteristic of B lymphocytes in PBMC data.\n\n```json\n{\"cell_type\": \"B cell\", \"confidence\": 0.85}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2766,
+  "completion_tokens": 372,
+  "reasoning_tokens": null,
+  "cost_usd": 0.009252,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.5
+ }
+}

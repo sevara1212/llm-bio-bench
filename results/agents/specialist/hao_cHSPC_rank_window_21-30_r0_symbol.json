@@ -1,0 +1,139 @@
+{
+ "condition": "specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "hao_cHSPC_rank_window_21-30_r0_symbol",
+  "dataset": "hao",
+  "cluster": "HSPC",
+  "genes": [
+   "RPS4X",
+   "SNHG7",
+   "MYB",
+   "FAM30A",
+   "EGFL7",
+   "RPS2",
+   "MACROH2A1",
+   "RPS3A",
+   "DDAH2",
+   "RPS23"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "21-30",
+  "replicate": 0,
+  "answer": "HSPC"
+ },
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPS4X, SNHG7, MYB, FAM30A, EGFL7, RPS2, MACROH2A1, RPS3A, DDAH2, RPS23",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: RPS4X, SNHG7, MYB, FAM30A, EGFL7, RPS2, MACROH2A1, RPS3A, DDAH2, RPS23"
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EpsFCpABCBIYAipAOG/G6xMEkGNd0t9fmd4onW00rLEIAuz6wLi5EA1ldZ7mKQ+eKa71vtf2Sd4aGosJ3udE/o0PaffkE5dOIN8wzjIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAarS3tUGEgyHpmPCj8eyJ+WTgYIaDC/Ur3WX+ZBXku+fXSIwV7Fjs9IgTmQew50AiFiz6Q/C6svaeyPHUCW7GaZr0w592cYZ991Bli9No3b4QytAKrcDz8UuFRRsbfQmLQi7KpS/9wPtZbseP42cvldJ/Ol69kPLsvNOkaK5Itr32lXjUz5omjrjO+18KJhUZjG07iBTQ2owvqfiGs4VPAaSlTdoLJ2f494utJFvD9QMJSRRaeSxOUYTnepJcz+AJ+ibcF3riCRHP2zLLqyeHU9iJ0V5gReHFJitSTRBPgAECu90N0tbOnvj54MVYwCITnNiq92ewX9KtwiJu+ZpIm8+LnyFhA5dhHuNyKc0gxA4dy2lBI2iobYbf7ZduUsmFt1gf3u/QLkwFh3JOpJsxVGuNZTgBcrhmO/PbzgU3p4IyD0J9W7xXqtaBJKJe354N8UdthZVmN615UFYddaych6k3F4Xd0/OxGMG0rVCuO9DHmDqpJp6QpXBOpHqsNCRbbMYtPyEji+fS+otdhdReRU83Jsz02ku6QLIP/Kg+xKyD+rLDvTGtMqh4AIXIVWOpMPgSjTs9GDWwXajLwUP7lT5e4WoJMPqmTUydIimVs6kLEvGJ56D7Lkii0heSojE6xC7tKIhSTSKN+XAfDroCI2RVVyDAwd4rInvhiLzPi4t9FiWbzppNH4WxO7lqhgB",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_016NWn38vFAZp5wf9dJtGfKa",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "genes": [
+       "MYB",
+       "FAM30A",
+       "EGFL7",
+       "DDAH2",
+       "MACROH2A1"
+      ]
+     },
+     "name": "cellmarker_gene_to_cell_types",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "MYB",
+       "FAM30A",
+       "EGFL7",
+       "DDAH2",
+       "MACROH2A1"
+      ]
+     },
+     "id": "toolu_016NWn38vFAZp5wf9dJtGfKa"
+    }
+   ],
+   "usage": {
+    "input_tokens": 989,
+    "output_tokens": 283,
+    "total_tokens": 1272,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 190
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"MYB\":{\"symbol\":\"MYB\",\"n_cell_types\":0,\"cell_types\":[]},\"FAM30A\":{\"symbol\":\"FAM30A\",\"n_cell_types\":3,\"cell_types\":[{\"cell_type\":\"Progenitor cell\",\"rank\":10},{\"cell_type\":\"Hematopoietic stem cell\",\"rank\":36},{\"cell_type\":\"Memory B cell\",\"rank\":41}]},\"EGFL7\":{\"symbol\":\"EGFL7\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Proliferative B cell\",\"rank\":29}]},\"DDAH2\":{\"symbol\":\"DDAH2\",\"n_cell_types\":0,\"cell_types\":[]},\"MACROH2A1\":{\"symbol\":\"MACROH2A1\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "toolu_016NWn38vFAZp5wf9dJtGfKa"
+  },
+  {
+   "type": "ai",
+   "content": "{\"cell_type\": \"Hematopoietic stem/progenitor cell (CD34+ progenitor)\", \"confidence\": 0.7}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1560,
+    "output_tokens": 48,
+    "total_tokens": 1608,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "hao_cHSPC_rank_window_21-30_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "21-30",
+  "replicate": 0,
+  "run": 0,
+  "provider": "anthropic",
+  "answer": "HSPC",
+  "predicted": "Hematopoietic stem/progenitor cell (CD34+ progenitor)",
+  "confidence": 0.7,
+  "raw": "{\"cell_type\": \"Hematopoietic stem/progenitor cell (CD34+ progenitor)\", \"confidence\": 0.7}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2549,
+  "completion_tokens": 331,
+  "reasoning_tokens": null,
+  "cost_usd": 0.008408,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 4.6
+ }
+}
