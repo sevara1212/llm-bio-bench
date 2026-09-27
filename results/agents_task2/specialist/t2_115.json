@@ -1,0 +1,140 @@
+{
+ "condition": "task2_specialist",
+ "model": "claude-sonnet-5",
+ "question": {
+  "id": "t2_115",
+  "X": "COL2A1",
+  "X_norman_label": "COL2A1",
+  "Y": "APOC1",
+  "label": "down",
+  "log2FC": -0.8611,
+  "padj": 3.015345590311117e-75,
+  "ctrl_frac_Y": 0.9979,
+  "coexpr_r_ctrl": -0.00312,
+  "question": "In K562 cells (a human leukemia cell line), gene COL2A1 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene APOC1? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene COL2A1 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene APOC1? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": [
+    {
+     "signature": "EpoCCpABCBIYAipA+r73SeXtxSNufDW+IV2vQfZRvaiolcem5QZT9AjnvJCxxOpdv7fdFsZgvOSrhWkq3XZlUuXAsCt55NbjPvxP9zIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiRiZWM5NTI0NS04NmE0LTQyYzEtOWU2NS1mNGIxMjQ3ZWRmNzGoAYfD49UGEgzc8atRKdD826b30SsaDByYzoneNK+IilvR/iIwCxHmnTiZcrvZHY9Cs6ly/dXrs5R76YDvFJy5expYwa4LcZLk5qLhKsAAAHoUBwbDKjeu4+9ZL07dgwk+K4KCXjvUiXK2o936W1+PWxY666oAs27+2dCtYWqNM8HEgbR5GMbI9GCb7NI/GAE=",
+     "thinking": "",
+     "type": "thinking"
+    },
+    {
+     "id": "toolu_016Tb19whvFqwJmXL9q7ktAp",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "gene_x": "COL2A1",
+      "gene_y": "APOC1"
+     },
+     "name": "coexpression_in_control",
+     "type": "tool_use",
+     "toolset_name": null
+    },
+    {
+     "id": "toolu_01595sJqzU96pmHw3txEu5ho",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "tf": "COL2A1",
+      "target": "APOC1"
+     },
+     "name": "collectri_lookup",
+     "type": "tool_use",
+     "toolset_name": null
+    }
+   ],
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "COL2A1",
+      "gene_y": "APOC1"
+     },
+     "id": "toolu_016Tb19whvFqwJmXL9q7ktAp"
+    },
+    {
+     "name": "collectri_lookup",
+     "args": {
+      "tf": "COL2A1",
+      "target": "APOC1"
+     },
+     "id": "toolu_01595sJqzU96pmHw3txEu5ho"
+    }
+   ],
+   "usage": {
+    "input_tokens": 984,
+    "output_tokens": 179,
+    "total_tokens": 1163,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 15
+    }
+   },
+   "stop_reason": "tool_use"
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"COL2A1\", \"gene_y\": \"APOC1\", \"pearson_r_control_cells\": -0.0031, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.4751, \"share_control_cells_expressing_y\": 0.9979}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "toolu_016Tb19whvFqwJmXL9q7ktAp"
+  },
+  {
+   "type": "tool",
+   "content": "{\"tf\":\"COL2A1\",\"tf_in_collectri\":false,\"n_targets\":0,\"link_to_target\":null,\"some_targets\":[]}",
+   "tool_name": "collectri_lookup",
+   "tool_call_id": "toolu_01595sJqzU96pmHw3txEu5ho"
+  },
+  {
+   "type": "ai",
+   "content": "{\"answer\": \"no_change\", \"confidence\": 0.75}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1373,
+    "output_tokens": 22,
+    "total_tokens": 1395,
+    "input_token_details": {
+     "cache_read": 0,
+     "cache_creation": 0,
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "output_token_details": {
+     "reasoning": 0
+    }
+   },
+   "stop_reason": "end_turn"
+  }
+ ],
+ "summary": {
+  "id": "t2_115",
+  "X": "COL2A1",
+  "Y": "APOC1",
+  "label": "down",
+  "predicted": "no_change",
+  "confidence": 0.75,
+  "raw": "{\"answer\": \"no_change\", \"confidence\": 0.75}",
+  "finish_reason": "ok",
+  "prompt_tokens": 2357,
+  "completion_tokens": 201,
+  "cost_usd": 0.006724,
+  "n_tool_calls": 2,
+  "n_model_calls": 2,
+  "latency_s": 3.4
+ }
+}

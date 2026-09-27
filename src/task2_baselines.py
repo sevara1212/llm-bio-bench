@@ -8,11 +8,22 @@
                      written, before any baseline result was seen, and has not been tuned since.
   collectri          CollecTRI TF -> target link X -> Y: weight +1 -> up, -1 -> down; no link -> no_change.
                      Coverage = share of questions where X has a CollecTRI link to Y.
+  expression_only    target detected in more control cells than the median over all 200 questions ->
+                     down, otherwise up (never no_change). The threshold (median detection rate) uses no
+                     labels and was fixed before any model was run. Tests the "quiet target -> up" shortcut.
 
 Reports 3-class accuracy, macro-F1 (over up, down, no_change) and direction accuracy: on the up/down
-questions only, the share predicted with the correct direction (a no_change prediction counts as wrong).
+questions only, the share predicted with the correct direction (a no_change prediction counts as wrong),
+on all 134 up/down questions and on expression-matched up/down pairs only.
+
+Expression-matched pairs (data/task2_matched_pairs.json, made here, seed 0, before any model run):
+each up question is paired with an unused down question whose target's control detection rate is
+within 0.02 (the closest one; up questions without a match are left out). Within these pairs the
+target's expression level carries almost no information about the direction.
 """
 import json
+import os
+import random
 
 import pandas as pd
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
@@ -35,15 +46,40 @@ q["coexpr_sign_|r|>0.05"] = [coexpr(r, 0.05) for r in q.coexpr_r_ctrl]
 q["collectri_link"] = [(x, y) in edge for x, y in zip(q.X, q.Y)]
 q["collectri"] = [("up" if edge[(x, y)] > 0 else "down") if (x, y) in edge else "no_change" for x, y in zip(q.X, q.Y)]
 
-methods = ["always_no_change", "coexpr_sign", "coexpr_sign_|r|>0.05", "collectri"]
+THRESHOLD = q.ctrl_frac_Y.median()  # over all 200 questions, no labels used
+q["expression_only"] = ["down" if f > THRESHOLD else "up" for f in q.ctrl_frac_Y]
+
+# ---- expression-matched up/down pairs (made once, then reused unchanged) -------------------------
+PAIRS = "data/task2_matched_pairs.json"
+if not os.path.exists(PAIRS):
+    rng = random.Random(0)
+    ups = q[q.label == "up"].sample(frac=1, random_state=0)
+    downs = q[q.label == "down"].copy()
+    pairs = []
+    for u in ups.itertuples():
+        d = downs[(downs.ctrl_frac_Y - u.ctrl_frac_Y).abs() <= 0.02]
+        if len(d):
+            best = (d.ctrl_frac_Y - u.ctrl_frac_Y).abs().idxmin()
+            pairs.append({"up": u.id, "down": downs.at[best, "id"],
+                          "ctrl_frac_up": u.ctrl_frac_Y, "ctrl_frac_down": downs.at[best, "ctrl_frac_Y"]})
+            downs = downs.drop(best)
+    json.dump({"tolerance": 0.02, "seed": 0, "pairs": pairs}, open(PAIRS, "w"), indent=1)
+pairs = json.load(open(PAIRS))["pairs"]
+matched_ids = {p["up"] for p in pairs} | {p["down"] for p in pairs}
+mq = q[q.id.isin(matched_ids)]
+
+methods = ["always_no_change", "coexpr_sign", "coexpr_sign_|r|>0.05", "collectri", "expression_only"]
 ud = q[q.label != "no_change"]
 res = pd.DataFrame({m: {"accuracy": accuracy_score(q.label, q[m]),
                         "macro_F1": f1_score(q.label, q[m], labels=CLASSES, average="macro", zero_division=0),
                         "direction_acc_up_down": (ud[m] == ud.label).mean(),
+                        "direction_acc_matched_pairs": (mq[m] == mq.label).mean(),
                         "said_no_change_on_up_down": (ud[m] == "no_change").mean()}
                     for m in methods}).T
 res = res.rename(index={"coexpr_sign_|r|>0.05": "coexpr_sign_|r|>0.05 (threshold fixed in advance)"})
-print(f"n = {len(q)} questions: {q.label.value_counts().to_dict()}\n")
+print(f"n = {len(q)} questions: {q.label.value_counts().to_dict()}")
+print(f"expression-matched up/down pairs: {len(pairs)} (n = {len(mq)} questions); expression_only threshold "
+      f"= median control detection {THRESHOLD:.3f}\n")
 print(res.round(3).to_string())
 print(f"\ncoexpr: X not detected in control cells (r undefined) on {q.coexpr_r_ctrl.isna().sum()} questions")
 cov = q.collectri_link.mean()
@@ -57,4 +93,5 @@ if q.collectri_link.any():
 for m in methods[1:]:
     print(f"\nconfusion matrix, {m} (rows = truth, columns = prediction, order {CLASSES}):")
     print(pd.DataFrame(confusion_matrix(q.label, q[m], labels=CLASSES), index=CLASSES, columns=CLASSES).to_string())
-q[["id", "X", "Y", "label"] + methods + ["coexpr_r_ctrl", "collectri_link"]].to_csv("results/task2_baselines.csv", index=False)
+q[["id", "X", "Y", "label"] + methods + ["coexpr_r_ctrl", "collectri_link", "ctrl_frac_Y"]].to_csv(
+    "results/task2_baselines.csv", index=False)

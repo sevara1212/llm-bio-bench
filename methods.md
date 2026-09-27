@@ -248,7 +248,7 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
 CollecTRI coverage: 1/200 questions (0.5%) have an X -> Y link (81/200 have an X with any CollecTRI
 targets).
 
-## Task 2 specialist agent (built, NOT yet run)
+## Task 2 specialist agent
 `src/run_agent_task2.py`: same setup as the Task 1 agents (claude-sonnet-5, Anthropic API, LangGraph
 prebuilt ReAct agent, question text as the only prompt, no system prompt, max 5 tool calls, 2-minute
 timeout, full trajectories saved). Three tools, none of which can see perturbation outcomes:
@@ -260,3 +260,53 @@ timeout, full trajectories saved). Three tools, none of which can see perturbati
 3. `collectri_lookup` - the same CollecTRI snapshot as the baseline: whether X is a TF in CollecTRI,
    its link to Y (sign, "default activation" flag, number of references), up to 30 other targets.
 Answers are parsed as the first up / down / no_change value in the JSON reply.
+
+- Run on all 200 questions after a 5-question pilot (0 failures, $1.55, 2.1 tool calls per question on
+  average; co-expression queried for (X, Y) on 98% of questions, CollecTRI on 77%, gene_info on 32%).
+
+## Task 2 results (n = 200, one run per question)
+
+Plain models: `run_eval.py --dataset task2` - Claude Sonnet 5 via the Anthropic API; GPT-5.6 Terra and
+Gemini 3.8 Flash via OpenRouter (Gemini's Google API billing was unavailable); the question text as the
+only prompt; same parser for every method (`src/task2_common.py`). Gemini's one API error (t2_004) was
+retried once and answered. Scored with `src/task2_score.py`; unparsable answers count as wrong.
+Direction accuracy is on the 134 up/down questions; matched pairs are the 30 expression-matched pairs
+(60 questions) fixed before any model run.
+
+| Method | Accuracy | Macro-F1 | Direction, all up/down | Direction, matched pairs | no_change on up/down |
+|---|---|---|---|---|---|
+| baseline: always no_change | 33.0% | 0.165 | 0.0% | 0.0% | 100% |
+| baseline: co-expression sign | 42.0% | 0.345 | 61.9% | 60.0% | 2% |
+| baseline: co-expression, \|r\| <= 0.05 -> no_change (fixed in advance) | 39.0% | 0.298 | 11.2% | 10.0% | 88% |
+| baseline: CollecTRI | 33.5% | 0.176 | 0.7% | 0.0% | 99% |
+| baseline: expression level only (threshold fixed in advance) | 49.0% | 0.391 | 73.1% | 50.0% | 0% |
+| Claude Sonnet 5 | 41.5% | 0.359 | 20.9% | 15.0% | 64% |
+| GPT-5.6 Terra | 46.0% | 0.430 | 29.9% | 31.7% | 49% |
+| Gemini 3.8 Flash | 45.5% | 0.410 | 26.1% | 25.0% | 58% |
+| specialist agent (Claude + 3 tools) | 39.0% | 0.288 | 9.7% | 1.7% | 88% |
+
+- **Agent vs plain Claude (paired, same questions):** 3-class, agent right & plain wrong 14 vs the
+  reverse 19 (two-sided sign test p = 0.49); direction on up/down, 4 vs 19 (p = 0.003). The agent gave
+  the same answer as plain Claude on 75% of questions and answered no_change 183/200 times (plain: 141).
+- **Agent wrong answers (122/200), classified from the co-expression value in its own tool output**
+  ("weak" = |r| <= 0.05, the baseline's threshold fixed before any model run):
+  weak co-expression read as no_change 105; |r| > 0.05 but still no_change 10; no_change without
+  querying co-expression 3; wrong direction following the sign of r 2; wrong direction against the sign
+  1; claimed an effect on a no_change question 1. Control-cell co-expression was weak (|r| <= 0.05) for
+  90% of queried pairs whatever the truth (53 up, 62 down, 62 no_change), and the agent answered
+  no_change on 94% of those. When |r| > 0.05 and it did answer up/down, it always followed the sign of r.
+- **Extra metric, defined post hoc (after seeing the model results): direction accuracy when committed**
+  = among up/down questions where the method answered up or down, the share with the correct direction.
+  It separates "declined to commit" (no_change) from "chose the wrong direction". Not a pre-planned
+  metric; small n for methods that rarely commit.
+
+  | Method | All up/down: committed, correct | Matched pairs: committed, correct |
+  |---|---|---|
+  | Claude Sonnet 5 | 48/134, 58.3% | 21/60, 42.9% |
+  | GPT-5.6 Terra | 69/134, 58.0% | 33/60, 57.6% |
+  | Gemini 3.8 Flash | 57/134, 61.4% | 26/60, 57.7% |
+  | specialist agent | 16/134, 81.2% | 2/60, 50.0% |
+  | baseline: co-expression sign | 131/134, 63.4% | 59/60, 61.0% |
+  | baseline: expression level only | 134/134, 73.1% | 60/60, 50.0% |
+- Direction biases (what the models answered on true up / true down questions): Claude answered up
+  21 / 17 times and down 3 / 7; GPT and Gemini answered down more than up in both.

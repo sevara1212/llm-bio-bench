@@ -1,6 +1,9 @@
 """Step 4: ask a model to name the cell type for each question.
 
-Usage: python src/run_eval.py <model> [n_runs] [--dataset pbmc|hao] [--skip-knob noise] [--test]
+Usage: python src/run_eval.py <model> [n_runs] [--dataset pbmc|hao|task2] [--skip-knob noise] [--test]
+
+--dataset task2 asks the Task 2 perturbation questions (data/task2_questions.json): the prompt is each
+question's own text and the answer is parsed as up / down / no_change (task2_common.parse_direction).
   anthropic/claude-sonnet-5   -> Anthropic API directly (ANTHROPIC_API_KEY)
   google/gemini-3.8-flash     -> Gemini API directly (GEMINI_API_KEY), OpenAI-compatible endpoint
   openai/gpt-5.6-terra        -> OpenRouter (OPENROUTER_API_KEY); so is anything else
@@ -26,13 +29,14 @@ from openai import OpenAI
 
 from prices import cost_usd
 from prompts import make_prompt
+from task2_common import parse_direction
 
 load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("model", nargs="?", default="anthropic/claude-sonnet-5")
 parser.add_argument("n_runs", nargs="?", type=int, default=1)
-parser.add_argument("--dataset", default="pbmc", choices=["pbmc", "hao"])
+parser.add_argument("--dataset", default="pbmc", choices=["pbmc", "hao", "task2"])
 parser.add_argument("--skip-knob", action="append", default=[],
                     help="leave out a difficulty knob, e.g. --skip-knob noise (repeatable)")
 parser.add_argument("--test", action="store_true", help="ask one question, print everything, save nothing")
@@ -106,7 +110,7 @@ def call_openai_compatible(prompt):
 
 def ask(q, run, test=False):
     limiter.wait()
-    prompt = make_prompt(DATASET, q["genes"])
+    prompt = q["question"] if DATASET == "task2" else make_prompt(DATASET, q["genes"])
     if PROVIDER == "anthropic":
         raw, finish_reason, usage = ask_claude(API_MODEL, prompt, MAX_TOKENS)
         raw_usage = usage
@@ -116,6 +120,10 @@ def ask(q, run, test=False):
         print(f"PROMPT:\n{prompt}\n\nRAW RESPONSE:\n{raw}\n\nFINISH REASON: {finish_reason}")
         print(f"\nUSAGE AS RETURNED BY {PROVIDER.upper()}:\n{json.dumps(raw_usage, indent=1, default=str)}")
         print(f"\nLOGGED: {json.dumps(usage)}")
+    if DATASET == "task2":
+        pred, conf = parse_direction(raw)
+        return {"id": q["id"], "X": q["X"], "Y": q["Y"], "run": run, "provider": PROVIDER, "answer": q["label"],
+                "predicted": pred, "confidence": conf, "raw": raw, "finish_reason": finish_reason, **usage}
     try:
         parsed = json.loads(re.search(r"\{.*\}", raw, re.S).group())
     except (AttributeError, json.JSONDecodeError):
@@ -128,12 +136,13 @@ def ask(q, run, test=False):
     }
 
 
-questions = [q for q in json.load(open(f"data/questions_{DATASET}.json")) if q["knob"] not in args.skip_knob]
+QUESTIONS_FILE = "data/task2_questions.json" if DATASET == "task2" else f"data/questions_{DATASET}.json"
+questions = [q for q in json.load(open(QUESTIONS_FILE)) if q.get("knob") not in args.skip_knob]
 
 if args.test:
     print(f"TEST: {MODEL} -> provider {PROVIDER}, API model name {API_MODEL!r}, question {questions[0]['id']}\n")
     row = ask(questions[0], run=0, test=True)
-    print(f"\nPARSED: cell_type={row['predicted']!r}, confidence={row['confidence']}  (truth: {row['answer']})")
+    print(f"\nPARSED: {row['predicted']!r}, confidence={row['confidence']}  (truth: {row['answer']})")
     raise SystemExit
 
 # anthropic/claude-sonnet-5 --dataset hao -> results/claude-sonnet-5_hao.csv

@@ -35,6 +35,7 @@ from langgraph.errors import GraphRecursionError
 from langgraph.prebuilt import create_react_agent
 
 from prices import cost_usd
+from task2_common import parse_direction
 
 load_dotenv()
 parser = argparse.ArgumentParser()
@@ -44,7 +45,6 @@ args = parser.parse_args()
 
 MODEL, MAX_TOOL_CALLS, TIMEOUT_S, WORKERS = "claude-sonnet-5", 5, 120, 4
 OUT_DIR, CSV = "results/agents_task2/specialist", "results/agents_task2/agent-specialist_task2.csv"
-CLASSES = ("up", "down", "no_change")
 
 # ---- tool data ------------------------------------------------------------------------------------
 _c = np.load("data/norman2019/task2_ctrl_corr.npz", allow_pickle=True)
@@ -133,20 +133,6 @@ def make_tools(counter):
         return StructuredTool.from_function(func=run, name=fn.__name__, description=fn.__doc__,
                                             args_schema=StructuredTool.from_function(fn).args_schema)
     return [wrap(f) for f in TOOLS]
-
-
-def parse_direction(text):
-    """(direction, confidence) from a JSON reply; direction is the first up/down/no_change value found."""
-    try:
-        obj = json.loads(re.search(r"\{.*\}", text, re.S).group())
-    except (AttributeError, json.JSONDecodeError):
-        return None, None
-    conf = next((v for k, v in obj.items() if "conf" in k.lower()), None)
-    for v in obj.values():
-        v = str(v).strip().lower().replace(" ", "_").replace("-", "_")
-        if v in CLASSES:
-            return v, conf
-    return None, conf
 
 
 llm = ChatAnthropic(model=MODEL, max_tokens=4000, timeout=TIMEOUT_S, max_retries=6)
