@@ -182,3 +182,81 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
   (e.g. "Naive T cell (likely naive CD4+ T cell)" expected CD4 Naive), but the judge sometimes treats it
   as a hedge and answers "T cell (subtype unclear)". The hand-check rule named only "possibly" and "or".
   Decide whether "likely" is a hedge, then fix the test expectation or add it to the hedge list.
+
+---
+
+# Task 2: perturbation direction (Norman et al. 2019, CRISPRa in K562)
+
+## Data
+- scPerturb `NormanWeissman2019_filtered.h5ad` (Zenodo DOI 10.5281/zenodo.7041849, MD5 c870e696...,
+  downloaded 2026-09-27): 111,445 K562 cells, 33,694 genes, raw counts. CRISPR **activation** screen.
+  Only control (11,855 cells) and single-gene perturbations (105 genes, 57,831 cells) are used; the 131
+  pair perturbations are not used yet. Three Norman labels use old symbols and are renamed to current
+  HGNC symbols (C19orf26 -> CBARP, C3orf72 -> FOXL2NB, KIAA1804 -> MAP3K21; MAP3K21 is not measured).
+- Normalisation: counts / cell total x 10,000, then natural log1p (cell totals equal the stored
+  `ncounts`). Pseudobulk = mean log-normalised expression per perturbation and for control, computed
+  by reading the gene-stored matrix in blocks of 2,000 genes (peak memory ~1.3 GB).
+- CRISPRa check: the activated gene is higher than in control in 102/104 measured perturbations.
+
+## Differential expression and labels (`src/task2_build.py`)
+- **Fold change: log2FC = (mean log-normalised expression in X cells - mean in control cells) / ln 2**,
+  i.e. the difference of mean log-expression, in log2 units. (This understates changes for lowly
+  expressed genes compared with a log2 ratio of mean expression; e.g. the activated gene ATL1 is ~4x
+  higher, log2 ratio 1.96, but difference-of-means log2FC 0.01.)
+- **Test: Welch's t-test** on per-cell log-normalised values (X cells vs control cells), computed
+  exactly from per-group sums and sums of squares; **Benjamini-Hochberg within each activated gene X**,
+  across its tested target genes.
+- Tested targets Y: detected (count > 0) in >= 10% of control cells (7,991 genes); Y != X.
+- Labels: up = log2FC > 0.5 and padj < 0.05; down = log2FC < -0.5 and padj < 0.05;
+  no_change = |log2FC| < 0.1 and padj > 0.5; everything else dropped. Over all 839,001 tested pairs:
+  932 up, 1,299 down, 414,483 no_change, 422,287 dropped.
+
+## Question set (`data/task2_questions.json`, 200 questions, seed 0)
+- 67 up, 67 down, 66 no_change; all 105 activated genes (max 2 questions each; cap 5); 159 target genes
+  (cap 3 per target); targets with clone-style names (RP11-..., AC012345.1, ...) excluded.
+- **Expression matching:** up and down are sampled first; each no_change question is matched to a random
+  up/down question on the target's control detection rate (within 0.02, else 0.05; all 66 matched).
+  Without matching, no_change targets had a median detection of 32% vs 94-96% for up/down. After
+  matching, no_change vs up+down detection: KS D = 0.098, p = 0.74.
+- **Remaining imbalance (not corrected):** up targets are less expressed than down targets (median
+  detection 75% vs 98%; KS p < 0.001); detection rate alone separates down from up with AUC 0.80. This
+  reflects the biology (activation switches on quieter genes and represses highly expressed ones) but
+  is a possible shortcut for the direction questions.
+- Question text: "In K562 cells (a human leukemia cell line), gene X is activated with CRISPR activation
+  (CRISPRa). What happens to the expression of gene Y? Answer up, down, or no_change, as JSON with a
+  confidence 0-1." Gene symbols only.
+
+## Baselines (`src/task2_baselines.py`, no API calls)
+- always no_change.
+- co-expression sign: Pearson r of X and Y across control cells only; r > 0 -> up, r < 0 -> down;
+  X undetected in controls -> no_change (4 questions).
+- co-expression with |r| <= 0.05 -> no_change: **threshold set when the script was first written,
+  before any result was seen; not tuned.**
+- CollecTRI (via decoupler 2.2.0 / OmniPath, snapshot `data/task2/collectri_human.csv`, 42,990 links,
+  downloaded 2026-09-27): X -> Y link weight +1 -> up, -1 -> down; no link -> no_change. Note that
+  CollecTRI labels links without sign evidence as "default activation" (+1).
+- Metrics: 3-class accuracy, macro-F1, and direction accuracy = share of up/down questions predicted
+  with the correct direction (no_change predictions count as wrong).
+
+| Baseline | Accuracy | Macro-F1 | Direction acc. (up/down) |
+|---|---|---|---|
+| always no_change | 33.0% | 0.165 | 0.0% |
+| co-expression sign | 42.0% | 0.345 | 61.9% |
+| co-expression, \|r\| <= 0.05 -> no_change (fixed in advance) | 39.0% | 0.298 | 11.2% |
+| CollecTRI | 33.5% | 0.176 | 0.7% |
+
+CollecTRI coverage: 1/200 questions (0.5%) have an X -> Y link (81/200 have an X with any CollecTRI
+targets).
+
+## Task 2 specialist agent (built, NOT yet run)
+`src/run_agent_task2.py`: same setup as the Task 1 agents (claude-sonnet-5, Anthropic API, LangGraph
+prebuilt ReAct agent, question text as the only prompt, no system prompt, max 5 tool calls, 2-minute
+timeout, full trajectories saved). Three tools, none of which can see perturbation outcomes:
+1. `gene_info` - MyGene.info (symbol/Ensembl -> symbol, name, summary).
+2. `coexpression_in_control` - Pearson r of X and Y across the 11,855 control cells (from
+   `data/norman2019/task2_ctrl_corr.npz`, written by `task2_build.py`), plus the share of control
+   cells expressing each gene. Returns exactly the numbers the co-expression baseline uses (checked on
+   all 200 questions).
+3. `collectri_lookup` - the same CollecTRI snapshot as the baseline: whether X is a TF in CollecTRI,
+   its link to Y (sign, "default activation" flag, number of references), up to 30 other targets.
+Answers are parsed as the first up / down / no_change value in the JSON reply.
