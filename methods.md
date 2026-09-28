@@ -2,6 +2,67 @@
 
 Working notes for the methods section. Numbers are from `results/scores_hao.csv` unless stated.
 
+## Task 1 pilot: PBMC3k (8 cell types)
+
+- **Data** (`src/prepare_data.py`): `scanpy.datasets.pbmc3k()`, the scanpy tutorial pipeline (cells with
+  200-2,500 genes and < 5% mitochondrial counts; highly variable genes by the tutorial's dispersion
+  thresholds; counts and mitochondrial share regressed out; PCA; 10 neighbours on 40 PCs; Leiden at
+  resolution 1.0), giving the tutorial's 8 cell types (CD4 T, CD8 T,
+  B, CD14 monocytes, FCGR3A monocytes, NK, dendritic cells, megakaryocytes). Clusters were labelled from
+  canonical tutorial markers (z-scored across clusters) and checked by eye. Top-50 markers per cluster
+  (Wilcoxon).
+- **Questions** (`src/make_questions.py pbmc`): 8 clusters x 20 question variants (the same four
+  difficulty knobs as Hao, incl. noise) x 2 gene formats = 320. Prompt: "...a cluster from human blood"
+  (the Hao prompt says "PBMCs"). **Each question was asked 3 times** (runs 0-2): n = 960 answers per
+  model.
+- **Scoring:** keyword rules (`src/scoring.py`, `RULES`), not the LLM judge - with 8 broad types each
+  answer is mapped by the first matching pattern. Strict = exact type; lenient = 0.5 for "T cell" on a
+  CD4/CD8 cluster or "monocyte" on a CD14/FCGR3A cluster. The rules read the whole answer text, so they
+  do not apply the primary-answer / hedge rules of the Hao judge.
+- Models: Claude Sonnet 5 via the Anthropic API; GPT-5.6 Terra and Gemini 3.8 Flash via OpenRouter.
+  Random guess: 12.5% (1/8).
+
+| Method (n = 960) | Strict | Lenient | Strict symbol | Strict Ensembl |
+|---|---|---|---|---|
+| Claude Sonnet 5 | 78.6% | 85.1% | 82.3% | 75.0% |
+| Gemini 3.8 Flash | 72.6% | 77.4% | 82.1% | 63.1% |
+| GPT-5.6 Terra | 70.5% | 75.2% | 75.4% | 65.6% |
+| CellMarker lookup (tie-break) | 64.4% | 70.3% | 64.4% | 64.4% |
+| PanglaoDB lookup (tie-break) | 36.9% | 40.9% | 36.9% | 36.9% |
+| Random guess | 12.5% | - | - | - |
+
+- Lookups with fractional tie credit: CellMarker 61.0%, PanglaoDB 41.9% strict (they are deterministic,
+  so the 3 runs are identical).
+- **Run-to-run stability** (strict accuracy moved by at most 1.2 points between runs): per run (0 / 1 / 2): Claude 78.8 / 78.4 / 78.8%, Gemini
+  72.8 / 72.2 / 72.8%, GPT 71.2 / 70.0 / 70.3%. Same mapped answer in all 3 runs: Claude 83.4%, GPT
+  81.9%, Gemini 73.8% of questions; right in some runs and wrong in others: Claude 11.6%, GPT 10.9%,
+  Gemini 21.2%.
+- **Difficulty knobs**, strict, both formats and 3 runs pooled (n = 48 per cell; noise levels 2-6 pool
+  3 random draws, n = 144):
+
+  | Knob | Level | Claude | Gemini | GPT | CellMarker lookup |
+  |---|---|---|---|---|---|
+  | marker ranks shown | 1-10 | 88% | 85% | 85% | 62% |
+  | | 11-20 | 58% | 48% | 52% | 62% |
+  | | 21-30 | 65% | 52% | 52% | 50% |
+  | | 31-40 | 65% | 38% | 38% | 12% |
+  | genes shown | 1 | 50% | 52% | 48% | 100% |
+  | | 3 | 77% | 71% | 62% | 88% |
+  | | 5 | 77% | 75% | 69% | 75% |
+  | | 10 | 88% | 85% | 79% | 62% |
+  | random genes among 10 | 0 | 85% | 85% | 79% | 62% |
+  | | 2 | 87% | 88% | 81% | 62% |
+  | | 4 | 82% | 70% | 77% | 62% |
+  | | 6 | 77% | 70% | 65% | 71% |
+  | ribosomal/MT genes removed | off | 85% | 88% | 83% | 62% |
+  | | on | 98% | 90% | 94% | 62% |
+
+- **Ribosomal filter and the CD4 cluster:** the CD4 T cluster's top-10 markers are ribosomal genes.
+  Lenient score on that cluster without / with the ribosomal/MT filter (n = 6 each: 2 formats x 3
+  runs; small): Claude 0.50 / 0.92, Gemini
+  1.00 / 0.83, GPT 0.00 / 1.00, CellMarker lookup 1.00 / 1.00.
+- Cost (logged): Claude $2.24, Gemini $3.46, GPT $5.04 (960 answers each).
+
 ## Task 1 data (Hao 2021)
 
 - CELLxGENE dataset "nygc multimodal pbmc" (Hao et al. 2021, 161,764 cells, `celltype.l2` labels).
@@ -34,9 +95,10 @@ Models are compared only on (question, run) pairs answered by all three models: 
 
 ## Judge validation
 
-- **Test set** (`src/test_judge.py`): 34 hand-written answer strings with known labels. The final judge
-  scored 34/34, 33/34 and 31/34 on three repeated runs (96% overall). Residual misses are almost all
-  "proliferating/cycling NK cells" mapped to NK or NK_CD56bright.
+- **Test set** (`src/test_judge.py`): hand-written answer strings with known labels. With 34 cases the
+  judge scored 34/34, 33/34 and 31/34 on three repeated runs (96% overall); residual misses were almost
+  all "proliferating/cycling NK cells" mapped to NK or NK_CD56bright. Extended to 41 cases on 2026-09-28
+  for the "likely" rule (below); latest run 40/41, the miss being the open "memory/effector" case.
 - **Hand-check, before the fix:** 30 randomly sampled judge decisions (distinct answers, model names
   hidden; `results/hao_judge_check.csv`) were checked by hand. **The judge agreed on 27/30.** The 3
   disagreements:
@@ -56,6 +118,23 @@ Models are compared only on (question, run) pairs answered by all three models: 
   Only cached decisions the new rules could affect were re-judged (561 of 822 distinct answers
   containing "cytotoxic", "effector" or a hedge word); the other 261 were reused. After the fix all 3
   hand-check disagreements are labelled as the hand-check says.
+- **"likely" rule (decided 2026-09-28):** "likely X" (or "probably X") counts as the answer, so X is
+  judged, e.g. "CD4 T cell (likely naive)" -> CD4 Naive. "possibly X" and "X or Y" / "X/Y" alternatives
+  are ignored and only the primary answer is judged; if "likely" introduces alternatives ("likely CD8+
+  central/effector memory"), only what they share counts (-> CD8 T cell (subtype unclear)).
+  - Check against how the judge had actually scored: it was inconsistent - e.g. "B cells (likely naive
+    B cells)" -> B naive (likely counted) but "CD4 T cell (likely naive)" -> CD4 T cell (subtype unclear)
+    (likely ignored). All 274 cached answers containing "likely"/"probably" were re-judged under the
+    written rule; 33 of 1,114 distinct labels changed.
+  - Effect (600 Hao questions): plain Claude strict 32.5% -> 32.7%, lenient 54.9% -> 54.7%; GPT-5.6
+    strict 27.2% -> 27.0%, lenient 47.8% -> 47.5%; 96-question subset, plain Claude lenient 53.6% ->
+    52.6%. Gemini, the agents and the lookups are unchanged. All numbers in this file use the new rule;
+    the "Effect of the fix" table above is historical (the state after the earlier fix).
+  - **Not yet done:** answers with "/" or "or" alternatives but no "likely" (509 distinct answers) still
+    carry labels from the earlier rule text, which named "or Y" but not "X/Y"; some are inconsistent
+    (e.g. three "effector/central memory CD8" variants -> CD8 TCM, one -> CD8 T cell (subtype unclear)).
+    Re-judging them was interrupted when the Anthropic credit ran out; their previous labels were
+    restored, so every score here is from one consistent cache state.
 - **Effect of the fix on accuracy** (same 600 questions per model):
 
   | Model | Strict before | Strict after | Change | Lenient change | Labels changed | Right/wrong flips |
@@ -104,9 +183,9 @@ Results (Hao, same 600 questions per method, 300 per format, strict):
 |---|---|---|
 | CellMarker lookup, tie-break | 28.7% | 28.7% |
 | CellMarker lookup, fractional | 27.5% | 27.5% |
-| Claude Sonnet 5 | 28.0% | 37.0% |
+| Claude Sonnet 5 | 28.0% | 37.3% |
 | Gemini 3.8 Flash | 22.0% | 37.7% |
-| GPT-5.6 Terra | 21.7% | 32.7% |
+| GPT-5.6 Terra | 21.3% | 32.7% |
 | PanglaoDB lookup, tie-break | 16.0% | 16.0% |
 | PanglaoDB lookup, fractional | 16.3% | 16.3% |
 | Random guess | 3.3% | 3.3% |
@@ -118,8 +197,8 @@ PBMC3k (8 types), strict: CellMarker 64.4% / 61.0%, PanglaoDB 36.9% / 41.9% (tie
 
 Statement of the gap: with gene symbols, the three LLMs score 4.0-9.0 points above the CellMarker
 lookup (tie-break) and 5.2-10.2 points above it (fractional). With Ensembl IDs, Claude scores 0.7
-points below the lookup (tie-break) and 0.5 points above it (fractional); Gemini and GPT score 5.5-7.0
-points below it (5.5-5.8 fractional, 6.7-7.0 tie-break). Each LLM loses 9.0-15.7 points when the same genes are given as
+points below the lookup (tie-break) and 0.5 points above it (fractional); Gemini and GPT score 5.5-7.3
+points below it (5.5-6.2 fractional, 6.7-7.3 tie-break). Each LLM loses 9.3-15.7 points when the same genes are given as
 Ensembl IDs instead of symbols; the lookup loses nothing, because it converts IDs to symbols first.
 
 ## Agent conditions (Hao, Claude only)
@@ -146,7 +225,7 @@ Ensembl IDs instead of symbols; the lookup loses nothing, because it converts ID
 
 | Condition | Strict | Lenient | Strict symbol | Strict Ensembl |
 |---|---|---|---|---|
-| plain Claude | 30.2% | 53.6% | 37.5% | 22.9% |
+| plain Claude | 30.2% | 52.6% | 37.5% | 22.9% |
 | CellMarker lookup | 27.1% | 46.9% | 27.1% | 27.1% |
 | generic agent | 31.2% | 54.2% | 35.4% | 27.1% |
 | specialist agent | 38.5% | 60.9% | 43.8% | 33.3% |
@@ -166,15 +245,15 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
 
 | | Strict | Lenient | Strict symbol | Strict Ensembl |
 |---|---|---|---|---|
-| plain Claude | 32.5% | 54.9% | 37.0% | 28.0% |
+| plain Claude | 32.7% | 54.7% | 37.3% | 28.0% |
 | CellMarker lookup (tie-break) | 28.7% | 46.2% | 28.7% | 28.7% |
 | specialist agent | 41.2% | 61.0% | 43.3% | 39.0% |
 
-- Paired (strict): specialist right & plain Claude wrong on 59 questions, the reverse on 7 (two-sided
-  sign test p = 2.4e-11); specialist right & lookup wrong on 90, the reverse on 15 (p = 3.3e-14).
+- Paired (strict): specialist right & plain Claude wrong on 58 questions, the reverse on 7 (two-sided
+  sign test p = 4.3e-11); specialist right & lookup wrong on 90, the reverse on 15 (p = 3.3e-14).
 - Strict by lineage (plain / lookup / specialist): B 44/32/50%, CD4 T 2/7/6%, CD8 T 8/0/12%, DC
-  39/25/56%, Mono 78/50/85%, NK 38/27/43%, other 70/68/75%, other T 18/47/42%.
-- Symbol vs Ensembl gap: specialist 4.3 points (43.3% vs 39.0%) vs 9.0 for plain Claude (37.0% vs 28.0%).
+  39/25/56%, Mono 78/50/85%, NK 38/27/43%, other 70/68/75%, other T 20/47/42%.
+- Symbol vs Ensembl gap: specialist 4.3 points (43.3% vs 39.0%) vs 9.3 for plain Claude (37.3% vs 28.0%).
 - 1.3 tool calls per question on average; $0.011 per question ($6.78 for the 600); 6.6 s mean latency.
 
 ### specialist_nudge — a SEPARATE condition, added AFTER the error analysis (post hoc)
@@ -201,12 +280,14 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
     **6 correctly** (strict); lenient mean on those 21 rose from 0.40 to 0.60.
   - Cost per question $0.016 vs $0.011; mean latency 8.0 s vs 5.9 s.
 
-## Open decision
+## Open decisions
 
-- **"likely X" is currently treated as part of the primary answer** in the hand-written test cases
-  (e.g. "Naive T cell (likely naive CD4+ T cell)" expected CD4 Naive), but the judge sometimes treats it
-  as a hedge and answers "T cell (subtype unclear)". The hand-check rule named only "possibly" and "or".
-  Decide whether "likely" is a hedge, then fix the test expectation or add it to the hedge list.
+- **"memory/effector":** your hand-check labelled "CD8+ memory/effector T cells (KLRB1+ GZMK+ subset,
+  possibly MAIT-like)" as CD8 TEM (reading "memory/effector" as effector memory). Under the strict
+  "X/Y alternatives are ignored" rule it would be CD8 T cell (subtype unclear), which is what the judge
+  now answers. The test set keeps the hand-check label until this is decided.
+- **Re-judge the "/" and "or" answers** under the current rule text (needs Anthropic credit, ~500
+  judge calls) - see the "likely" rule above.
 
 ---
 
@@ -350,3 +431,5 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | **Total logged** | **$31.94** |
 
 Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
+
+**Account totals (actual spend): [PLACEHOLDER - to be filled in from the Anthropic and OpenRouter accounts]**

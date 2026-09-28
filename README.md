@@ -56,16 +56,20 @@ them domain tools (gene lookups, marker databases, co-expression data) help or h
 | Method | Strict | Strict, symbols | Strict, Ensembl |
 |---|---|---|---|
 | Specialist agent (Claude + tools) | 41.2% | 43.3% | 39.0% |
-| Claude Sonnet 5 | 32.5% | 37.0% | 28.0% |
+| Claude Sonnet 5 | 32.7% | 37.3% | 28.0% |
 | Gemini 3.8 Flash | 29.8% | 37.7% | 22.0% |
-| GPT-5.6 Terra | 27.2% | 32.7% | 21.7% |
+| GPT-5.6 Terra | 27.0% | 32.7% | 21.3% |
 | CellMarker lookup (no LLM, tie-break) | 28.7% | 28.7% | 28.7% |
 | PanglaoDB lookup (no LLM, tie-break) | 16.0% | 16.0% | 16.0% |
 | Random guess | 3.3% | 3.3% | 3.3% |
 
-Specialist vs plain Claude, paired: right where Claude was wrong on 59 questions, the reverse on 7
-(sign test p = 2.4e-11). On the 96-question subset: generic web agent 31.2%, plain Claude 30.2%,
+Specialist vs plain Claude, paired: right where Claude was wrong on 58 questions, the reverse on 7
+(sign test p = 4.3e-11). On the 96-question subset: generic web agent 31.2%, plain Claude 30.2%,
 specialist 38.5%, specialist + nudge 42.7% (post hoc).
+
+**PBMC3k pilot** (8 broad cell types, 320 questions x 3 runs, keyword scoring): Claude Sonnet 5 78.6%,
+Gemini 3.8 Flash 72.6%, GPT-5.6 Terra 70.5%, CellMarker lookup 64.4%, random 12.5% strict; the same
+Ensembl drop appears (Gemini 82.1% with symbols vs 63.1% with Ensembl IDs).
 
 ![Task 1 accuracy](results/figures/task1_accuracy_600.png)
 ![Task 1 symbol vs Ensembl](results/figures/task1_symbol_vs_ensembl.png)
@@ -89,8 +93,8 @@ specialist 38.5%, specialist + nudge 42.7% (post hoc).
 ## Key findings - DRAFT (to be rewritten)
 
 1. **Domain tools help cell-type annotation.** The specialist agent reached 41.2% strict accuracy on the
-   600 Hao questions vs 32.5% for plain Claude and 28.7% for the CellMarker lookup it uses as a tool.
-2. **Ensembl IDs cost the plain LLMs 9.0-15.7 points; the tools remove most of that gap.** Plain models
+   600 Hao questions vs 32.7% for plain Claude and 28.7% for the CellMarker lookup it uses as a tool.
+2. **Ensembl IDs cost the plain LLMs 9.3-15.7 points; the tools remove most of that gap.** Plain models
    drop from symbols to Ensembl IDs (Gemini 37.7% -> 22.0%); the specialist drops only 4.3 points
    (43.3% -> 39.0%), and with Ensembl IDs a plain lookup (28.7%) is on par with plain Claude (28.0%).
 3. **Fine subtypes stay unsolved.** CD4 T subtypes reach only 2-7% strict for plain Claude, the lookup
@@ -104,8 +108,9 @@ specialist 38.5%, specialist + nudge 42.7% (post hoc).
 
 ## Limitations
 
-- **One run per question** for Task 1 on Hao and for Task 2 (repeat runs were only done on PBMC3k); n is
-  small for some comparisons (96-question subset, 60 matched-pair questions).
+- **One run per question** for Task 1 on Hao and for Task 2 (the PBMC3k pilot used 3 runs, and accuracy
+  moved by at most 1.2 points between runs); n is small for some comparisons (96-question subset, 60
+  matched-pair questions).
 - **The LLM judge is a Claude model scoring Claude and other models.** It is blind to the model and the
   true label, agreed with a 30-answer hand-check on 27/30 before its rules were tightened, scores 96% on
   a 34-case test set, and is not fully deterministic (re-judging changed 3.8% of labels, 0.3 points of
@@ -119,13 +124,16 @@ specialist 38.5%, specialist + nudge 42.7% (post hoc).
 - **One model per provider, one prompt, one cell line (K562).** GPT and Gemini were called through
   OpenRouter. Agents got no instructions on how to use tools (same prompt as plain models); the nudge is
   a post hoc exception. The generic web agent was only run on the 96-question subset.
-- The PBMC3k pilot is summarised in `failures.md`, not in `methods.md`.
+- The judge's handling of "X/Y" alternatives is not yet fully consistent (a re-judging pass was
+  interrupted when API credit ran out; see `methods.md`, open decisions).
 
 ## Future work
 
 - **Gene pairs:** Norman 2019 has 131 two-gene activations whose genes are all also activated alone -
   predict the combination from the singles, or detect genetic interactions.
-- **Task 3:** to be defined.
+- **Task 3:** an agent receives raw PBMC3k data and a Python sandbox, and must cluster and label cell
+  types from scratch; scored against expert labels. Tests end-to-end analysis rather than question
+  answering.
 - Agents that are told what tool outputs mean (e.g. that weak co-expression is not evidence of no
   effect), repeat runs, and more models per provider.
 
@@ -187,5 +195,6 @@ API spend logged per answer in the results files (US$):
 | Task 2, specialist agent | $1.55 |
 | **Total logged** | **$31.94** |
 
-Not included: LLM-judge calls, one-question tests, and runs discarded before cost logging was added
-(not measured; a few dollars).
+Not included: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
+
+**Account totals (actual spend): [PLACEHOLDER - to be filled in from the Anthropic and OpenRouter accounts]**

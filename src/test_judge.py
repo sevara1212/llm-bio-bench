@@ -41,6 +41,14 @@ CASES = {
     "CD8+ memory/effector T cells (KLRB1+ GZMK+ subset, possibly MAIT-like)": "CD8 TEM",
     "cytotoxic CD8+ T cell": "CD8 T cell (subtype unclear)",
     "CD8+ cytotoxic T cell": "CD8 T cell (subtype unclear)",
+    # "likely X" counts as the answer; "likely X/Y" alternatives are ignored:
+    "CD4 T cell (likely naive)": "CD4 Naive",
+    "B cells (likely naive B cells)": "B naive",
+    "T cell (likely CD8+ effector memory T cell)": "CD8 TEM",
+    "CD4+ T cells (likely Th2/regulatory T cell subset)": "CD4 T cell (subtype unclear)",
+    "Monocyte (possibly CD16+ non-classical)": "Monocyte (subtype unclear)",
+    "GZMK+ memory T cell (likely CD8+ central/effector memory)": "CD8 T cell (subtype unclear)",
+    "GZMK+ memory T cell (likely CD8+ effector/central memory)": "CD8 T cell (subtype unclear)",
     # rule 2: effector wording still maps to TEM
     "CD8+ effector T cells": "CD8 TEM",
     "CD8+ effector memory T cell": "CD8 TEM",

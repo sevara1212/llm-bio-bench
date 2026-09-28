@@ -9,8 +9,11 @@ The judge sees only the answer text - never which model wrote it, the true label
 so it maps wording, it doesn't grade. Each distinct answer string is judged once and cached in
 results/judge_cache_hao.json.
 
-Usage: python src/judge.py           judge answers not yet in the cache
-       python src/judge.py --fresh   ignore the cache and judge everything again in one pass
+Usage: python src/judge.py                    judge answers not yet in the cache
+       python src/judge.py --fresh            ignore the cache and judge everything again in one pass
+       python src/judge.py --rejudge REGEX    judge again the cached answers matching REGEX; each old
+                                              label is replaced only when its new label arrives
+The cache is saved every 20 decisions, so a crash (e.g. no API credit) loses at most 20.
 """
 import glob
 import json
@@ -115,8 +118,12 @@ specify a subtype -> CD8 T cell (subtype unclear).
 Be strict: only pick a fine type when the answer itself says it. Never pick one because it is the most
 common subtype.
 Judge the PRIMARY answer only: the cell type the answer commits to. Ignore hedges and alternatives such as
-"possibly X", "maybe X", "or Y", "X-like", "e.g. X" - never let a hedge pick the label. Words describing the
-cell's state (proliferating, cycling, naive, memory, effector) are part of the primary answer, not hedges.
+"possibly X", "maybe X", "or Y", "X/Y", "X-like", "e.g. X" - never let a hedge pick the label. Words describing
+the cell's state (proliferating, cycling, naive, memory, effector) are part of the primary answer, not hedges.
+"likely X" (or "probably X") is NOT a hedge: it counts as the answer, so judge X, e.g. "CD4 T cell (likely
+naive)" -> CD4 Naive. But if "likely" introduces alternatives ("likely X or Y", "likely X/Y"), those
+alternatives are ignored and only what they share is used: "memory T cell (likely CD8+ central/effector
+memory)" -> CD8 T cell (subtype unclear), because central vs effector is left open.
 Judge the wording only."""
 
 client = anthropic.Anthropic(timeout=60, max_retries=6)
@@ -153,17 +160,29 @@ def results_files():
             if "knob" in pd.read_csv(p, nrows=0).columns]
 
 
+def save(cache):
+    json.dump(cache, open(CACHE + ".tmp", "w"), indent=1, sort_keys=True)
+    os.replace(CACHE + ".tmp", CACHE)
+
+
 if __name__ == "__main__":
     fresh = "--fresh" in sys.argv
+    rejudge = sys.argv[sys.argv.index("--rejudge") + 1] if "--rejudge" in sys.argv else None
     cache = {} if fresh or not os.path.exists(CACHE) else json.load(open(CACHE))
     answers = set()
     for path in results_files():
         answers |= set(pd.read_csv(path).predicted.dropna().astype(str))
     ruled = {a for a in answers if rule_match(a)}
     todo = sorted(answers - ruled - set(cache))
+    if rejudge:
+        todo += sorted(a for a in set(cache) & answers - ruled if re.search(rejudge, a, re.I))
     print(f"{len(answers)} distinct answers: {len(ruled)} matched by rules, {len(todo)} to send to the judge")
+    changed = 0
     with ThreadPoolExecutor(8) as pool:
-        for answer, label in zip(todo, pool.map(judge, todo)):
+        for i, (answer, label) in enumerate(zip(todo, pool.map(judge, todo)), 1):
+            changed += cache.get(answer, label) != label
             cache[answer] = label
-    json.dump(cache, open(CACHE, "w"), indent=1, sort_keys=True)
-    print(f"Saved {len(cache)} judgements to {CACHE}")
+            if i % 20 == 0:
+                save(cache)
+    save(cache)
+    print(f"Saved {len(cache)} judgements to {CACHE} ({changed} existing labels changed)")
