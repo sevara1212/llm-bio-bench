@@ -164,3 +164,41 @@ hbar({k: t2.at[k, "said_no_change_on_up_down"] for k in llms + bases},
      "Share of no_change answers on the 134 questions whose true label is up or down (67 each). "
      "Lower is better; 0% means the method always commits to a direction.",
      "share answered no_change", f"{OUT}/task2_no_change_share.png", xmax=1.1)
+
+# ---- Task 3: end-to-end analysis agents, one dot per run ------------------------------------------
+if os.path.exists("results/task3/task3_scores.csv"):
+    t3 = pd.read_csv("results/task3/task3_scores.csv")
+    T3N = {"claude": "Claude Sonnet 5", "gpt": "GPT-5.6 Terra", "gemini": "Gemini 3.8 Flash"}
+    order3 = [k for k in ["claude", "gemini", "gpt"] if k in set(t3.model_key)]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.2), facecolor=SURFACE, sharey=True)
+    for ax, (col, xlabel) in zip(axes, [("strict", "per-cell accuracy (strict)"), ("ari_labels", "ARI vs expert clusters")]):
+        ax.set_facecolor(SURFACE)
+        for i, k in enumerate(order3):
+            d = t3[t3.model_key == k]
+            ok, bad = d[d.status == "ok"], d[d.status != "ok"]
+            jitter = [(j - (len(ok) - 1) / 2) * 0.05 for j in range(len(ok))]
+            ax.scatter(ok[col].fillna(0), [i + y for y in jitter], s=70, color=COLOR[T3N[k]], edgecolor=SURFACE,
+                       linewidth=2, zorder=3)
+            if len(bad):  # failed runs (no labels.csv) are drawn at 0 as open markers
+                ax.scatter([0] * len(bad), [i] * len(bad), s=70, facecolor=SURFACE, edgecolor=COLOR[T3N[k]], linewidth=2, zorder=3)
+            ax.text(1.02, i, f"median {ok[col].median():.2f}" if len(ok) else "", va="center", fontsize=9, color=TEXT_2,
+                    transform=ax.get_yaxis_transform())
+        ax.set_yticks(range(len(order3)), [T3N[k] for k in order3])
+        if ax is axes[0]:  # the y axis is shared: invert it once, not once per panel
+            ax.invert_yaxis()
+        ax.set_xlim(0, 1.0)
+        ax.grid(axis="x", color=GRID, linewidth=1)
+        ax.set_axisbelow(True)
+        for side in ("top", "right", "left"):
+            ax.spines[side].set_visible(False)
+        ax.tick_params(length=0)
+        ax.set_xlabel(xlabel)
+    n_runs = t3.groupby("model_key").size().max()
+    fig.tight_layout(w_pad=6)
+    titles(fig, axes[0], "Task 3: end-to-end PBMC3k analysis by an agent",
+           f"Each dot is one run (up to {n_runs} per model): raw counts -> QC, normalisation, clustering, markers, labels, "
+           "scored against the expert labels. Open dots at 0 = run without labels.csv; medians are over runs that "
+           "produced labels.csv.")
+    fig.savefig(f"{OUT}/task3_runs.png", dpi=160, facecolor=SURFACE)
+    plt.close(fig)
+    print("saved", f"{OUT}/task3_runs.png")

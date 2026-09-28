@@ -70,6 +70,12 @@ for cluster, row in expr.iterrows():
 labels = pd.DataFrame(labels)
 labels.to_csv("data/pbmc_labels.csv", index=False)
 
+# Per-cell answer key for Task 3 (cells that pass this pipeline's QC, with cluster and cell type).
+cluster_type = labels.set_index("cluster").cell_type
+pd.DataFrame({"barcode": adata.obs_names, "cluster": adata.obs.leiden.astype(str).values,
+              "cell_type": adata.obs.leiden.astype(str).map(cluster_type).values}
+             ).to_csv("data/pbmc3k_expert_cells.csv", index=False)
+
 print(labels.to_string(index=False))
 print("\nTop 5 markers per cluster:")
 print(names.head(5).to_string())

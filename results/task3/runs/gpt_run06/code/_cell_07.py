@@ -1,0 +1,21 @@
+import scanpy as sc, pandas as pd, numpy as np
+p='filtered_gene_bc_matrices/hg19/'
+adata=sc.read_10x_mtx(p,var_names='gene_symbols',cache=False)
+adata.var_names_make_unique()
+adata.var['mt']=adata.var_names.str.startswith('MT-')
+sc.pp.calculate_qc_metrics(adata,qc_vars=['mt'],inplace=True,log1p=False)
+print(adata,adata.obs[['total_counts','n_genes_by_counts','pct_counts_mt']].describe().round(2))
+# filtered 10x matrix; remove low quality only
+adata=adata[(adata.obs.n_genes_by_counts>=200)&(adata.obs.pct_counts_mt<10)].copy()
+print('QC retained',adata.n_obs)
+adata.layers['counts']=adata.X.copy()
+sc.pp.normalize_total(adata,target_sum=1e4); sc.pp.log1p(adata)
+sc.pp.highly_variable_genes(adata,n_top_genes=2000,flavor='seurat')
+print('HVG',adata.var.highly_variable.sum())
+sc.pp.scale(adata,max_value=10)
+sc.tl.pca(adata,n_comps=50,use_highly_variable=True,svd_solver='arpack',random_state=0)
+sc.pp.neighbors(adata,n_neighbors=15,n_pcs=30,random_state=0)
+sc.tl.leiden(adata,resolution=.6,key_added='leiden',random_state=0)
+sc.tl.umap(adata,random_state=0)
+print(adata.obs.leiden.value_counts().sort_index())
+adata.write('pbmc_qc_clustered.h5ad')

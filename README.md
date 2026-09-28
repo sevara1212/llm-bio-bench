@@ -36,6 +36,11 @@ them domain tools (gene lookups, marker databases, co-expression data) help or h
   no_change) built from pseudobulk differential expression, with no_change targets matched on
   expression level; 30 expression-matched up/down pairs isolate direction from expression level.
 
+- **Task 3 - end-to-end analysis.** An agent gets a sandboxed folder with only the raw PBMC3k counts and a
+  `run_python` tool (no network, no access outside the folder, 60 s per execution, at most 15 executions,
+  $1.50 per run) and must do QC, normalisation, clustering, marker finding and labelling itself, saving
+  labels.csv. Scored per cell against the tutorial-pipeline labels (8 types) and by ARI; 7 runs per model.
+
 ## Conditions
 
 | Condition | Task 1 | Task 2 |
@@ -90,6 +95,20 @@ Ensembl drop appears (Gemini 82.1% with symbols vs 63.1% with Ensembl IDs).
 ![Task 2 direction on matched pairs](results/figures/task2_direction_matched.png)
 ![Task 2 no_change share](results/figures/task2_no_change_share.png)
 
+### Task 3 (raw PBMC3k counts -> labels, 7 runs per model, all via OpenRouter)
+
+| Model | Runs with labels | Strict mean (SD) | ARI mean | Steps mean | Cost per run (est.) |
+|---|---|---|---|---|---|
+| Claude Sonnet 5 | 7/7 | 95.3% (2.3%) | 0.87 | 12.1 | $0.191 |
+| GPT-5.6 Terra | 7/7 | 91.1% (3.5%) | 0.75 | 9.7 | $0.148 |
+| Gemini 3.8 Flash | 6/7 | 53.9% (37.0%) | 0.81 | 15.0 | $0.077 |
+
+The most common error was in clustering: CD8 T cells partly merged into a CD4-majority cluster (10 of
+21 runs) or merged with NK cells into one cluster named NK (5 runs). Gemini used all 15 steps in every run,
+largely re-running the pipeline after assuming variables persisted between calls.
+
+![Task 3 runs](results/figures/task3_runs.png)
+
 ## Key findings - DRAFT (to be rewritten)
 
 1. **Domain tools help cell-type annotation.** The specialist agent reached 41.2% strict accuracy on the
@@ -131,9 +150,9 @@ Ensembl drop appears (Gemini 82.1% with symbols vs 63.1% with Ensembl IDs).
 
 - **Gene pairs:** Norman 2019 has 131 two-gene activations whose genes are all also activated alone -
   predict the combination from the singles, or detect genetic interactions.
-- **Task 3:** an agent receives raw PBMC3k data and a Python sandbox, and must cluster and label cell
-  types from scratch; scored against expert labels. Tests end-to-end analysis rather than question
-  answering.
+- **Task 3 on less famous data:** PBMC3k is the scanpy/Seurat tutorial dataset and its labels come from
+  the tutorial pipeline, so models may have memorised both (Claude and Gemini reproduced the tutorial QC
+  thresholds exactly). Repeat Task 3 on a dataset without a well-known tutorial.
 - Agents that are told what tool outputs mean (e.g. that weak co-expression is not evidence of no
   effect), repeat runs, and more models per provider.
 
@@ -177,6 +196,14 @@ python src/run_agent_task2.py
 python src/task2_score.py && python src/task2_agent_analysis.py
 ```
 
+**Task 3** (macOS: uses `sandbox-exec`; needs `OPENROUTER_API_KEY`)
+
+```bash
+python src/prepare_data.py                       # also writes the per-cell answer key data/pbmc3k_expert_cells.csv
+python src/task3_agent.py --runs 7               # 7 runs per model; stops if the OpenRouter balance is below $3
+python src/task3_score.py
+```
+
 **Figures:** `python src/make_figures.py` writes `results/figures/`.
 
 All runs are resumable (answers are saved as they come in) and `--test` flags ask one question without
@@ -193,7 +220,8 @@ API spend logged per answer in the results files (US$):
 | Task 1, agents (generic, specialist incl. all 600, nudge) | $9.19 |
 | Task 2, plain models | $1.80 |
 | Task 2, specialist agent | $1.55 |
-| **Total logged** | **$31.94** |
+| Task 3, 21 agent runs (estimated at list prices) | $2.91 |
+| **Total logged** | **$34.85** |
 
 Not included: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
 

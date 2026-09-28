@@ -419,6 +419,129 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 
 ---
 
+# Task 3: end-to-end analysis by an agent (PBMC3k, raw counts)
+
+## Setup (`src/task3_agent.py`, `src/task3_sandbox.py`)
+- **Input:** each run gets a fresh folder containing only the raw PBMC3k counts as a 10x
+  `filtered_gene_bc_matrices/hg19/` folder (matrix.mtx, genes.tsv, barcodes.tsv; 2,700 cells x 32,738 genes),
+  written from scanpy's cached `pbmc3k_raw.h5ad` - the same raw input `prepare_data.py` starts from.
+- **Agent:** LangGraph prebuilt ReAct agent (`create_react_agent`) with one tool, `run_python(code) -> output`.
+  All three models via OpenRouter (`anthropic/claude-sonnet-5`, `openai/gpt-5.6-terra`,
+  `google/gemini-3.8-flash`; provider and model recorded per run), max_tokens 8,000, no temperature set,
+  no system prompt. The only instruction, identical for every model: "This folder contains a raw single-cell RNA-seq count matrix from human peripheral blood mononuclear cells (PBMCs). Perform standard quality control, normalisation and clustering, identify marker genes, and assign a cell type label to every cluster. Save labels.csv with columns barcode,cell_type. Work step by step and check your outputs."
+- **Tool description** (also identical): each call runs in a new Python process with a 60-second limit,
+  variables do not persist (save intermediate results to files), scanpy / anndata / pandas / numpy / scipy /
+  leidenalg installed, no internet. Each output ends with "[execution k/15, exit code X; n left]".
+- **Limits:** at most 15 code executions ("steps") per run; a run stops at $1.50 (checked after every model
+  reply, from token counts at OpenRouter list prices); before every run the live OpenRouter balance was
+  checked and all runs would stop below $3 (never triggered). A run without labels.csv counts as failed.
+- **Runs:** 1 pilot run per model, then 6 more (7 per model, 21 in total), interleaved across models, each
+  saved as soon as it ended.
+
+## Sandbox rules
+- macOS `sandbox-exec` (Seatbelt) profile, deny by default: read access only to the Python installation,
+  `/opt/homebrew` (installed software and its libraries), the project's `venv` and the run's own folder;
+  write access only inside the run folder; all network access denied; a fresh process per execution with a
+  minimal environment (no API keys, HOME = the run folder); the process group is killed after 60 s.
+- Tested before any model run: reading the answer key, the project `.env`, the home and project folders,
+  other runs' folders, running `/bin/cat` on the answer key, writing outside the folder, raw sockets, HTTPS
+  and DNS were all blocked; the scanpy pipeline ran (15 s).
+- Run folders are under `/private/tmp/llmbio_task3_runs/`, outside the project: anndata's settings loader
+  searches parent folders for a `.env` file and, inside the project, found the API-key file (the read was
+  blocked, but it crashed the import).
+- Output shown to the agent is truncated to ~50 lines / 4,000 characters (first 20 + last 30 lines); the
+  untruncated output (up to 20,000 characters) is kept in the trajectory. joblib prints a one-line warning
+  in every execution because the sandbox blocks its shared-memory semaphores (it falls back to serial mode).
+- Trajectories: `results/task3/runs/<run_id>/trajectory.json` (every code cell, its full and shown output,
+  the model's text, tokens, cost), plus `code/`, `labels.csv` and `agent_obs_*.csv` (the obs table of every
+  .h5ad the agent saved). Hidden reasoning was not returned by OpenRouter for these models.
+
+## Scoring (`src/task3_score.py`)
+- **Answer key:** the per-cell labels of this project's PBMC3k pipeline (`prepare_data.py`, saved as
+  `data/pbmc3k_expert_cells.csv`: 2,638 cells after the tutorial QC, 8 Leiden clusters with tutorial cell
+  types). These are tutorial-derived labels, not an independent expert annotation.
+- Only cells present in both the agent's labels.csv and the answer key are scored; coverage = share of the
+  2,638 expert cells the agent kept (100% in every successful run).
+- Free-text labels are mapped to the 8 types with the Task 1 PBMC3k keyword rules (`normalize_pbmc`,
+  `score_pbmc`): strict = exact type, lenient = 0.5 for "T cell" on CD4/CD8 or "monocyte" on CD14/FCGR3A.
+- **ARI:** adjusted Rand index of the partition given by the agent's labels vs the 8 expert Leiden clusters
+  (splitting a type, e.g. CD4 naive vs memory, lowers ARI even when both labels are correct).
+- **Diagnosis:** for every expert type < 80% correct, the wrongly labelled cells are located in the
+  agent's own clusters (the saved cluster column that best matches its labels.csv): wrong cells in clusters
+  dominated by another type, or in a mixed cluster (second type >= 25%), = merged in clustering; wrong cells
+  in a pure cluster of their own type = right cluster, wrong name. Runs that saved no clusters, and the
+  failed run, were classified by reading their trajectories.
+
+## Results (21 runs)
+
+| Run | Status | Cells kept | Strict | Lenient | ARI | Labels | Steps | Code errors | Cost (est.) | Time | Where it went wrong |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| claude_run01 | ok | 2638 | 97.1% | 97.1% | 0.94 | 8 | 14 | 2 | $0.225 | 139 s | none (all types >= 80% correct) |
+| gpt_run01 | ok | 2700 | 88.7% | 88.7% | 0.58 | 9 | 11 | 1 | $0.186 | 116 s | clustering: switched to Leiden resolution 1.0 at step 6 (at 0.6 the DCs were separate), merging all 36 DCs into the non-classical monocyte cluster |
+| gemini_run01 | ok | 2638 | 93.1% | 93.1% | 0.63 | 9 | 15 | 1 | $0.080 | 140 s | clustering: 85/339 CD8 T cells in a CD4-majority cluster |
+| claude_run02 | ok | 2638 | 93.0% | 93.0% | 0.87 | 8 | 13 | 0 | $0.231 | 178 s | clustering: 71/339 CD8 T cells in a CD4-majority cluster |
+| gpt_run02 | ok | 2700 | 93.5% | 93.5% | 0.87 | 8 | 8 | 0 | $0.129 | 124 s | clustering: 77/339 CD8 T cells in a CD4-majority cluster |
+| gemini_run02 | ok | 2638 | 93.0% | 93.0% | 0.87 | 8 | 15 | 4 | $0.063 | 125 s | clustering: 71/339 CD8 T cells in a CD4-majority cluster |
+| claude_run03 | ok | 2638 | 97.1% | 97.1% | 0.94 | 8 | 10 | 0 | $0.138 | 120 s | none |
+| gpt_run03 | ok | 2700 | 91.6% | 91.6% | 0.66 | 8 | 7 | 0 | $0.093 | 126 s | clustering: 110/339 CD8 T cells in a CD4-majority cluster; all 13 megakaryocytes merged into the FCGR3A monocyte cluster |
+| gemini_run03 | ok | 2638 | 20.9% | 55.5% | 0.82 | 6 | 15 | 3 | $0.078 | 187 s | step budget: re-ran the pipeline in most steps (3 NameErrors, state assumed to persist); final coarse clustering (resolution 0.5, 6 clusters) at step 14 merged CD8 T + NK ('NK cells') and left CD4 as generic 'T cells', monocytes unsplit |
+| claude_run04 | ok | 2638 | 97.1% | 97.1% | 0.94 | 8 | 10 | 0 | $0.138 | 118 s | none |
+| gpt_run04 | ok | 2700 | 94.2% | 94.2% | 0.65 | 10 | 11 | 1 | $0.187 | 144 s | clustering: 87/339 CD8 T cells in a CD4-majority cluster |
+| gemini_run04 | ok | 2638 | 42.2% | 64.5% | 0.84 | 7 | 15 | 4 | $0.080 | 184 s | step budget: 3 NameErrors, labels written at step 15; CD8 T + NK merged ('NK cells'), CD4 left as generic 'T cells' |
+| claude_run05 | ok | 2638 | 97.1% | 97.1% | 0.94 | 8 | 11 | 1 | $0.154 | 116 s | none |
+| gpt_run05 | ok | 2700 | 92.6% | 92.6% | 0.85 | 8 | 11 | 0 | $0.173 | 105 s | clustering: 85/339 CD8 T cells in a CD4-majority cluster |
+| gemini_run05 | ok | 2638 | 84.2% | 84.2% | 0.84 | 7 | 15 | 5 | $0.066 | 127 s | clustering: CD8 T + NK merged in one cluster (59% / 37%), named 'NK cells'; labels written at step 15 |
+| claude_run06 | ok | 2638 | 93.0% | 93.0% | 0.87 | 8 | 14 | 0 | $0.245 | 156 s | clustering: 71/339 CD8 T cells in a CD4-majority cluster |
+| gpt_run06 | ok | 2700 | 84.3% | 84.3% | 0.84 | 7 | 10 | 2 | $0.125 | 99 s | clustering: CD8 T + NK merged in one cluster (58% / 35%), named 'NK cell' from shared cytotoxic markers |
+| gemini_run06 | failed | - | 0.0% | 0.0% | - | - | 15 | 4 | $0.098 | 164 s | ran out of steps: 15/15 used, 4 code errors (incl. NameErrors), no labels.csv; its final message nevertheless claimed the analysis was complete |
+| claude_run07 | ok | 2638 | 92.5% | 92.5% | 0.62 | 9 | 13 | 0 | $0.208 | 138 s | clustering: 84/339 CD8 T cells in a CD4-majority cluster |
+| gpt_run07 | ok | 2700 | 92.9% | 92.9% | 0.78 | 9 | 10 | 2 | $0.143 | 90 s | clustering: 77/339 CD8 T cells in a CD4-majority cluster |
+| gemini_run07 | ok | 2638 | 44.0% | 66.2% | 0.86 | 7 | 15 | 5 | $0.073 | 150 s | step budget: 3 NameErrors, labels written at step 15; CD8 T + NK merged ('NK cells'), CD4 left as generic 'T cells' |
+
+### Consistency across runs (7 per model; the failed run counts as 0)
+
+| Model | Runs with labels | Strict mean (SD) | Strict range | Lenient mean | ARI mean (SD) | ARI range | Labels range | Steps mean | Code errors per run | Cost per run (est.) |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Claude Sonnet 5 | 7/7 | 95.3% (2.3%) | 92.5%-97.1% | 95.3% | 0.87 (0.12) | 0.62-0.94 | 8-9 | 12.1 | 0.4 | $0.191 |\n| GPT-5.6 Terra | 7/7 | 91.1% (3.5%) | 84.3%-94.2% | 91.1% | 0.75 (0.12) | 0.58-0.87 | 7-10 | 9.7 | 0.9 | $0.148 |\n| Gemini 3.8 Flash | 6/7 | 53.9% (37.0%) | 0.0%-93.1% | 65.2% | 0.81 (0.09) | 0.63-0.87 | 6-9 | 15.0 | 3.7 | $0.077 |
+
+## Failure classes
+- **Clustering - CD8 T cells partly merged into a CD4-majority cluster:** 10 of 21 runs (Claude 3, GPT 5,
+  Gemini 2), 71-110 of the 339 CD8 T cells each time.
+- **Clustering - CD8 T and NK cells merged into one cluster, named NK:** 5 runs (GPT 1, Gemini 4). The
+  mixed cluster (~430-445 cells, about 58-59% CD8 T / 35-37% NK where the agent's clusters were saved) was
+  named after the cytotoxic markers the two types share (NKG7, GZMA, CST7, CCL5), so ~250-270 CD8 T cells
+  were called NK.
+- **Clustering - other merges:** dendritic cells into non-classical monocytes (GPT run 1, caused by the
+  choice of resolution 1.0 at step 6); megakaryocytes into FCGR3A monocytes (GPT run 3).
+- **Labelling too coarse:** 3 Gemini runs labelled all CD4 T cells as generic "T cells" (lenient credit
+  only), in each case in a final pipeline written at step 14-15.
+- **Ran out of steps / did not keep state:** Gemini used all 15 steps in every run and had 26 code errors
+  in total (3.7 per run, mostly `NameError`s from assuming variables persisted between calls, despite the
+  tool description), re-running the whole pipeline in most steps. One run (Gemini run 6) produced no
+  labels.csv and still ended with a message claiming the analysis was complete.
+- **QC:** never too strict (coverage 100%). GPT kept all 2,700 cells in every run (62 more than the
+  tutorial QC; e.g. run 1 removed 2 cells and re-assigned them by nearest neighbours) - looser than the
+  answer key but with no effect on accuracy here, because only shared cells are scored. Claude and Gemini
+  kept exactly the tutorial's 2,638 cells in every successful run (the tutorial thresholds: 200-2,500 genes,
+  < 5% mitochondrial counts).
+- **Normalisation and marker finding:** no failures traced to these. Every run used total-count
+  normalisation to 10,000 followed by log1p; where types were merged or misnamed, the markers the agent
+  printed were consistent with the (merged) cluster it had made.
+
+## Cost
+- Estimated from token counts at OpenRouter list prices: $2.91 for the 21 runs (Claude $1.34, GPT $1.04,
+  Gemini $0.54).
+- Actual OpenRouter balance change over the pilot and the 18 runs: $28.74 -> $26.41 ($2.33); the estimate
+  ignores provider prompt-caching discounts.
+
+## Limitations
+- **PBMC3k is a famous tutorial dataset** (the scanpy and Seurat introductory tutorial) and the answer key
+  is itself the tutorial pipeline's output; models may have memorised the workflow and its cell types.
+  Claude and Gemini reproduced the tutorial QC thresholds exactly in every successful run.
+- One dataset, one instruction, 7 runs per model; no temperature control; the step and cost limits shape
+  behaviour (Gemini's failures are mostly step-budget failures).
+- ARI compares with 8 tutorial clusters, so reasonable finer splits are penalised.
+
+---
+
 # Cost (logged per answer in the results files, US$)
 
 | Component | Cost |
@@ -428,7 +551,8 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | Task 1, agents (generic, specialist incl. all 600, nudge) | $9.19 |
 | Task 2, plain models | $1.80 |
 | Task 2, specialist agent | $1.55 |
-| **Total logged** | **$31.94** |
+| Task 3, 21 agent runs (estimated at list prices) | $2.91 |
+| **Total logged** | **$34.85** |
 
 Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
 
