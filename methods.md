@@ -2,6 +2,15 @@
 
 Working notes for the methods section. Numbers are from `results/scores_hao.csv` unless stated.
 
+## Task 1 data (Hao 2021)
+
+- CELLxGENE dataset "nygc multimodal pbmc" (Hao et al. 2021, 161,764 cells, `celltype.l2` labels).
+  Doublets are dropped, leaving 30 cell types; up to 500 cells per type are subsampled (seed 0) and the
+  authors' labels are used directly (no re-clustering). Top-50 markers per type from a Wilcoxon test on
+  log-normalised counts (`src/prepare_hao.py`).
+- Questions (`src/make_questions.py hao`): 30 types x 20 question variants x 2 gene formats = 1,200;
+  the 600 non-noise questions are the main comparison.
+
 ## Scoring free-text answers (Hao 2021, 30 cell types)
 
 Each model answer (free text) is mapped to one of the 30 Hao `celltype.l2` labels, a lineage-only
@@ -133,6 +142,21 @@ Ensembl IDs instead of symbols; the lookup loses nothing, because it converts ID
 - Tool quirk found: MyGene.info returns "TARP" for ENSG00000211689 (TRGC1, a gamma-delta T marker);
   in the one affected question the agent still answered correctly.
 
+### Results on the 96-question subset (`score_agents.py`, one run each, n = 96: 48 symbol, 48 Ensembl)
+
+| Condition | Strict | Lenient | Strict symbol | Strict Ensembl |
+|---|---|---|---|---|
+| plain Claude | 30.2% | 53.6% | 37.5% | 22.9% |
+| CellMarker lookup | 27.1% | 46.9% | 27.1% | 27.1% |
+| generic agent | 31.2% | 54.2% | 35.4% | 27.1% |
+| specialist agent | 38.5% | 60.9% | 43.8% | 33.3% |
+| specialist_nudge (post-hoc) | 42.7% | 64.6% | 41.7% | 43.8% |
+
+- Paired (strict), specialist vs plain Claude: 10 vs 2 (sign test p = 0.039); vs CellMarker lookup:
+  17 vs 6 (p = 0.035); vs generic agent: 7 vs 0 (p = 0.016).
+- The generic agent called no tool on 84% of questions.
+- The nudge row is post hoc (see below).
+
 ### Specialist on all 600 non-noise Hao questions
 
 The original specialist (no nudge, unchanged) was then run on all 600 non-noise Hao questions - the set
@@ -150,6 +174,7 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
   sign test p = 2.4e-11); specialist right & lookup wrong on 90, the reverse on 15 (p = 3.3e-14).
 - Strict by lineage (plain / lookup / specialist): B 44/32/50%, CD4 T 2/7/6%, CD8 T 8/0/12%, DC
   39/25/56%, Mono 78/50/85%, NK 38/27/43%, other 70/68/75%, other T 18/47/42%.
+- Symbol vs Ensembl gap: specialist 4.3 points (43.3% vs 39.0%) vs 9.0 for plain Claude (37.0% vs 28.0%).
 - 1.3 tool calls per question on average; $0.011 per question ($6.78 for the 600); 6.6 s mean latency.
 
 ### specialist_nudge — a SEPARATE condition, added AFTER the error analysis (post hoc)
@@ -310,3 +335,18 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
   | baseline: expression level only | 134/134, 73.1% | 60/60, 50.0% |
 - Direction biases (what the models answered on true up / true down questions): Claude answered up
   21 / 17 times and down 3 / 7; GPT and Gemini answered down more than up in both.
+
+---
+
+# Cost (logged per answer in the results files, US$)
+
+| Component | Cost |
+|---|---|
+| Task 1, PBMC3k pilot (3 models x 3 runs) | $10.74 |
+| Task 1, Hao, plain models | $8.65 |
+| Task 1, agents (generic, specialist incl. all 600, nudge) | $9.19 |
+| Task 2, plain models | $1.80 |
+| Task 2, specialist agent | $1.55 |
+| **Total logged** | **$31.94** |
+
+Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
