@@ -40,6 +40,7 @@ parser.add_argument("--dataset", default="pbmc", choices=["pbmc", "hao", "task2"
 parser.add_argument("--skip-knob", action="append", default=[],
                     help="leave out a difficulty knob, e.g. --skip-knob noise (repeatable)")
 parser.add_argument("--test", action="store_true", help="ask one question, print everything, save nothing")
+parser.add_argument("--ids", help="JSON file with an 'ids' list: ask only these questions (e.g. data/agent_subset_hao.json)")
 parser.add_argument("--provider", choices=["anthropic", "google", "openrouter"],
                     help="override the provider picked from the model prefix, e.g. send google/... via openrouter")
 args = parser.parse_args()
@@ -138,6 +139,9 @@ def ask(q, run, test=False):
 
 QUESTIONS_FILE = "data/task2_questions.json" if DATASET == "task2" else f"data/questions_{DATASET}.json"
 questions = [q for q in json.load(open(QUESTIONS_FILE)) if q.get("knob") not in args.skip_knob]
+if args.ids:
+    wanted = set(json.load(open(args.ids))["ids"])
+    questions = [q for q in questions if q["id"] in wanted]
 
 if args.test:
     print(f"TEST: {MODEL} -> provider {PROVIDER}, API model name {API_MODEL!r}, question {questions[0]['id']}\n")

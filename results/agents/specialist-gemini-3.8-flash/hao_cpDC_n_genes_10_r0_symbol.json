@@ -1,0 +1,116 @@
+{
+ "condition": "specialist",
+ "model": "google/gemini-3.8-flash",
+ "question": {
+  "id": "hao_cpDC_n_genes_10_r0_symbol",
+  "dataset": "hao",
+  "cluster": "pDC",
+  "genes": [
+   "CCDC50",
+   "PPP1R14B",
+   "UGCG",
+   "TCF4",
+   "IRF7",
+   "IRF8",
+   "PLD4",
+   "SERPINF1",
+   "IL3RA",
+   "LILRA4"
+  ],
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "10",
+  "replicate": 0,
+  "answer": "pDC"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CCDC50, PPP1R14B, UGCG, TCF4, IRF7, IRF8, PLD4, SERPINF1, IL3RA, LILRA4",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: CCDC50, PPP1R14B, UGCG, TCF4, IRF7, IRF8, PLD4, SERPINF1, IL3RA, LILRA4"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "LILRA4",
+       "IL3RA",
+       "TCF4",
+       "IRF7"
+      ]
+     },
+     "id": "call_338066"
+    }
+   ],
+   "usage": {
+    "input_tokens": 336,
+    "output_tokens": 217,
+    "total_tokens": 553,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 173
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"LILRA4\":{\"symbol\":\"LILRA4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":3},{\"cell_type\":\"Dendritic cell\",\"rank\":14}]},\"IL3RA\":{\"symbol\":\"IL3RA\",\"n_cell_types\":11,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":1},{\"cell_type\":\"Eosinophil\",\"rank\":2},{\"cell_type\":\"Basophil\",\"rank\":3},{\"cell_type\":\"Dendritic cell\",\"rank\":5},{\"cell_type\":\"CD16+ dendritic cell\",\"rank\":7},{\"cell_type\":\"Intermediate monocyte\",\"rank\":7},{\"cell_type\":\"Myeloid dendritic cell\",\"rank\":7},{\"cell_type\":\"Monocyte derived dendritic cell\",\"rank\":9},{\"cell_type\":\"Non-classical monocyte\",\"rank\":10},{\"cell_type\":\"Granulocyte\",\"rank\":16},{\"cell_type\":\"Neutrophil\",\"rank\":16}]},\"TCF4\":{\"symbol\":\"TCF4\",\"n_cell_types\":2,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":5},{\"cell_type\":\"B cell\",\"rank\":48}]},\"IRF7\":{\"symbol\":\"IRF7\",\"n_cell_types\":1,\"cell_types\":[{\"cell_type\":\"Plasmacytoid dendritic cell\",\"rank\":21}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "call_338066"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\n  \"cell_type\": \"plasmacytoid dendritic cell\",\n  \"confidence\": 0.99\n}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 604,
+    "output_tokens": 134,
+    "total_tokens": 738,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 101
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "hao_cpDC_n_genes_10_r0_symbol",
+  "format": "symbol",
+  "knob": "n_genes",
+  "level": "10",
+  "replicate": 0,
+  "run": 0,
+  "provider": "openrouter",
+  "model": "google/gemini-3.8-flash",
+  "answer": "pDC",
+  "predicted": "plasmacytoid dendritic cell",
+  "confidence": 0.99,
+  "raw": "```json\n{\n  \"cell_type\": \"plasmacytoid dendritic cell\",\n  \"confidence\": 0.99\n}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 940,
+  "completion_tokens": 351,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00202125,
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 5.4
+ }
+}

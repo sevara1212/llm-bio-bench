@@ -1,0 +1,1 @@
+print(adata.obs[['total_counts', 'n_genes_by_counts', 'pct_counts_mt']].describe(percentiles=[0.01, 0.05, 0.1, 0.5, 0.9, 0.95, 0.99]))

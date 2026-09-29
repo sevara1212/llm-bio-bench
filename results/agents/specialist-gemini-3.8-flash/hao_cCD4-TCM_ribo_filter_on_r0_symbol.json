@@ -1,0 +1,151 @@
+{
+ "condition": "specialist",
+ "model": "google/gemini-3.8-flash",
+ "question": {
+  "id": "hao_cCD4-TCM_ribo_filter_on_r0_symbol",
+  "dataset": "hao",
+  "cluster": "CD4 TCM",
+  "genes": [
+   "IL7R",
+   "LTB",
+   "TPT1",
+   "LDHB",
+   "TRAC",
+   "MAL",
+   "EEF1A1",
+   "CD3D",
+   "TCF7",
+   "TRAT1"
+  ],
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "answer": "CD4 TCM"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: IL7R, LTB, TPT1, LDHB, TRAC, MAL, EEF1A1, CD3D, TCF7, TRAT1",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: IL7R, LTB, TPT1, LDHB, TRAC, MAL, EEF1A1, CD3D, TCF7, TRAT1"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "IL7R",
+       "MAL",
+       "TCF7",
+       "TRAT1",
+       "LTB"
+      ]
+     },
+     "id": "call_521833"
+    }
+   ],
+   "usage": {
+    "input_tokens": 328,
+    "output_tokens": 410,
+    "total_tokens": 738,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 364
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"IL7R\":{\"symbol\":\"IL7R\",\"n_cell_types\":27,\"cell_types\":[{\"cell_type\":\"Innate lymphoid cell\",\"rank\":1},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":1},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":1},{\"cell_type\":\"CD4+ T cell\",\"rank\":2},{\"cell_type\":\"Effector memory T cell\",\"rank\":2},{\"cell_type\":\"Memory T cell\",\"rank\":3},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":5},{\"cell_type\":\"CD4 T cell\",\"rank\":5},{\"cell_type\":\"T cell\",\"rank\":5},{\"cell_type\":\"Conventional T cell\",\"rank\":7},{\"cell_type\":\"Effector memory CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":8},{\"cell_type\":\"Central memory T cell\",\"rank\":8},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":8},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":9},{\"cell_type\":\"Naive T cell\",\"rank\":9},{\"cell_type\":\"Effector T cell\",\"rank\":10},{\"cell_type\":\"CD8+ T cell\",\"rank\":13},{\"cell_type\":\"M1 macrophage\",\"rank\":13},{\"cell_type\":\"Natural regulatory T cell\",\"rank\":15}]},\"MAL\":{\"symbol\":\"MAL\",\"n_cell_types\":7,\"cell_types\":[{\"cell_type\":\"Naive CD4 T cell\",\"rank\":4},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":12},{\"cell_type\":\"CD4+ T cell\",\"rank\":16},{\"cell_type\":\"Naive T cell\",\"rank\":21},{\"cell_type\":\"Naive CD8+ T cell\",\"rank\":24}]},\"TCF7\":{\"symbol\":\"TCF7\",\"n_cell_types\":12,\"cell_types\":[{\"cell_type\":\"Naive CD8 T cell\",\"rank\":2},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":3},{\"cell_type\":\"Naive CD8+ T cell\",\"rank\":4},{\"cell_type\":\"CD4 T cell\",\"rank\":6},{\"cell_type\":\"CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Naive T cell\",\"rank\":7},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":9},{\"cell_type\":\"CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":11},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":17},{\"cell_type\":\"T cell\",\"rank\":17},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":23}]},\"TRAT1\":{\"symbol\":\"TRAT1\",\"n_cell_types\":4,\"cell_types\":[{\"cell_type\":\"Conventional T cell\",\"rank\":12},{\"cell_type\":\"CD4+ T cell\",\"rank\":24},{\"cell_type\":\"T cell\",\"rank\":34},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":49}]},\"LTB\":{\"symbol\":\"LTB\",\"n_cell_types\":5,\"cell_types\":[{\"cell_type\":\"CD4+ T cell\",\"rank\":6},{\"cell_type\":\"Effector memory T cell\",\"rank\":9},{\"cell_type\":\"Memory CD4+ T cell\",\"rank\":24},{\"cell_type\":\"T cell\",\"rank\":28},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":32}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "call_521833"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Naive CD4+ T cell"
+     },
+     "id": "call_339462"
+    }
+   ],
+   "usage": {
+    "input_tokens": 939,
+    "output_tokens": 209,
+    "total_tokens": 1148,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 181
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Naive CD4+ T cell\", \"markers\": [\"CCR7\", \"SELL\", \"TCF7\", \"CD4\", \"LEF1\", \"CD3E\", \"CD27\", \"IL7R\", \"LRRN3\", \"CD3D\", \"FHIT\", \"MAL\", \"TRABD2A\", \"EEF1B2\", \"RPS12\", \"RPS6\", \"IL32\", \"PRKCA\", \"RPS5\", \"CD28\", \"LDLRAP1\", \"SATB1\", \"SNHG32\", \"TESPA1\", \"TMEM204\", \"ADTRP\", \"GIMAP7\", \"LDHB\", \"AK5\", \"EPHX2\", \"LINC01550\", \"LTB\", \"OCIAD2\", \"PLEKHB1\", \"RCAN3\", \"RETREG1\", \"GSTM3\", \"NOG\", \"NPM1\", \"RGCC\", \"RPL31\", \"RPL35\", \"RPL36A\", \"RPS10\", \"RPS23\", \"TCEA3\", \"TOMM7\", \"TSHZ2\", \"AGMAT\", \"BCL11B\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "call_339462"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\n  \"cell_type\": \"naive CD4+ T cell\",\n  \"confidence\": 0.95\n}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1142,
+    "output_tokens": 327,
+    "total_tokens": 1469,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 294
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD4-TCM_ribo_filter_on_r0_symbol",
+  "format": "symbol",
+  "knob": "ribo_filter",
+  "level": "on",
+  "replicate": 0,
+  "run": 0,
+  "provider": "openrouter",
+  "model": "google/gemini-3.8-flash",
+  "answer": "CD4 TCM",
+  "predicted": "naive CD4+ T cell",
+  "confidence": 0.95,
+  "raw": "```json\n{\n  \"cell_type\": \"naive CD4+ T cell\",\n  \"confidence\": 0.95\n}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 2409,
+  "completion_tokens": 946,
+  "reasoning_tokens": null,
+  "cost_usd": 0.0053542500000000005,
+  "n_tool_calls": 2,
+  "n_model_calls": 3,
+  "latency_s": 15.9
+ }
+}

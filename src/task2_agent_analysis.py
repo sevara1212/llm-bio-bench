@@ -1,6 +1,7 @@
 """Task 2 specialist agent: paired comparison with plain Claude and classification of its wrong answers.
 
-Usage: python src/task2_agent_analysis.py   (after the full agent run)
+Usage: python src/task2_agent_analysis.py [--model claude-sonnet-5|gpt-5.6-terra|gemini-3.8-flash]
+Compares the agent with the same model's plain answers (and, for GPT/Gemini, with Claude's agent).
 
 "Weak" co-expression = |r| <= 0.05, the same threshold as the thresholded co-expression baseline,
 fixed before any model was run. r is read from the agent's own coexpression_in_control tool output
@@ -18,7 +19,7 @@ Wrong-answer classes:
   truth no_change, answered up/down:
     false_effect_followed_coexpr_sign / false_effect_against_coexpr_sign / false_effect_without_coexpr
   no_answer                           timeout, error or unparsable reply
-Writes results/agents_task2/specialist_errors_task2.csv.
+Writes results/agents_task2/specialist<-model>_errors_task2.csv.
 """
 import json
 from math import comb
@@ -26,8 +27,14 @@ from math import comb
 import pandas as pd
 
 q = pd.DataFrame(json.load(open("data/task2_questions.json"))).set_index("id")
-agent = pd.read_csv("results/agents_task2/agent-specialist_task2.csv").set_index("id")
-plain = pd.read_csv("results/claude-sonnet-5_task2.csv").set_index("id")
+import sys  # noqa: E402
+
+M = sys.argv[sys.argv.index("--model") + 1] if "--model" in sys.argv else "claude-sonnet-5"
+TAG = "" if M == "claude-sonnet-5" else "-" + M
+TRAJ_DIR = f"results/agents_task2/specialist{TAG}"
+agent = pd.read_csv(f"results/agents_task2/agent-specialist{TAG}_task2.csv").set_index("id")
+plain = pd.read_csv(f"results/{M}_task2.csv").set_index("id")
+claude_agent = pd.read_csv("results/agents_task2/agent-specialist_task2.csv").set_index("id")
 assert len(agent) == len(q) == len(plain), (len(agent), len(q), len(plain))
 WEAK = 0.05
 
@@ -38,7 +45,7 @@ def sign_test(a, b):
 
 
 def tool_facts(qid):
-    t = json.load(open(f"results/agents_task2/specialist/{qid}.json"))
+    t = json.load(open(f"{TRAJ_DIR}/{qid}.json"))
     x, y = q.at[qid, "X"], q.at[qid, "Y"]
     r, used = None, []
     for m in t["messages"]:
@@ -63,19 +70,19 @@ agent["label"] = q.label
 # ---- paired comparison with plain Claude ----------------------------------------------------------
 a_ok = agent.predicted.reindex(q.index) == q.label
 p_ok = plain.predicted.reindex(q.index) == q.label
-print("PAIRED vs plain Claude, same 200 questions")
+print(f"PAIRED vs plain {M}, same 200 questions")
 for name, ids in [("3-class, all 200", q.index), ("direction, 134 up/down", q.index[q.label != "no_change"])]:
     g = int((a_ok[ids] & ~p_ok[ids]).sum())
     l = int((~a_ok[ids] & p_ok[ids]).sum())
     print(f"   {name:<24} agent right & plain wrong: {g:>3} | plain right & agent wrong: {l:>3} | sign test p = {sign_test(g, l):.3f}")
 same = (agent.predicted.reindex(q.index) == plain.predicted.reindex(q.index)).mean()
-print(f"   same answer as plain Claude on {same:.0%} of questions")
+print(f"   same answer as plain {M} on {same:.0%} of questions")
 
 # ---- how the agent used its tools -----------------------------------------------------------------
 print("\nTOOL USE")
 print(f"   mean tool calls {agent.n_tool_calls.mean():.2f}; queried co-expression for (X, Y) on {agent.r_seen.notna().mean():.0%}; "
       f"called CollecTRI on {agent.tools_used.str.contains('collectri').mean():.0%}; gene_info on {agent.tools_used.str.contains('gene_info').mean():.0%}")
-print(f"   answer distribution: {agent.predicted.value_counts(dropna=False).to_dict()} (plain Claude: {plain.predicted.value_counts(dropna=False).to_dict()})")
+print(f"   answer distribution: {agent.predicted.value_counts(dropna=False).to_dict()} (plain {M}: {plain.predicted.value_counts(dropna=False).to_dict()})")
 seen = agent[agent.r_seen.notna()]
 weak = seen.r_seen.abs() <= WEAK
 print(f"   when r was weak (|r| <= {WEAK}, n = {weak.sum()}): answered no_change {(seen[weak].predicted == 'no_change').mean():.0%}")
@@ -104,7 +111,13 @@ def classify(row):
 wrong = agent[agent.predicted != agent.label].copy()
 wrong["class"] = wrong.apply(classify, axis=1)
 wrong[["X", "Y", "label", "predicted", "r_seen", "tools_used", "class", "raw"]].to_csv(
-    "results/agents_task2/specialist_errors_task2.csv")
+    f"results/agents_task2/specialist{TAG}_errors_task2.csv")
+if TAG:
+    c_ok = claude_agent.predicted.reindex(q.index) == q.label
+    for name, ids in [("3-class, all 200", q.index), ("direction, 134 up/down", q.index[q.label != "no_change"])]:
+        g = int((a_ok[ids] & ~c_ok[ids]).sum()); l = int((~a_ok[ids] & c_ok[ids]).sum())
+        print(f"PAIRED vs Claude's agent, {name}: this agent right & Claude's agent wrong {g} | reverse {l} | "
+              f"sign test p = {sign_test(g, l):.3f}")
 print(f"\nWRONG ANSWERS: {len(wrong)}/200")
 print(wrong["class"].value_counts().to_string())
 print("\nexamples of weak_coexpr_read_as_no_change:")

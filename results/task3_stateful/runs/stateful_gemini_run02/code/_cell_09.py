@@ -1,0 +1,1 @@
+print(pd.DataFrame(adata.uns['rank_genes_groups']['names']).head(10))

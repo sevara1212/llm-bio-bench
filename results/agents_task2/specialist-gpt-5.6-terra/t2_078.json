@@ -1,0 +1,96 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_078",
+  "X": "CBL",
+  "X_norman_label": "CBL",
+  "Y": "CD99",
+  "label": "up",
+  "log2FC": 1.1854,
+  "padj": 6.5686624796210775e-152,
+  "ctrl_frac_Y": 0.8792,
+  "coexpr_r_ctrl": -0.02436,
+  "question": "In K562 cells (a human leukemia cell line), gene CBL is activated with CRISPR activation (CRISPRa). What happens to the expression of gene CD99? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene CBL is activated with CRISPR activation (CRISPRa). What happens to the expression of gene CD99? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "CBL",
+      "gene_y": "CD99"
+     },
+     "id": "call_2HiqXhjKk0K9e1ibxnNt2kHt"
+    }
+   ],
+   "usage": {
+    "input_tokens": 333,
+    "output_tokens": 127,
+    "total_tokens": 460,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 97
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"CBL\", \"gene_y\": \"CD99\", \"pearson_r_control_cells\": -0.0244, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.2655, \"share_control_cells_expressing_y\": 0.8792}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_2HiqXhjKk0K9e1ibxnNt2kHt"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.6}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 442,
+    "output_tokens": 163,
+    "total_tokens": 605,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 145
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_078",
+  "X": "CBL",
+  "Y": "CD99",
+  "label": "up",
+  "predicted": "no_change",
+  "confidence": 0.6,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.6}",
+  "finish_reason": "ok",
+  "prompt_tokens": 775,
+  "completion_tokens": 290,
+  "cost_usd": 0.00503,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 14.0
+ }
+}

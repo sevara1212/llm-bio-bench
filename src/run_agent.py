@@ -51,15 +51,23 @@ parser = argparse.ArgumentParser()
 parser.add_argument("condition", choices=["generic", "specialist", "specialist_nudge"])
 parser.add_argument("--questions", choices=["subset", "all_nonoise"], default="subset")
 parser.add_argument("--limit", type=int, help="pilot: only N questions, spread evenly over the subset")
+parser.add_argument("--model", default="claude-sonnet-5",
+                    help="claude-sonnet-5 (Anthropic API, default) or an OpenRouter id such as openai/gpt-5.6-terra")
 args = parser.parse_args()
 
-MODEL = "claude-sonnet-5"
+MODEL = args.model
+# Claude keeps its original setup (Anthropic API, no temperature); other models go through OpenRouter at
+# temperature 0, matching how their plain (no-tool) answers were collected in run_eval.py.
+VIA_OPENROUTER = "/" in MODEL
+TAG = "" if MODEL == "claude-sonnet-5" else "-" + MODEL.split("/")[-1]  # e.g. specialist-gpt-5.6-terra
 DATASET = "hao"
 MAX_TOOL_CALLS = 5
 TIMEOUT_S = 120
 WORKERS = 4
-OUT_DIR = f"results/agents/{args.condition}"
-CSV = f"results/agents/agent-{args.condition}_{DATASET}.csv"
+if VIA_OPENROUTER:  # new OpenRouter accounts are capped at 20 requests/minute per model (GPT too)
+    WORKERS = 2  # OpenRouter caps new accounts at 20 requests/minute per model; agents make several calls each
+OUT_DIR = f"results/agents/{args.condition}{TAG}"
+CSV = f"results/agents/agent-{args.condition}{TAG}_{DATASET}.csv"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ---- shared data for the specialist tools -------------------------------------------------------
@@ -150,7 +158,19 @@ def make_tools(counter):
     return [wrap(f) for f in TOOL_FUNCS[args.condition]]
 
 
-llm = ChatAnthropic(model=MODEL, max_tokens=4000, timeout=TIMEOUT_S, max_retries=6)
+if VIA_OPENROUTER:
+    from langchain_openai import ChatOpenAI
+    llm = ChatOpenAI(model=MODEL, base_url="https://openrouter.ai/api/v1", api_key=os.environ["OPENROUTER_API_KEY"],
+                     max_tokens=4000, temperature=0, timeout=TIMEOUT_S, max_retries=6)
+    _p = next(m["pricing"] for m in requests.get("https://openrouter.ai/api/v1/models", timeout=30).json()["data"]
+              if m["id"] == MODEL)
+    PRICE_IN, PRICE_OUT = float(_p["prompt"]), float(_p["completion"])  # $ per token, OpenRouter list price
+else:
+    llm = ChatAnthropic(model=MODEL, max_tokens=4000, timeout=TIMEOUT_S, max_retries=6)
+
+
+def cost_of(tin, tout):
+    return tin * PRICE_IN + tout * PRICE_OUT if VIA_OPENROUTER else cost_usd(MODEL, tin, tout)
 
 
 def serialize(m):
@@ -203,10 +223,11 @@ def ask(q):
     tout = sum((m.usage_metadata or {}).get("output_tokens", 0) for m in ai)
     row = {
         "id": q["id"], "format": q["format"], "knob": q["knob"], "level": q["level"],
-        "replicate": q["replicate"], "run": 0, "provider": "anthropic", "answer": q["answer"],
+        "replicate": q["replicate"], "run": 0, "provider": "openrouter" if VIA_OPENROUTER else "anthropic",
+        "model": MODEL, "answer": q["answer"],
         "predicted": parsed.get("cell_type"), "confidence": parsed.get("confidence"), "raw": raw,
         "finish_reason": status, "prompt_tokens": tin, "completion_tokens": tout, "reasoning_tokens": None,
-        "cost_usd": cost_usd(MODEL, tin, tout), "n_tool_calls": counter["n"],
+        "cost_usd": cost_of(tin, tout), "n_tool_calls": counter["n"],
         "n_model_calls": len(ai), "latency_s": round(latency, 1),
     }
     trajectory = {"condition": args.condition, "model": MODEL, "question": q, "system_prompt": SYSTEM_PROMPT,

@@ -1,6 +1,6 @@
 """Task 3: an agent analyses raw PBMC3k counts end to end in a sandbox (QC -> labels.csv).
 
-Usage: python src/task3_agent.py --runs N [--models claude,gpt,gemini]
+Usage: python src/task3_agent.py --runs N [--models claude,gpt,gemini] [--dataset pbmc3k|hao] [--min-balance 3]
   Brings every model up to N runs (runs already done are kept), one run at a time, saving after each.
 
 Per run:
@@ -32,14 +32,21 @@ from langchain_core.tools import StructuredTool
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
-from task3_sandbox import new_run_folder, run_python
+from task3_sandbox import StatefulSession, new_run_folder, run_python
 
 load_dotenv()
 MODELS = {"claude": "anthropic/claude-sonnet-5", "gpt": "openai/gpt-5.6-terra", "gemini": "google/gemini-3.8-flash"}
 PROVIDER = "openrouter"
 MAX_STEPS, RUN_BUDGET, MIN_BALANCE, MAX_TOKENS = 15, 1.50, 3.00, 8000
-OUT = Path("results/task3")
+OUT = Path("results/task3")  # set per dataset in main (results/task3 or results/task3_hao)
 RUNS_CSV = OUT / "task3_runs.csv"
+DATASET = "pbmc3k"
+STATEFUL = False  # post hoc condition C: variables persist between run_python calls
+STATEFUL_DOC = """Run Python code in a persistent Python session in the working folder (like a Jupyter notebook) and
+        return its printed output (stdout and stderr, truncated to about 50 lines / 4,000 characters). Variables,
+        imports and loaded data persist between calls. Each call has a 60-second limit; if it times out, the
+        session restarts and all variables are lost. scanpy, anndata, pandas, numpy, scipy and leidenalg are
+        installed. No internet access."""
 INSTRUCTION = ("This folder contains a raw single-cell RNA-seq count matrix from human peripheral blood "
                "mononuclear cells (PBMCs). Perform standard quality control, normalisation and clustering, "
                "identify marker genes, and assign a cell type label to every cluster. Save labels.csv with "
@@ -52,9 +59,16 @@ def openrouter(path):
     return json.load(urllib.request.urlopen(req, timeout=30))["data"]
 
 
-def balance():
-    d = openrouter("credits")
-    return d["total_credits"] - d["total_usage"]
+def balance(tries=6):
+    """Live OpenRouter balance; retries on network errors (the connection dropped once mid-run)."""
+    for i in range(tries):
+        try:
+            d = openrouter("credits")
+            return d["total_credits"] - d["total_usage"]
+        except Exception:
+            if i == tries - 1:
+                raise
+            time.sleep(20 * (i + 1))
 
 
 PRICES = {m["id"]: (float(m["pricing"]["prompt"]), float(m["pricing"]["completion"]))
@@ -74,7 +88,8 @@ def one_run(model_key, run_id):
     if run_dir.exists():
         shutil.rmtree(run_dir)
     run_dir.mkdir(parents=True)
-    work = new_run_folder(run_id)
+    work = new_run_folder(run_id, DATASET)
+    session = StatefulSession(work) if STATEFUL else None
     steps, cells = {"n": 0}, []
 
     def tool_run_python(code: str) -> str:
@@ -87,7 +102,7 @@ def one_run(model_key, run_id):
             return f"No code executions left ({MAX_STEPS}/{MAX_STEPS} used). The run is over."
         steps["n"] += 1
         code = re.sub(r"^```(?:python)?\s*|\s*```$", "", code.strip())
-        r = run_python(work, code, steps["n"])
+        r = session.run(code, steps["n"]) if session else run_python(work, code, steps["n"])
         r["step"] = steps["n"]
         cells.append(r)
         left = MAX_STEPS - steps["n"]
@@ -97,7 +112,7 @@ def one_run(model_key, run_id):
         return f"{r['output_shown']}\n{note}"
 
     tool = StructuredTool.from_function(func=tool_run_python, name="run_python",
-                                        description=tool_run_python.__doc__)
+                                        description=STATEFUL_DOC if STATEFUL else tool_run_python.__doc__)
     llm = ChatOpenAI(model=model, base_url="https://openrouter.ai/api/v1", api_key=KEY, max_tokens=MAX_TOKENS,
                      timeout=180, max_retries=3, extra_body={"usage": {"include": True}})
     agent = create_react_agent(llm, [tool])
@@ -118,7 +133,7 @@ def one_run(model_key, run_id):
                 stop_reason = f"run budget ${RUN_BUDGET:.2f} reached"
                 break
             if start_balance - cost < MIN_BALANCE:
-                stop_reason = "account balance would drop below $3"
+                stop_reason = f"account balance would drop below ${MIN_BALANCE:.0f}"
                 break
             if steps["n"] >= MAX_STEPS and isinstance(messages[-1], ToolMessage) and "No code executions left" in str(messages[-1].content):
                 stop_reason = "step limit reached"
@@ -126,6 +141,8 @@ def one_run(model_key, run_id):
     except Exception as e:  # recursion limit, API error, ...
         stop_reason = f"error: {type(e).__name__}: {str(e)[:200]}"
     seconds = time.monotonic() - t0
+    if session:
+        session.close()
     if steps["n"] >= MAX_STEPS and stop_reason == "agent finished":
         stop_reason = "agent finished (all steps used)"
 
@@ -133,7 +150,7 @@ def one_run(model_key, run_id):
     if labels_ok:
         shutil.copy(work / "labels.csv", run_dir / "labels.csv")
     (run_dir / "code").mkdir()
-    for c in work.glob("_cell_*.py"):
+    for c in work.glob("_cell_*.py"):  # (stateful runs also leave _cell_NN.py.out files; code only is copied)
         shutil.copy(c, run_dir / "code" / c.name)
     for h in work.glob("*.h5ad"):  # the agent's own clusters, for the failure analysis
         try:
@@ -143,6 +160,11 @@ def one_run(model_key, run_id):
         except Exception:
             pass
     files = sorted(str(p.relative_to(work)) for p in work.rglob("*") if p.is_file() and ".tmp" not in p.parts)
+    # Free disk space: the agent's intermediate .h5ad files can be GBs per run (Hao). Everything scoring needs
+    # (labels.csv, code, obs tables of every .h5ad, the file list) has been copied to results/ above.
+    for h in work.rglob("*.h5ad"):
+        h.unlink()
+    shutil.rmtree(work / ".tmp", ignore_errors=True)
 
     def ser(m):
         d = {"type": m.type, "content": m.content}
@@ -151,7 +173,8 @@ def one_run(model_key, run_id):
             d["usage"] = m.usage_metadata
             d["reasoning"] = (m.additional_kwargs or {}).get("reasoning") or (m.additional_kwargs or {}).get("reasoning_content")
         return d
-    row = {"run_id": run_id, "model_key": model_key, "model": model, "provider": PROVIDER,
+    row = {"run_id": run_id, "dataset": DATASET, "stateful": STATEFUL, "max_steps": MAX_STEPS,
+           "model_key": model_key, "model": model, "provider": PROVIDER,
            "status": "ok" if labels_ok else "failed", "stop_reason": stop_reason, "steps": steps["n"],
            "code_errors": sum(c["error"] for c in cells), "timeouts": sum(c["timed_out"] for c in cells),
            "prompt_tokens": tin, "completion_tokens": tout, "cost_usd": round(cost, 4),
@@ -168,13 +191,23 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, required=True)
     ap.add_argument("--models", default="claude,gpt,gemini")
+    ap.add_argument("--dataset", default="pbmc3k", choices=["pbmc3k", "hao"])
+    ap.add_argument("--min-balance", type=float, default=MIN_BALANCE)
+    ap.add_argument("--max-steps", type=int, default=MAX_STEPS, help="post hoc condition B uses 30")
+    ap.add_argument("--stateful", action="store_true", help="post hoc condition C: persistent Python session")
     args = ap.parse_args()
+    DATASET, MIN_BALANCE, MAX_STEPS, STATEFUL = args.dataset, args.min_balance, args.max_steps, args.stateful
+    # post hoc conditions get their own output folders and run-id prefixes, so they never mix with the main runs
+    suffix = ("_stateful" if STATEFUL else "") + (f"_{MAX_STEPS}steps" if MAX_STEPS != 15 else "")
+    OUT = Path("results/task3" + ("_hao" if DATASET == "hao" else "") + suffix)
+    RUNS_CSV = OUT / "task3_runs.csv"
     OUT.mkdir(parents=True, exist_ok=True)
     done = pd.read_csv(RUNS_CSV) if RUNS_CSV.exists() else pd.DataFrame(columns=["run_id", "model_key"])
     keys = args.models.split(",")
     # interleave models (run 1 of each, then run 2 of each, ...) so a budget stop leaves them balanced
-    todo = [(k, f"{k}_run{i:02d}") for i in range(1, args.runs + 1) for k in keys
-            if f"{k}_run{i:02d}" not in set(done.run_id)]
+    prefix = ("hao_" if DATASET == "hao" else "") + ("stateful_" if STATEFUL else "") + (f"s{MAX_STEPS}_" if MAX_STEPS != 15 else "")
+    todo = [(k, f"{prefix}{k}_run{i:02d}") for i in range(1, args.runs + 1) for k in keys
+            if f"{prefix}{k}_run{i:02d}" not in set(done.run_id)]  # full run id, prefix included
     print(f"{len(todo)} runs to do; balance ${balance():.2f}; prices $/M in/out:",
           {k: (round(v[0] * 1e6, 2), round(v[1] * 1e6, 2)) for k, v in PRICES.items()}, flush=True)
     for k, rid in todo:
@@ -185,7 +218,7 @@ if __name__ == "__main__":
             break
         print(f"{rid:<14} {r['status']:<6} steps {r['steps']:>2} errors {r['code_errors']} ${r['cost_usd']:.3f} "
               f"{r['seconds']:.0f}s | {r['stop_reason']}", flush=True)
-        if r["stop_reason"] == "account balance would drop below $3":
+        if r["stop_reason"].startswith("account balance would drop below"):
             print("STOPPING ALL RUNS: balance limit", flush=True)
             break
     print(f"balance now ${balance():.2f}")

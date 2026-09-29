@@ -1,0 +1,1 @@
+print("Check barcodes count:", len(adata.obs_names), len(set(adata.obs_names)))

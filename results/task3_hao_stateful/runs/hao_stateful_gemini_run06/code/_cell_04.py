@@ -1,0 +1,1 @@
+print(adata.obs[['n_genes_by_counts', 'total_counts', 'pct_counts_mt', 'pct_counts_ribo', 'pct_counts_hb']].quantile([0.01, 0.05, 0.1, 0.5, 0.9, 0.95, 0.98, 0.99, 1.0]))

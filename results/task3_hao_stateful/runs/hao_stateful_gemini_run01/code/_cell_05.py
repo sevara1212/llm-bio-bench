@@ -1,0 +1,6 @@
+print("pct_counts_mt quantiles:")
+print(np.quantile(adata.obs['pct_counts_mt'], [0.95, 0.98, 0.99, 1.0]))
+print("total_counts quantiles:")
+print(np.quantile(adata.obs['total_counts'], [0.01, 0.05, 0.95, 0.99, 1.0]))
+print("n_genes_by_counts quantiles:")
+print(np.quantile(adata.obs['n_genes_by_counts'], [0.01, 0.05, 0.95, 0.99, 1.0]))

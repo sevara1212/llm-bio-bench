@@ -55,6 +55,11 @@ SOURCES = {
     "generic agent": "results/agents/agent-generic_hao.csv",
     "specialist agent": "results/agents/agent-specialist_hao.csv",
     "specialist_nudge (post-hoc)": "results/agents/agent-specialist_nudge_hao.csv",
+    # extension: the same specialist agent (tools, prompt, limits) with GPT and Gemini via OpenRouter
+    "plain GPT": "results/gpt-5.6-terra_hao.csv",
+    "specialist agent (GPT)": "results/agents/agent-specialist-gpt-5.6-terra_hao.csv",
+    "plain Gemini": "results/gemini-3.8-flash_hao.csv",
+    "specialist agent (Gemini)": "results/agents/agent-specialist-gemini-3.8-flash_hao.csv",
 }
 if ALL:  # only these three were run on all 600
     SOURCES = {k: SOURCES[k] for k in ["plain Claude", "CellMarker lookup", "specialist agent"]}
@@ -108,7 +113,10 @@ def paired(cond, others):
               f"| sign test p = {sign_test(a, b):.3f}")
 
 
-paired("specialist agent", [c for c in order if c != "specialist agent"])
+paired("specialist agent", [c for c in ["plain Claude", "CellMarker lookup", "generic agent", "specialist_nudge (post-hoc)"] if c in order])
+if not ALL:
+    for m in ["GPT", "Gemini"]:  # each model's agent vs its OWN plain answers, and vs Claude's agent
+        paired(f"specialist agent ({m})", [f"plain {m}", "specialist agent"])
 
 agents = s[s.condition.str.contains("agent|nudge")]
 print("\nAGENT BEHAVIOUR")

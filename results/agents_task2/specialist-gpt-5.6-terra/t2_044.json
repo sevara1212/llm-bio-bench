@@ -1,0 +1,96 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_044",
+  "X": "DUSP9",
+  "X_norman_label": "DUSP9",
+  "Y": "FTH1",
+  "label": "up",
+  "log2FC": 0.6154,
+  "padj": 5.884379787489015e-148,
+  "ctrl_frac_Y": 1.0,
+  "coexpr_r_ctrl": 0.01107,
+  "question": "In K562 cells (a human leukemia cell line), gene DUSP9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene FTH1? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene DUSP9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene FTH1? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "DUSP9",
+      "gene_y": "FTH1"
+     },
+     "id": "call_14RDQvmmQXvG9MxHcee68HCV"
+    }
+   ],
+   "usage": {
+    "input_tokens": 335,
+    "output_tokens": 131,
+    "total_tokens": 466,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 99
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"DUSP9\", \"gene_y\": \"FTH1\", \"pearson_r_control_cells\": 0.0111, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.0925, \"share_control_cells_expressing_y\": 1.0}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_14RDQvmmQXvG9MxHcee68HCV"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"down\",\"confidence\":0.6}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 447,
+    "output_tokens": 318,
+    "total_tokens": 765,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 301
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_044",
+  "X": "DUSP9",
+  "Y": "FTH1",
+  "label": "up",
+  "predicted": "down",
+  "confidence": 0.6,
+  "raw": "{\"effect\":\"down\",\"confidence\":0.6}",
+  "finish_reason": "ok",
+  "prompt_tokens": 782,
+  "completion_tokens": 449,
+  "cost_usd": 0.006952,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 29.7
+ }
+}

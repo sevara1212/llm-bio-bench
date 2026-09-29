@@ -1,0 +1,8 @@
+print("pct_counts_mt summary:")
+print(adata.obs['pct_counts_mt'].describe(percentiles=[0.01, 0.05, 0.1, 0.5, 0.9, 0.95, 0.98, 0.99]))
+print("\ntotal_counts summary:")
+print(adata.obs['total_counts'].describe(percentiles=[0.01, 0.05, 0.1, 0.5, 0.9, 0.95, 0.98, 0.99]))
+print("\nn_genes_by_counts summary:")
+print(adata.obs['n_genes_by_counts'].describe(percentiles=[0.01, 0.05, 0.1, 0.5, 0.9, 0.95, 0.98, 0.99]))
+print("\npct_counts_hb summary:")
+print(adata.obs['pct_counts_hb'].describe(percentiles=[0.9, 0.95, 0.98, 0.99]))

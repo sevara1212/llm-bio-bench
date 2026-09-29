@@ -150,6 +150,14 @@ Models are compared only on (question, run) pairs answered by all three models: 
   instructions changed 3.8% of labels (23/600) but only 0.7% of correct/incorrect outcomes (4/600);
   strict accuracy moved by 0.3 points.
 
+- **Judge route (provenance):** from 2026-09-28 the Anthropic API credit was exhausted, and new judge
+  decisions were made with the SAME judge (`claude-sonnet-5`, same instructions, label list and JSON
+  schema) called through OpenRouter (`anthropic/claude-sonnet-5`, structured output, reasoning effort
+  low), paced to ~15 requests/minute. On the 41-case test set this route scored 40/41, identical to the
+  Anthropic route (the miss is the open "memory/effector" case). 176 of the 1,290 cached decisions were
+  made this way (all of them for answers first seen in these later runs; no earlier decision was re-made);
+  each is marked in `results/judge_cache_hao_provenance.json`, the others came from the Anthropic API.
+
 ## Baselines (no LLM)
 
 - **Random guess:** uniform over the 30 fine types -> strict 3.3%, lenient 7.8% (PBMC3k: 12.5% strict).
@@ -279,6 +287,28 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
   - Of the specialist's 21 "no_cellmarker" errors, the nudge queried CellMarker on all 21 and answered
     **6 correctly** (strict); lenient mean on those 21 rose from 0.40 to 0.60.
   - Cost per question $0.016 vs $0.011; mean latency 8.0 s vs 5.9 s.
+
+### Specialist agent with GPT-5.6 Terra and Gemini 3.8 Flash (96-question subset)
+
+- Same agent as the Claude specialist (tools, prompt, 5-call budget, 2-minute timeout), with GPT or
+  Gemini through OpenRouter at temperature 0 (as in their plain runs) and 2 parallel workers (new
+  OpenRouter accounts are limited to 20 requests/minute per model; rate-limited questions were retried).
+  `run_agent.py specialist --model openai/gpt-5.6-terra` / `google/gemini-3.8-flash`.
+- Plain GPT and Gemini had not answered the subset's noise questions (they were run with noise skipped);
+  those 23 / 22 questions were added with `run_eval.py ... --ids data/agent_subset_hao.json` ($0.24), so
+  every comparison uses all 96 questions.
+
+| Condition (n = 96) | Strict | Lenient | Strict symbol | Strict Ensembl | Tool calls / question | Cost / question |
+|---|---|---|---|---|---|---|
+| plain GPT-5.6 Terra | 29.2% | 51.0% | 37.5% | 20.8% | - | - |
+| specialist agent (GPT) | 43.8% | 63.0% | 41.7% | 45.8% | 1.22 (31% none) | $0.005 |
+| plain Gemini 3.8 Flash | 30.2% | 53.1% | 35.4% | 25.0% | - | - |
+| specialist agent (Gemini) | 38.5% | 59.9% | 39.6% | 37.5% | 2.75 (11.5% hit the budget) | $0.005 |
+| specialist agent (Claude), for reference | 38.5% | 60.9% | 43.8% | 33.3% | 1.24 | $0.011 |
+
+- Paired (strict) vs each model's own plain answers: GPT agent right & plain wrong on 15 questions, the
+  reverse on 1 (sign test p = 0.0005); Gemini 11 vs 3 (p = 0.057). Vs Claude's agent: GPT 8 vs 3
+  (p = 0.227); Gemini 4 vs 4 (p = 1.000).
 
 ## Open decisions
 
@@ -417,6 +447,35 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 - Direction biases (what the models answered on true up / true down questions): Claude answered up
   21 / 17 times and down 3 / 7; GPT and Gemini answered down more than up in both.
 
+## Post hoc condition A (SEPARATE, added after the Claude agent results): the Task 2 specialist agent with GPT and Gemini
+- Same tools, question text, limits (5 tool calls, 2-minute timeout) and parser as the Claude agent; models
+  GPT-5.6 Terra and Gemini 3.8 Flash via OpenRouter at temperature 0 (`run_agent_task2.py --model openai/...`
+  / `google/...`), all 200 questions, one run each. 3 GPT questions hit OpenRouter rate limits (429) and were
+  rerun; every question finished. Gemini gave 4 replies with no parsable answer (counted as wrong).
+  Analysis: `task2_agent_analysis.py --model <model>`.
+
+| Method (post hoc rows marked) | Accuracy | Macro-F1 | Direction, all up/down | Direction, matched pairs | no_change on up/down |
+|---|---|---|---|---|---|
+| GPT-5.6 Terra, plain | 46.0% | 0.430 | 29.9% | 31.7% | 49% |
+| specialist agent, GPT + 3 tools (post hoc) | 43.5% | 0.370 | 18.7% | 20.0% | 72% |
+| Gemini 3.8 Flash, plain | 45.5% | 0.410 | 26.1% | 25.0% | 58% |
+| specialist agent, Gemini + 3 tools (post hoc) | 39.5% | 0.312 | 11.9% | 6.7% | 81% |
+| specialist agent, Claude + 3 tools (main) | 39.0% | 0.288 | 9.7% | 1.7% | 88% |
+
+- **Vs its own plain answers (paired, sign test):** GPT agent 3-class 17 right where plain was wrong vs 22
+  the reverse (p = 0.522); direction 6 vs 21 (p = 0.006). Gemini agent 3-class 11 vs 23 (p = 0.058);
+  direction 2 vs 21 (p = 6.6e-05). With tools both models committed to a direction less often and lost
+  direction accuracy, as Claude did (4 vs 19, p = 0.003).
+- **Vs Claude's agent:** GPT agent 3-class 16 vs 7 (p = 0.093), direction 16 vs 4 (p = 0.012); Gemini agent
+  3-class 6 vs 5 (p = 1.0), direction 6 vs 3 (p = 0.508).
+- **Weak co-expression read as no_change - yes, for both.** When the (X, Y) control-cell correlation it
+  queried was weak (|r| <= 0.05), the GPT agent answered no_change 85% of the time (n = 162) and the Gemini
+  agent 89% (n = 177; Claude's agent 94%). This was the largest class of wrong answers: 81 of GPT's 113 and
+  98 of Gemini's 121 (Claude's agent: 105 of 122). When |r| > 0.05 and they answered up/down, they
+  followed the sign of r 89% (GPT) and 100% (Gemini) of the time.
+- Tool use: mean 2.17 (GPT) and 2.83 (Gemini) tool calls per question; co-expression queried for (X, Y) on
+  90% / 98% of questions, CollecTRI on 68% / 75%, gene_info on 57% / 90%.
+
 ---
 
 # Task 3: end-to-end analysis by an agent (PBMC3k, raw counts)
@@ -542,6 +601,132 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 
 ---
 
+# Task 3 on Hao 2021 (30 fine cell types)
+
+## Setup (`src/task3_hao_data.py`, `task3_agent.py --dataset hao`, `src/task3_hao_score.py`)
+- **Agent's input:** `raw_counts.h5ad` - raw RNA counts of up to 300 cells per Hao celltype.l2 type (30 types,
+  doublets dropped, seed 0; 7,841 cells x 20,264 genes; 76-300 cells per type), gene symbols as var_names
+  plus Ensembl gene_ids, cell barcodes. No labels, no protein (ADT) data, no embeddings (the CELLxGENE file's
+  `X_apca`/`X_spca`/WNN embeddings are not copied), no other metadata; cells shuffled (seed 0). Counts
+  verified identical to Hao's `raw.X`. It is an .h5ad rather than a 10x .mtx folder so that loading takes
+  0.5 s instead of a large share of the 60-second execution limit.
+- **Same** sandbox, instruction, tool description (fresh process per call), 15-step cap, $1.50 per run and
+  models (all via OpenRouter) as PBMC3k Task 3; 7 runs per model. The balance floor was $4-5 and never
+  reached.
+- **Answer key** `data/task3_hao_expert_cells.csv` (barcode, celltype.l1, celltype.l2), outside the sandbox.
+- **Scoring:** agent labels -> Hao labels with the Task 1 rules (`judge.rule_match`, then the LLM judge; see
+  "Judge route (provenance)"). strict_fine = exact celltype.l2; lenient_fine = Task 1 lenient score; coarse =
+  predicted lineage equals celltype.l1 (fine labels by their l1, lineage-only labels by their lineage, "T cell
+  (unclear)" counts for CD4 T, CD8 T and other T); ARI of the agent's label partition vs celltype.l2 / l1.
+- **"Proliferating lymphocyte (lineage unclear)" counts as wrong at the lineage level** (it names no lineage).
+  It affects 5,852 of 125,337 scored cells (4.7%) in the 16 successful 15-step runs - 5,734 of them truly
+  proliferating cells (NK Proliferating 3,244, CD4 Proliferating 1,352, CD8 Proliferating 1,138); 4,209 of
+  78,398 (5.4%) in the 30-step runs and 2,962 of 47,046 (6.3%) in the stateful runs.
+- **Tutorial thresholds:** detected from each run's code (max genes 2,500 AND mitochondrial < 5%).
+
+## Results (21 runs, 15 steps)
+
+| Run | Status | Cells kept | Strict (30 types) | Lenient | Coarse (lineage) | ARI (l2) | Labels | Steps | Errors | Cost (est.) | Stop reason |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| hao_claude_run01 | ok | 7771 | 53.1% | 66.9% | 74.6% | 0.58 | 22 | 15 | 0 | $0.493 | agent finished (all steps used) |
+| hao_gpt_run01 | ok | 7841 | 42.0% | 58.4% | 74.8% | 0.51 | 20 | 10 | 1 | $0.138 | agent finished |
+| hao_gemini_run01 | ok | 7841 | 32.6% | 54.1% | 69.2% | 0.48 | 16 | 15 | 3 | $0.084 | agent finished (all steps used) |
+| hao_claude_run02 | failed | - | 0.0% | 0.0% | 0.0% | - | - | 15 | 0 | $0.370 | step limit reached |
+| hao_gpt_run02 | ok | 7841 | 46.6% | 61.6% | 70.4% | 0.54 | 21 | 10 | 1 | $0.185 | agent finished |
+| hao_gemini_run02 | ok | 7841 | 29.0% | 49.1% | 63.1% | 0.44 | 16 | 15 | 2 | $0.096 | agent finished (all steps used) |
+| hao_claude_run03 | ok | 7838 | 45.6% | 59.1% | 66.4% | 0.53 | 20 | 15 | 0 | $0.347 | agent finished (all steps used) |
+| hao_gpt_run03 | ok | 7841 | 37.5% | 56.8% | 76.2% | 0.51 | 19 | 13 | 2 | $0.200 | agent finished |
+| hao_gemini_run03 | ok | 7841 | 46.5% | 61.9% | 71.0% | 0.53 | 19 | 15 | 3 | $0.096 | agent finished (all steps used) |
+| hao_claude_run04 | ok | 7795 | 50.4% | 63.5% | 71.7% | 0.50 | 20 | 15 | 0 | $0.458 | agent finished (all steps used) |
+| hao_gpt_run04 | ok | 7841 | 40.2% | 58.0% | 76.8% | 0.51 | 20 | 8 | 1 | $0.122 | agent finished |
+| hao_gemini_run04 | ok | 7841 | 35.7% | 55.6% | 69.1% | 0.48 | 16 | 15 | 3 | $0.079 | agent finished (all steps used) |
+| hao_claude_run05 | failed | - | 0.0% | 0.0% | 0.0% | - | - | 15 | 0 | $0.417 | step limit reached |
+| hao_gpt_run05 | ok | 7841 | 39.1% | 56.6% | 74.3% | 0.50 | 20 | 10 | 1 | $0.143 | agent finished |
+| hao_gemini_run05 | ok | 7841 | 25.2% | 48.6% | 65.7% | 0.43 | 15 | 15 | 3 | $0.087 | agent finished (all steps used) |
+| hao_claude_run06 | failed | - | 0.0% | 0.0% | 0.0% | - | - | 15 | 0 | $0.298 | step limit reached |
+| hao_gpt_run06 | ok | 7841 | 42.9% | 55.8% | 66.2% | 0.53 | 22 | 12 | 1 | $0.242 | agent finished |
+| hao_gemini_run06 | ok | 7841 | 37.8% | 59.0% | 77.6% | 0.46 | 19 | 15 | 1 | $0.119 | agent finished (all steps used) |
+| hao_claude_run07 | failed | - | 0.0% | 0.0% | 0.0% | - | - | 15 | 1 | $0.349 | step limit reached |
+| hao_gpt_run07 | ok | 7841 | 43.7% | 60.6% | 75.2% | 0.60 | 22 | 11 | 0 | $0.230 | agent finished |
+| hao_gemini_run07 | failed | - | 0.0% | 0.0% | 0.0% | - | - | 15 | 3 | $0.073 | agent finished (all steps used) |
+
+| Model | Runs with labels | Strict mean, all runs (SD) | Strict, runs with labels: mean (range) | Coarse, runs with labels | ARI (l2), runs with labels | Steps mean (range) | Errors / run | Cost / run (est.) |
+|---|---|---|---|---|---|---|---|---|
+| Claude Sonnet 5 | 3/7 | 21.3% (26.7%) | 49.7% (45.6%-53.1%) | 70.9% | 0.54 | 15.0 (15-15) | 0.1 | $0.390 |
+| GPT-5.6 Terra | 7/7 | 41.7% (3.1%) | 41.7% (37.5%-46.6%) | 73.4% | 0.53 | 10.6 (8-13) | 1.0 | $0.180 |
+| Gemini 3.8 Flash | 6/7 | 29.5% (14.7%) | 34.5% (25.2%-46.5%) | 69.3% | 0.47 | 15.0 (15-15) | 2.6 | $0.090 |
+
+- **Claude hit the 15-step limit without saving labels.csv in 4 of 7 runs**; its 3 finished runs are the most
+  accurate (45.6-53.1% strict). GPT finished every run in 8-13 steps. Gemini used all 15 steps in every run.
+- **Main error, all models:** T-cell subtypes. More than half of CD8 T cells were given CD4-lineage labels (15 steps:
+  Claude 55%, GPT 60%, Gemini 62% of CD8 T cells) and most "other T" cells (MAIT, gdT, dnT) were called CD4
+  or CD8 (Claude 76%, GPT 55%, Gemini 70%); CD4 T subtypes were exactly right for only 14-19% of cells. B cells, DCs and
+  monocytes were almost always right at the lineage level.
+- **Tutorial thresholds were not reused on Hao** (0/21 runs): typical choices were < 5,500-6,000 genes and < 15% mitochondrial (Claude)
+  and >= 200-500 genes with < 12-15% mitochondrial (GPT). Coverage was 99-100%.
+- **Compared with PBMC3k Task 3** (8 types): strict accuracy of runs with labels fell from 95.3% to 49.7%
+  (Claude), 91.1% to 41.7% (GPT) and 62.9% to 34.5% (Gemini). On PBMC3k, Claude and Gemini kept exactly the
+  tutorial's 2,638 cells in every successful run; on Hao no run used the tutorial thresholds.
+
+## Run-record note
+- A bug in the resume check of `task3_agent.py` (it compared run ids without the `hao_` prefix) made the first
+  two Hao attempts restart from run 01, overwriting the pilot runs and the first attempt's runs. The saved runs
+  come from the last attempts with unchanged agent-facing code (instruction, tools, limits); the bug is fixed.
+  A network outage and a full disk also interrupted runs; both are handled now (balance checks retry; each
+  run deletes the agent's intermediate .h5ad files after its results are copied).
+
+## Post hoc condition B (SEPARATE, added after the 15-step results): 30-step cap on Hao, Claude and GPT
+- Identical to the 15-step runs except the step cap (30); 5 runs per model; $1.50 per-run cap unchanged
+  (`task3_agent.py --dataset hao --max-steps 30`, results in `results/task3_hao_30steps/`).
+
+| Run | Status | Cells kept | Strict (30 types) | Lenient | Coarse (lineage) | ARI (l2) | Labels | Steps | Errors | Cost (est.) | Stop reason |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| hao_s30_claude_run01 | ok | 7838 | 52.8% | 67.4% | 75.6% | 0.57 | 23 | 22 | 0 | $0.705 | agent finished |
+| hao_s30_gpt_run01 | ok | 7841 | 41.3% | 60.8% | 74.4% | 0.56 | 21 | 10 | 1 | $0.161 | agent finished |
+| hao_s30_claude_run02 | ok | 7838 | 50.2% | 64.0% | 71.4% | 0.53 | 20 | 17 | 0 | $0.490 | agent finished |
+| hao_s30_gpt_run02 | ok | 7841 | 47.5% | 65.1% | 76.5% | 0.62 | 22 | 10 | 1 | $0.146 | agent finished |
+| hao_s30_claude_run03 | ok | 7841 | 49.5% | 61.0% | 66.2% | 0.53 | 21 | 26 | 1 | $1.010 | agent finished |
+| hao_s30_gpt_run03 | ok | 7841 | 50.8% | 61.2% | 71.5% | 0.55 | 20 | 11 | 2 | $0.235 | agent finished |
+| hao_s30_claude_run04 | ok | 7838 | 49.6% | 61.0% | 66.2% | 0.53 | 20 | 19 | 1 | $0.503 | agent finished |
+| hao_s30_gpt_run04 | ok | 7841 | 35.6% | 57.4% | 72.9% | 0.51 | 18 | 8 | 0 | $0.136 | agent finished |
+| hao_s30_claude_run05 | ok | 7838 | 53.2% | 64.5% | 73.1% | 0.57 | 23 | 26 | 1 | $0.963 | agent finished |
+| hao_s30_gpt_run05 | ok | 7841 | 46.3% | 59.6% | 67.3% | 0.48 | 19 | 11 | 1 | $0.166 | agent finished |
+
+| Model | Runs with labels | Strict mean, all runs (SD) | Strict, runs with labels: mean (range) | Coarse, runs with labels | ARI (l2), runs with labels | Steps mean (range) | Errors / run | Cost / run (est.) |
+|---|---|---|---|---|---|---|---|---|
+| Claude Sonnet 5 | 5/5 | 51.1% (1.8%) | 51.1% (49.5%-53.2%) | 70.5% | 0.55 | 22.0 (17-26) | 0.6 | $0.734 |
+| GPT-5.6 Terra | 5/5 | 44.3% (6.0%) | 44.3% (35.6%-50.8%) | 72.5% | 0.54 | 10.0 (8-11) | 1.0 | $0.169 |
+
+- **Claude:** with 30 steps all 5 runs finished (17-26 steps, mean 22), vs 3 of 7 at 15 steps, and cost rose to
+  $0.734 per run. Accuracy of finished runs barely changed: 51.1% (30 steps) vs 49.7% (15 steps). Its 15-step
+  failures were budget failures, not a sign that more steps give better answers.
+- **GPT** used 8-11 steps with a 30-step cap, as with 15 (8-13), so the cap never bound; strict 44.3% vs 41.7%.
+- **The remaining errors are decision errors:** the same T-cell confusions persist with 30 steps (CD8 T cells
+  given CD4-lineage labels: Claude 55%, GPT 52%; "other T" called CD4/CD8: Claude 81%, GPT 58%).
+
+## Post hoc condition C (SEPARATE, added after the Gemini failures): Gemini with a stateful Python tool
+- Same as the main runs but `run_python` runs in one persistent sandboxed Python session per run (variables
+  persist, like a notebook; same sandbox profile, 60 s per call, output truncation; a timeout restarts the
+  session and says so). The tool description says variables persist. 7 runs on PBMC3k and 7 on Hao
+  (`task3_agent.py [--dataset hao] --stateful --models gemini`, results in `results/task3_stateful/` and
+  `results/task3_hao_stateful/`). One PBMC3k run was repeated because OpenRouter rate-limited it at step 2
+  (an infrastructure failure, not an agent failure).
+
+| Gemini 3.8 Flash | Runs with labels | Strict mean, all runs | Strict, runs with labels | Code errors (total) | Runs using all 15 steps |
+|---|---|---|---|---|---|
+| PBMC3k, stateless (main) | 6/7 | 53.9% | 62.9% | 26 | 7/7 |
+| PBMC3k, stateful (post hoc) | 6/7 | 72.5% | 84.6% | 6 | 6/7 |
+| Hao, stateless (main) | 6/7 | 29.5% | 34.5% | 18 | 7/7 |
+| Hao, stateful (post hoc) | 6/7 | 21.8% | 25.5% | 0 | 7/7 |
+
+- The stateful tool removed almost all code errors (PBMC3k 26 -> 6, Hao 18 -> 0) but Gemini still used all 15
+  steps in 13 of 14 runs and still failed to save labels.csv in 1 of 7 runs per dataset.
+- PBMC3k: higher accuracy (84.6% vs 62.9% for runs with labels), though one stateful run still gave coarse labels
+  (42.2%). Hao: lower accuracy (25.5% vs 34.5%) with fewer distinct labels (11-18 vs 15-19) - coarser answers.
+- PBMC3k stateful runs also kept exactly the tutorial's 2,638 cells.
+
+---
+
 # Cost (logged per answer in the results files, US$)
 
 | Component | Cost |
@@ -552,8 +737,17 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | Task 2, plain models | $1.80 |
 | Task 2, specialist agent | $1.55 |
 | Task 3, 21 agent runs (estimated at list prices) | $2.91 |
-| **Total logged** | **$34.85** |
+| Task 1, plain GPT and Gemini on the missing noise questions (for the 96-question comparison) | $0.24 |
+| Task 1, specialist agent with GPT ($0.52) and Gemini ($0.47), 96 questions | $0.99 |
+| Task 3 on Hao, 21 runs (estimated at list prices) | $4.63 |
+| Post hoc A: Task 2 specialist agent with GPT ($1.09) and Gemini ($1.10) | $2.19 |
+| Post hoc B: Task 3 Hao, 30-step cap, 10 runs | $4.52 |
+| Post hoc C: stateful Gemini, PBMC3k ($0.38) and Hao ($0.51) | $0.89 |
+| **Total logged** | **$48.31** |
 
 Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
+For the runs added in this round (the last six rows, $13.46 logged) the OpenRouter balance fell by $16.80
+($26.40 -> $9.60). Most of the difference is the Task 3 Hao runs that were overwritten by the resume bug
+(see "Run-record note"), plus judge calls routed through OpenRouter.
 
 **Account totals (actual spend): [PLACEHOLDER - to be filled in from the Anthropic and OpenRouter accounts]**

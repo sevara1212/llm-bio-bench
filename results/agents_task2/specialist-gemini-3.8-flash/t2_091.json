@@ -1,0 +1,110 @@
+{
+ "condition": "task2_specialist-gemini-3.8-flash",
+ "model": "google/gemini-3.8-flash",
+ "question": {
+  "id": "t2_091",
+  "X": "AHR",
+  "X_norman_label": "AHR",
+  "Y": "MT-ND4",
+  "label": "down",
+  "log2FC": -0.7902,
+  "padj": 9.721640103208833e-67,
+  "ctrl_frac_Y": 0.9999,
+  "coexpr_r_ctrl": -0.02105,
+  "question": "In K562 cells (a human leukemia cell line), gene AHR is activated with CRISPR activation (CRISPRa). What happens to the expression of gene MT-ND4? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene AHR is activated with CRISPR activation (CRISPRa). What happens to the expression of gene MT-ND4? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "AHR",
+      "gene_y": "MT-ND4"
+     },
+     "id": "call_788227"
+    },
+    {
+     "name": "collectri_lookup",
+     "args": {
+      "target": "MT-ND4",
+      "tf": "AHR"
+     },
+     "id": "call_788233"
+    }
+   ],
+   "usage": {
+    "input_tokens": 327,
+    "output_tokens": 178,
+    "total_tokens": 505,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 118
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"AHR\", \"gene_y\": \"MT-ND4\", \"pearson_r_control_cells\": -0.0211, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.004, \"share_control_cells_expressing_y\": 0.9999}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_788227"
+  },
+  {
+   "type": "tool",
+   "content": "{\"tf\":\"AHR\",\"tf_in_collectri\":true,\"n_targets\":194,\"link_to_target\":null,\"some_targets\":[{\"target\":\"CYP1B1\",\"weight\":1},{\"target\":\"ALDH3A1\",\"weight\":1},{\"target\":\"CYP1A1\",\"weight\":1},{\"target\":\"CDKN1B\",\"weight\":1},{\"target\":\"CTSD\",\"weight\":1},{\"target\":\"AHR\",\"weight\":1},{\"target\":\"GHRHR\",\"weight\":1},{\"target\":\"TF\",\"weight\":1},{\"target\":\"RB1\",\"weight\":1},{\"target\":\"ACHE\",\"weight\":1},{\"target\":\"XPO1\",\"weight\":1},{\"target\":\"CREBBP\",\"weight\":1},{\"target\":\"MDM2\",\"weight\":1},{\"target\":\"CD40\",\"weight\":1},{\"target\":\"ABCB1\",\"weight\":1},{\"target\":\"MYC\",\"weight\":1},{\"target\":\"HSPB1\",\"weight\":-1},{\"target\":\"ARNT\",\"weight\":1},{\"target\":\"UGT1A6\",\"weight\":1},{\"target\":\"BAX\",\"weight\":1},{\"target\":\"TNF\",\"weight\":1},{\"target\":\"STAR\",\"weight\":1},{\"target\":\"POLK\",\"weight\":1},{\"target\":\"AHRR\",\"weight\":1},{\"target\":\"BRCA1\",\"weight\":-1},{\"target\":\"SMARCA4\",\"weight\":1},{\"target\":\"GCG\",\"weight\":1},{\"target\":\"ALB\",\"weight\":1},{\"target\":\"GSTM1\",\"weight\":1},{\"target\":\"SERPINE1\",\"weight\":1}]}",
+   "tool_name": "collectri_lookup",
+   "tool_call_id": "call_788233"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\n  \"direction\": \"no_change\",\n  \"confidence\": 0.95\n}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 648,
+    "output_tokens": 407,
+    "total_tokens": 1055,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 379
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_091",
+  "X": "AHR",
+  "Y": "MT-ND4",
+  "label": "down",
+  "predicted": "no_change",
+  "confidence": 0.95,
+  "raw": "```json\n{\n  \"direction\": \"no_change\",\n  \"confidence\": 0.95\n}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 975,
+  "completion_tokens": 585,
+  "cost_usd": 0.002925,
+  "model": "google/gemini-3.8-flash",
+  "provider": "openrouter",
+  "n_tool_calls": 2,
+  "n_model_calls": 2,
+  "latency_s": 11.2
+ }
+}

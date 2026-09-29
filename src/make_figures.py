@@ -25,6 +25,8 @@ SURFACE, TEXT, TEXT_2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e0"
 COLOR = {  # fixed per method in every figure
     "Claude Sonnet 5": "#2a78d6", "Gemini 3.8 Flash": "#eb6834", "GPT-5.6 Terra": "#1baf7a",
     "Specialist agent": "#eda100", "Generic agent (web)": "#e87ba4", "Specialist + nudge (post hoc)": "#008300",
+    # post hoc Task 2 agents drawn in their model's colour
+    "GPT-5.6 Terra agent (post hoc)": "#1baf7a", "Gemini 3.8 Flash agent (post hoc)": "#eb6834",
 }
 BASELINE_GRAY, RANDOM_GRAY = "#7d7c78", "#c3c2b7"  # every no-LLM baseline / random guess, in every figure
 plt.rcParams.update({"font.size": 11, "axes.edgecolor": GRID, "axes.labelcolor": TEXT_2, "xtick.color": TEXT_2,
@@ -142,7 +144,9 @@ print("saved", f"{OUT}/task1_symbol_vs_ensembl.png")
 
 # ---- Task 2 --------------------------------------------------------------------------------------
 t2 = pd.read_csv("results/task2_scores.csv", index_col=0)
-T2N = {"specialist agent (Claude + tools)": "Specialist agent", "Claude Sonnet 5": "Claude Sonnet 5",
+T2N = {"specialist agent (Claude + tools)": "Specialist agent",
+       "specialist agent (GPT + tools, post hoc)": "GPT-5.6 Terra agent (post hoc)",
+       "specialist agent (Gemini + tools, post hoc)": "Gemini 3.8 Flash agent (post hoc)", "Claude Sonnet 5": "Claude Sonnet 5",
        "GPT-5.6 Terra": "GPT-5.6 Terra", "Gemini 3.8 Flash": "Gemini 3.8 Flash",
        "baseline: coexpr_sign": "Co-expression sign (no LLM)",
        "baseline: expression_only": "Expression level only (no LLM)",
@@ -150,7 +154,8 @@ T2N = {"specialist agent (Claude + tools)": "Specialist agent", "Claude Sonnet 5
        "baseline: collectri": "CollecTRI (no LLM)", "baseline: always_no_change": "Always no_change (no LLM)"}
 assert set(T2N) == set(t2.index), set(t2.index) ^ set(T2N)
 t2 = t2.rename(index=T2N)
-llms = ["Specialist agent", "Claude Sonnet 5", "Gemini 3.8 Flash", "GPT-5.6 Terra"]
+llms = ["Specialist agent", "GPT-5.6 Terra agent (post hoc)", "Gemini 3.8 Flash agent (post hoc)",
+        "Claude Sonnet 5", "Gemini 3.8 Flash", "GPT-5.6 Terra"]
 bases = ["Co-expression sign (no LLM)", "Expression level only (no LLM)", "Co-expression, |r| <= 0.05 -> no_change (no LLM)",
          "CollecTRI (no LLM)", "Always no_change (no LLM)"]
 hbar({k: t2.at[k, "direction_acc_matched"] for k in llms + bases},
@@ -166,25 +171,28 @@ hbar({k: t2.at[k, "said_no_change_on_up_down"] for k in llms + bases},
      "share answered no_change", f"{OUT}/task2_no_change_share.png", xmax=1.1)
 
 # ---- Task 3: end-to-end analysis agents, one dot per run ------------------------------------------
-if os.path.exists("results/task3/task3_scores.csv"):
-    t3 = pd.read_csv("results/task3/task3_scores.csv")
-    T3N = {"claude": "Claude Sonnet 5", "gpt": "GPT-5.6 Terra", "gemini": "Gemini 3.8 Flash"}
-    order3 = [k for k in ["claude", "gemini", "gpt"] if k in set(t3.model_key)]
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4.2), facecolor=SURFACE, sharey=True)
-    for ax, (col, xlabel) in zip(axes, [("strict", "per-cell accuracy (strict)"), ("ari_labels", "ARI vs expert clusters")]):
+T3N = {"claude": "Claude Sonnet 5", "gpt": "GPT-5.6 Terra", "gemini": "Gemini 3.8 Flash"}
+
+
+def task3_figure(rows, panels, path, title, subtitle):
+    """rows: (label, model_key, dataframe, post_hoc). Circles = main runs, squares = post hoc conditions;
+    open markers at 0 = runs without labels.csv. Medians are over runs that produced labels.csv."""
+    fig, axes = plt.subplots(1, len(panels), figsize=(11, 0.55 * len(rows) + 2.6), facecolor=SURFACE, sharey=True)
+    for ax, (col, xlabel) in zip(axes, panels):
         ax.set_facecolor(SURFACE)
-        for i, k in enumerate(order3):
-            d = t3[t3.model_key == k]
+        for i, (label, k, d, post_hoc) in enumerate(rows):
             ok, bad = d[d.status == "ok"], d[d.status != "ok"]
-            jitter = [(j - (len(ok) - 1) / 2) * 0.05 for j in range(len(ok))]
-            ax.scatter(ok[col].fillna(0), [i + y for y in jitter], s=70, color=COLOR[T3N[k]], edgecolor=SURFACE,
-                       linewidth=2, zorder=3)
-            if len(bad):  # failed runs (no labels.csv) are drawn at 0 as open markers
-                ax.scatter([0] * len(bad), [i] * len(bad), s=70, facecolor=SURFACE, edgecolor=COLOR[T3N[k]], linewidth=2, zorder=3)
-            ax.text(1.02, i, f"median {ok[col].median():.2f}" if len(ok) else "", va="center", fontsize=9, color=TEXT_2,
-                    transform=ax.get_yaxis_transform())
-        ax.set_yticks(range(len(order3)), [T3N[k] for k in order3])
-        if ax is axes[0]:  # the y axis is shared: invert it once, not once per panel
+            marker, c = ("s" if post_hoc else "o"), COLOR[T3N[k]]
+            jitter = [(j - (len(ok) - 1) / 2) * 0.06 for j in range(len(ok))]
+            ax.scatter(ok[col].fillna(0), [i + y for y in jitter], s=60, color=c, marker=marker, edgecolor=SURFACE,
+                       linewidth=1.5, zorder=3)
+            if len(bad):
+                ax.scatter([0] * len(bad), [i] * len(bad), s=60, facecolor=SURFACE, edgecolor=c, marker=marker,
+                           linewidth=2, zorder=3)
+            ax.text(1.02, i, f"median {ok[col].median():.2f}" if len(ok) else "", va="center", fontsize=9,
+                    color=TEXT_2, transform=ax.get_yaxis_transform())
+        ax.set_yticks(range(len(rows)), [r[0] for r in rows])
+        if ax is axes[0]:
             ax.invert_yaxis()
         ax.set_xlim(0, 1.0)
         ax.grid(axis="x", color=GRID, linewidth=1)
@@ -193,12 +201,36 @@ if os.path.exists("results/task3/task3_scores.csv"):
             ax.spines[side].set_visible(False)
         ax.tick_params(length=0)
         ax.set_xlabel(xlabel)
-    n_runs = t3.groupby("model_key").size().max()
     fig.tight_layout(w_pad=6)
-    titles(fig, axes[0], "Task 3: end-to-end PBMC3k analysis by an agent",
-           f"Each dot is one run (up to {n_runs} per model): raw counts -> QC, normalisation, clustering, markers, labels, "
-           "scored against the expert labels. Open dots at 0 = run without labels.csv; medians are over runs that "
-           "produced labels.csv.")
-    fig.savefig(f"{OUT}/task3_runs.png", dpi=160, facecolor=SURFACE)
+    titles(fig, axes[0], title, subtitle)
+    fig.savefig(path, dpi=160, facecolor=SURFACE)
     plt.close(fig)
-    print("saved", f"{OUT}/task3_runs.png")
+    print("saved", path)
+
+
+def load(path):
+    return pd.read_csv(path) if os.path.exists(path) else None
+
+
+t3, t3s = load("results/task3/task3_scores.csv"), load("results/task3_stateful/task3_scores.csv")
+if t3 is not None:
+    rows = [(T3N[k], k, t3[t3.model_key == k], False) for k in ["claude", "gpt", "gemini"]]
+    if t3s is not None:
+        rows.append(("Gemini, stateful tool (post hoc)", "gemini", t3s, True))
+    task3_figure(rows, [("strict", "per-cell accuracy (strict)"), ("ari_labels", "ARI vs expert clusters")],
+                 f"{OUT}/task3_runs.png", "Task 3: end-to-end PBMC3k analysis by an agent",
+                 "Each marker is one run (7 per condition): raw counts -> QC, normalisation, clustering, markers, labels, "
+                 "scored against the tutorial-pipeline labels. Circles = main runs (15 steps, fresh process per call); "
+                 "squares = post hoc condition. Open markers at 0 = run without labels.csv; medians over runs with labels.")
+h, h30, hs = (load(f"results/{d}/task3_hao_scores.csv") for d in ["task3_hao", "task3_hao_30steps", "task3_hao_stateful"])
+if h is not None:
+    rows = [(T3N[k], k, h[h.model_key == k], False) for k in ["claude", "gpt", "gemini"]]
+    if h30 is not None:
+        rows += [(f"{T3N[k]}, 30 steps (post hoc)", k, h30[h30.model_key == k], True) for k in ["claude", "gpt"]]
+    if hs is not None:
+        rows.append(("Gemini, stateful tool (post hoc)", "gemini", hs, True))
+    task3_figure(rows, [("strict_fine", "per-cell accuracy, 30 fine types (strict)"), ("coarse", "per-cell accuracy, lineage")],
+                 f"{OUT}/task3_hao_runs.png", "Task 3 on Hao 2021: end-to-end analysis of 7,841 PBMCs, 30 cell types",
+                 "Each marker is one run (7 per main condition, 5 or 7 post hoc). Circles = main runs (15 steps); squares = post "
+                 "hoc conditions. Open markers at 0 = run without labels.csv (Claude: 4 of 7 hit the 15-step limit); "
+                 "medians over runs with labels.")

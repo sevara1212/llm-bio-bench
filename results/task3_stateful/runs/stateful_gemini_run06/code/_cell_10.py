@@ -1,0 +1,1 @@
+print(mean_expr[[0, 1, 4, 5, 6]].round(2))

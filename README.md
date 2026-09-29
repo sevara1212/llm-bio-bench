@@ -53,6 +53,7 @@ them domain tools (gene lookups, marker databases, co-expression data) help or h
 | Specialist agent: Claude + MyGene.info + CellMarker lookup | 96 subset and all 600 | - |
 | Specialist + nudge (one-line system prompt, **added post hoc** after error analysis) | 96 subset | - |
 | Specialist agent: Claude + MyGene.info + control-cell co-expression + CollecTRI | - | yes |
+| Specialist agent with GPT-5.6 Terra / Gemini 3.8 Flash (same tools and prompt) | 96 subset | yes (**post hoc**) |
 
 ## Headline results
 
@@ -70,7 +71,9 @@ them domain tools (gene lookups, marker databases, co-expression data) help or h
 
 Specialist vs plain Claude, paired: right where Claude was wrong on 58 questions, the reverse on 7
 (sign test p = 4.3e-11). On the 96-question subset: generic web agent 31.2%, plain Claude 30.2%,
-specialist 38.5%, specialist + nudge 42.7% (post hoc).
+specialist 38.5%, specialist + nudge 42.7% (post hoc). The same specialist agent with GPT reached 43.8%
+(plain GPT 29.2%; 15 vs 1 discordant questions, p = 0.0005) and with Gemini 38.5% (plain Gemini 30.2%;
+11 vs 3, p = 0.057); neither differed significantly from Claude's agent (GPT 8 vs 3, p = 0.227).
 
 **PBMC3k pilot** (8 broad cell types, 320 questions x 3 runs, keyword scoring): Claude Sonnet 5 78.6%,
 Gemini 3.8 Flash 72.6%, GPT-5.6 Terra 70.5%, CellMarker lookup 64.4%, random 12.5% strict; the same
@@ -91,6 +94,12 @@ Ensembl drop appears (Gemini 82.1% with symbols vs 63.1% with Ensembl IDs).
 | Co-expression sign (no LLM) | 42.0% | 0.345 | 61.9% | 60.0% | 2% |
 | CollecTRI (no LLM) | 33.5% | 0.176 | 0.7% | 0.0% | 99% |
 | Always no_change | 33.0% | 0.165 | 0.0% | 0.0% | 100% |
+| *Post hoc:* specialist agent (GPT + 3 tools) | 43.5% | 0.370 | 18.7% | 20.0% | 72% |
+| *Post hoc:* specialist agent (Gemini + 3 tools) | 39.5% | 0.312 | 11.9% | 6.7% | 81% |
+
+Post hoc condition A (added after the Claude agent results): with the same tools, GPT and Gemini also
+lost direction accuracy against their plain answers (6 vs 21, p = 0.006; 2 vs 21, p = 6.6e-05) and also
+read weak co-expression (|r| <= 0.05) as no_change (85% and 89% of the time; Claude's agent 94%).
 
 ![Task 2 direction on matched pairs](results/figures/task2_direction_matched.png)
 ![Task 2 no_change share](results/figures/task2_no_change_share.png)
@@ -108,6 +117,27 @@ The most common error was in clustering: CD8 T cells partly merged into a CD4-ma
 largely re-running the pipeline after assuming variables persisted between calls.
 
 ![Task 3 runs](results/figures/task3_runs.png)
+
+### Task 3 on Hao 2021 (raw counts of 7,841 cells, 30 fine types, 7 runs per model, same setup)
+
+| Model | Runs with labels | Strict, runs with labels (range) | Coarse (lineage) | ARI | Cost per run (est.) |
+|---|---|---|---|---|---|
+| Claude Sonnet 5 | 3/7 | 49.7% (45.6-53.1%) | 70.9% | 0.54 | $0.390 |
+| GPT-5.6 Terra | 7/7 | 41.7% (37.5-46.6%) | 73.4% | 0.53 | $0.180 |
+| Gemini 3.8 Flash | 6/7 | 34.5% (25.2-46.5%) | 69.3% | 0.47 | $0.090 |
+
+Claude hit the 15-step limit without saving labels in 4 of 7 runs. The main error for every model was
+T-cell subtypes: 55% (Claude), 60% (GPT) and 62% (Gemini) of CD8 T cells got CD4-lineage labels. No run reused the PBMC3k tutorial QC
+thresholds (on PBMC3k, Claude and Gemini kept exactly the tutorial's 2,638 cells).
+
+Post hoc, each a separate condition (see methods.md):
+- **B, 30-step cap (Claude, GPT, 5 runs each):** Claude finished all 5 runs (mean 22 steps, $0.734 per
+  run) at 51.1% strict; GPT 44.3%, still 8-11 steps. Extra steps turned Claude's step-limit failures into
+  finished runs without better accuracy; the T-cell confusions stayed, so they are decision errors.
+- **C, stateful Python tool for Gemini (7 runs per dataset):** code errors fell (PBMC3k 26 -> 6, Hao
+  18 -> 0). PBMC3k mean strict rose from 53.9% to 72.5%; Hao fell from 29.5% to 21.8%.
+
+![Task 3 Hao runs](results/figures/task3_hao_runs.png)
 
 ## Key findings - DRAFT (to be rewritten)
 
@@ -202,6 +232,9 @@ python src/task2_score.py && python src/task2_agent_analysis.py
 python src/prepare_data.py                       # also writes the per-cell answer key data/pbmc3k_expert_cells.csv
 python src/task3_agent.py --runs 7               # 7 runs per model; stops if the OpenRouter balance is below $3
 python src/task3_score.py
+python src/task3_hao_data.py                     # Hao input (data/task3_hao_raw_counts.h5ad) and answer key
+python src/task3_agent.py --runs 7 --dataset hao && python src/task3_hao_score.py
+# post hoc: --max-steps 30 (B), --stateful --models gemini (C); score with --dir results/task3_hao_30steps etc.
 ```
 
 **Figures:** `python src/make_figures.py` writes `results/figures/`.
@@ -221,7 +254,13 @@ API spend logged per answer in the results files (US$):
 | Task 2, plain models | $1.80 |
 | Task 2, specialist agent | $1.55 |
 | Task 3, 21 agent runs (estimated at list prices) | $2.91 |
-| **Total logged** | **$34.85** |
+| Task 1, plain GPT and Gemini on the missing noise questions (for the 96-question comparison) | $0.24 |
+| Task 1, specialist agent with GPT ($0.52) and Gemini ($0.47), 96 questions | $0.99 |
+| Task 3 on Hao, 21 runs (estimated at list prices) | $4.63 |
+| Post hoc A: Task 2 specialist agent with GPT ($1.09) and Gemini ($1.10) | $2.19 |
+| Post hoc B: Task 3 Hao, 30-step cap, 10 runs | $4.52 |
+| Post hoc C: stateful Gemini, PBMC3k ($0.38) and Hao ($0.51) | $0.89 |
+| **Total logged** | **$48.31** |
 
 Not included: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
 

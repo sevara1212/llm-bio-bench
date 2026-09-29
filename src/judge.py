@@ -127,6 +127,11 @@ memory)" -> CD8 T cell (subtype unclear), because central vs effector is left op
 Judge the wording only."""
 
 client = anthropic.Anthropic(timeout=60, max_retries=6)
+# Backup route (used when the Anthropic API credit ran out): the SAME model, instructions and label list,
+# called through OpenRouter. Enabled with JUDGE_VIA_OPENROUTER=1; every label it produces is recorded in
+# results/judge_cache_hao_provenance.json.
+VIA_OPENROUTER = os.environ.get("JUDGE_VIA_OPENROUTER") == "1"
+PROVENANCE = "results/judge_cache_hao_provenance.json"
 # primary_answer comes first so the judge writes down the committed cell type (state words included,
 # hedges dropped) before choosing a label. Only `label` is used for scoring.
 SCHEMA = {"type": "object",
@@ -134,7 +139,45 @@ SCHEMA = {"type": "object",
           "required": ["primary_answer", "label"], "additionalProperties": False}
 
 
+_OR_LOCK, _OR_NEXT = __import__("threading").Lock(), [0.0]
+
+
+def _judge_openrouter(answer):
+    """Paced to ~15 requests/minute (new OpenRouter accounts are capped at 20/min per model); 429s are
+    retried with a growing wait. Only the pacing differs from the Anthropic route, not model, prompt or rules."""
+    import time
+    from openai import OpenAI, RateLimitError
+    with _OR_LOCK:
+        wait = max(0.0, _OR_NEXT[0] - time.monotonic())
+        _OR_NEXT[0] = max(_OR_NEXT[0], time.monotonic()) + 4.0
+    time.sleep(wait)
+    for attempt in range(8):
+        try:
+            return _judge_openrouter_once(answer)
+        except RateLimitError:
+            time.sleep(15 * (attempt + 1))
+    return _judge_openrouter_once(answer)
+
+
+def _judge_openrouter_once(answer):
+    from openai import OpenAI
+    orc = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ["OPENROUTER_API_KEY"], timeout=60, max_retries=6)
+    resp = orc.chat.completions.create(
+        model="anthropic/" + JUDGE_MODEL, max_tokens=1000,
+        messages=[{"role": "system", "content": INSTRUCTIONS}, {"role": "user", "content": f"Answer to map: {answer}"}],
+        response_format={"type": "json_schema", "json_schema": {"name": "judgement", "strict": True, "schema": SCHEMA}},
+        extra_body={"reasoning": {"effort": "low"}})
+    return resp.choices[0].message.content
+
+
 def judge(answer):
+    if VIA_OPENROUTER:
+        out = json.loads(re.search(r"\{.*\}", _judge_openrouter(answer), re.S).group())
+        label = rule_match(out.get("primary_answer", "")) or out["label"]
+        by_lower = {o.lower(): o for o in OPTIONS}
+        if label.lower() not in by_lower:
+            raise ValueError(f"judge returned unknown label {label!r} for {answer!r}")
+        return by_lower[label.lower()]
     resp = client.messages.create(
         model=JUDGE_MODEL,
         max_tokens=1000,
@@ -160,9 +203,13 @@ def results_files():
             if "knob" in pd.read_csv(p, nrows=0).columns]
 
 
-def save(cache):
+def save(cache, judged_now=()):
     json.dump(cache, open(CACHE + ".tmp", "w"), indent=1, sort_keys=True)
     os.replace(CACHE + ".tmp", CACHE)
+    if judged_now:  # record which API produced each label (default: anthropic)
+        prov = json.load(open(PROVENANCE)) if os.path.exists(PROVENANCE) else {}
+        prov.update({a: "openrouter" if VIA_OPENROUTER else "anthropic" for a in judged_now})
+        json.dump(prov, open(PROVENANCE, "w"), indent=1, sort_keys=True)
 
 
 if __name__ == "__main__":
@@ -177,12 +224,13 @@ if __name__ == "__main__":
     if rejudge:
         todo += sorted(a for a in set(cache) & answers - ruled if re.search(rejudge, a, re.I))
     print(f"{len(answers)} distinct answers: {len(ruled)} matched by rules, {len(todo)} to send to the judge")
-    changed = 0
+    changed, done_now = 0, []
     with ThreadPoolExecutor(8) as pool:
         for i, (answer, label) in enumerate(zip(todo, pool.map(judge, todo)), 1):
             changed += cache.get(answer, label) != label
             cache[answer] = label
+            done_now.append(answer)
             if i % 20 == 0:
-                save(cache)
-    save(cache)
+                save(cache, done_now)
+    save(cache, done_now)
     print(f"Saved {len(cache)} judgements to {CACHE} ({changed} existing labels changed)")

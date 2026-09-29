@@ -74,13 +74,21 @@ def write_raw_10x(dest: Path):
 WORK_ROOT = Path("/private/tmp/llmbio_task3_runs")
 
 
-def new_run_folder(run_id: str) -> Path:
-    """Fresh work folder (outside the project) containing only the raw counts."""
+HAO_RAW = PROJECT / "data" / "task3_hao_raw_counts.h5ad"  # counts only; see task3_hao_data.py
+
+
+def new_run_folder(run_id: str, dataset: str = "pbmc3k") -> Path:
+    """Fresh work folder (outside the project) containing only the raw counts:
+    pbmc3k -> 10x filtered_gene_bc_matrices/hg19/ folder; hao -> raw_counts.h5ad (counts, gene symbols and
+    barcodes only - no labels, protein data or embeddings)."""
     work = WORK_ROOT / run_id / "work"
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    write_raw_10x(work)
+    if dataset == "hao":
+        shutil.copy(HAO_RAW, work / "raw_counts.h5ad")
+    else:
+        write_raw_10x(work)
     return work
 
 
@@ -119,3 +127,80 @@ def run_python(work: Path, code: str, n: int) -> dict:
     error = timed_out or proc.returncode != 0 or "Traceback (most recent call last)" in out
     return {"code": code, "output_full": out[:KEEP_CHARS], "output_shown": truncate(out) or "(no output)",
             "returncode": proc.returncode, "timed_out": timed_out, "error": error}
+
+
+# ---- stateful variant (post hoc condition C): one persistent sandboxed Python session per run ------------
+KERNEL = r'''
+import sys, traceback, io, contextlib
+G = {"__name__": "__main__"}
+for line in sys.stdin:
+    cell = line.strip()
+    if not cell:
+        continue
+    buf, rc = io.StringIO(), 0
+    with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+        try:
+            exec(compile(open(cell).read(), cell, "exec"), G)
+        except SystemExit:
+            pass
+        except BaseException:
+            traceback.print_exc()
+            rc = 1
+    open(cell + ".out", "w").write(buf.getvalue())
+    sys.__stdout__.write(f"DONE {rc}\n"); sys.__stdout__.flush()
+'''
+
+
+class StatefulSession:
+    """A persistent Python process in the same sandbox: variables survive between run() calls. Each call has
+    the same 60 s limit; on timeout the session is killed and restarted (state is lost, and the output says so)."""
+
+    def __init__(self, work: Path):
+        self.work = work.resolve()
+        (self.work / "_kernel.py").write_text(KERNEL)
+        self.proc = None
+        self._start()
+
+    def _start(self):
+        tmp = self.work / ".tmp"
+        tmp.mkdir(exist_ok=True)
+        env = {"HOME": str(self.work), "TMPDIR": str(tmp), "MPLCONFIGDIR": str(tmp), "NUMBA_CACHE_DIR": str(tmp),
+               "MPLBACKEND": "Agg", "PATH": f"{VENV}/bin:/usr/bin:/bin", "PYTHONDONTWRITEBYTECODE": "1",
+               "OMP_NUM_THREADS": "4", "LANG": "en_US.UTF-8", "PYTHONUNBUFFERED": "1"}
+        self.proc = subprocess.Popen(["/usr/bin/sandbox-exec", "-p", profile(self.work), str(PYTHON), "_kernel.py"],
+                                     cwd=self.work, env=env, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT, text=True, start_new_session=True)
+
+    def close(self):
+        if self.proc and self.proc.poll() is None:
+            os.killpg(self.proc.pid, signal.SIGKILL)
+
+    def run(self, code: str, n: int) -> dict:
+        import select
+        cell = self.work / f"_cell_{n:02d}.py"
+        cell.write_text(code)
+        out_file = Path(str(cell) + ".out")
+        timed_out, crashed, rc = False, False, 1
+        if self.proc.poll() is not None:
+            self._start()
+        self.proc.stdin.write(cell.name + "\n")
+        self.proc.stdin.flush()
+        extra = ""
+        ready, _, _ = select.select([self.proc.stdout], [], [], TIMEOUT_S)
+        if ready:
+            line = self.proc.stdout.readline()
+            if line.startswith("DONE"):
+                rc = int(line.split()[1])
+            else:  # the session died (e.g. crashed in C code); whatever it printed is the output
+                crashed, extra = True, line + self.proc.stdout.read()
+        else:
+            timed_out = True
+        out = out_file.read_text() if out_file.exists() else extra
+        if timed_out or crashed:
+            self.close()
+            self._start()
+            out += (f"\n[TIMEOUT: execution stopped after {TIMEOUT_S} s]" if timed_out else "\n[the Python session crashed]")
+            out += " The Python session was restarted: all variables were lost."
+        error = timed_out or crashed or rc != 0 or "Traceback (most recent call last)" in out
+        return {"code": code, "output_full": out[:KEEP_CHARS], "output_shown": truncate(out) or "(no output)",
+                "returncode": -9 if timed_out else rc, "timed_out": timed_out, "error": error}

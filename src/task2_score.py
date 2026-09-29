@@ -31,7 +31,10 @@ for m in ["always_no_change", "coexpr_sign", "coexpr_sign_|r|>0.05", "collectri"
 MODELS = {"Claude Sonnet 5": "results/claude-sonnet-5_task2.csv",
           "GPT-5.6 Terra": "results/gpt-5.6-terra_task2.csv",
           "Gemini 3.8 Flash": "results/gemini-3.8-flash_task2.csv",
-          "specialist agent (Claude + tools)": "results/agents_task2/agent-specialist_task2.csv"}
+          "specialist agent (Claude + tools)": "results/agents_task2/agent-specialist_task2.csv",
+          # post hoc condition A: the same agent with GPT / Gemini (OpenRouter, temperature 0)
+          "specialist agent (GPT + tools, post hoc)": "results/agents_task2/agent-specialist-gpt-5.6-terra_task2.csv",
+          "specialist agent (Gemini + tools, post hoc)": "results/agents_task2/agent-specialist-gemini-3.8-flash_task2.csv"}
 unparsed = {}
 for name, path in MODELS.items():
     if not os.path.exists(path):

@@ -1,0 +1,96 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_090",
+  "X": "TMSB4X",
+  "X_norman_label": "TMSB4X",
+  "Y": "ACTB",
+  "label": "up",
+  "log2FC": 0.7107,
+  "padj": 6.338924357295733e-108,
+  "ctrl_frac_Y": 0.9986,
+  "coexpr_r_ctrl": 0.10592,
+  "question": "In K562 cells (a human leukemia cell line), gene TMSB4X is activated with CRISPR activation (CRISPRa). What happens to the expression of gene ACTB? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene TMSB4X is activated with CRISPR activation (CRISPRa). What happens to the expression of gene ACTB? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "TMSB4X",
+      "gene_y": "ACTB"
+     },
+     "id": "call_ozC8xEi5omx0vlWG6l7WM8eV"
+    }
+   ],
+   "usage": {
+    "input_tokens": 336,
+    "output_tokens": 131,
+    "total_tokens": 467,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 98
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"TMSB4X\", \"gene_y\": \"ACTB\", \"pearson_r_control_cells\": 0.1059, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.9996, \"share_control_cells_expressing_y\": 0.9986}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_ozC8xEi5omx0vlWG6l7WM8eV"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.55}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 451,
+    "output_tokens": 86,
+    "total_tokens": 537,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 68
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_090",
+  "X": "TMSB4X",
+  "Y": "ACTB",
+  "label": "up",
+  "predicted": "no_change",
+  "confidence": 0.55,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.55}",
+  "finish_reason": "ok",
+  "prompt_tokens": 787,
+  "completion_tokens": 217,
+  "cost_usd": 0.004177999999999999,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 11.6
+ }
+}

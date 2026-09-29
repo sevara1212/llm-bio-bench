@@ -26,7 +26,10 @@ from sklearn.metrics import adjusted_rand_score
 
 from scoring import normalize_pbmc, score_pbmc
 
-OUT = Path("results/task3")
+import sys  # noqa: E402
+
+# --dir scores another run folder, e.g. the post hoc conditions (results/task3_stateful, results/task3_hao_30steps)
+OUT = Path(sys.argv[sys.argv.index("--dir") + 1]) if "--dir" in sys.argv else Path("results/task3")
 expert = pd.read_csv("data/pbmc3k_expert_cells.csv", dtype=str).set_index("barcode")
 runs = pd.read_csv(OUT / "task3_runs.csv")
 CLUSTER_COLS = ("leiden", "louvain", "cluster", "clusters")

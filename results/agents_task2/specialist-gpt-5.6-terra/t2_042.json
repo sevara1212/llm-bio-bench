@@ -1,0 +1,96 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_042",
+  "X": "SLC6A9",
+  "X_norman_label": "SLC6A9",
+  "Y": "GLUL",
+  "label": "up",
+  "log2FC": 0.7636,
+  "padj": 3.7032423597998405e-66,
+  "ctrl_frac_Y": 0.6369,
+  "coexpr_r_ctrl": 0.0197,
+  "question": "In K562 cells (a human leukemia cell line), gene SLC6A9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene GLUL? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene SLC6A9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene GLUL? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "SLC6A9",
+      "gene_y": "GLUL"
+     },
+     "id": "call_u6ujSLoeylxLm8tvcOetW3iO"
+    }
+   ],
+   "usage": {
+    "input_tokens": 336,
+    "output_tokens": 260,
+    "total_tokens": 596,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 227
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"SLC6A9\", \"gene_y\": \"GLUL\", \"pearson_r_control_cells\": 0.0197, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.0351, \"share_control_cells_expressing_y\": 0.6369}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_u6ujSLoeylxLm8tvcOetW3iO"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.55}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 451,
+    "output_tokens": 95,
+    "total_tokens": 546,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 77
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_042",
+  "X": "SLC6A9",
+  "Y": "GLUL",
+  "label": "up",
+  "predicted": "no_change",
+  "confidence": 0.55,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.55}",
+  "finish_reason": "ok",
+  "prompt_tokens": 787,
+  "completion_tokens": 355,
+  "cost_usd": 0.005834,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 8.8
+ }
+}

@@ -1,0 +1,218 @@
+{
+ "condition": "specialist",
+ "model": "google/gemini-3.8-flash",
+ "question": {
+  "id": "hao_cdnT_rank_window_1-10_r0_symbol",
+  "dataset": "hao",
+  "cluster": "dnT",
+  "genes": [
+   "NUCB2",
+   "GZMK",
+   "TCF7",
+   "CD27",
+   "CD3D",
+   "TRAC",
+   "LDHB",
+   "FYB1",
+   "CD3G",
+   "FCMR"
+  ],
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "1-10",
+  "replicate": 0,
+  "answer": "dnT"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NUCB2, GZMK, TCF7, CD27, CD3D, TRAC, LDHB, FYB1, CD3G, FCMR",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: NUCB2, GZMK, TCF7, CD27, CD3D, TRAC, LDHB, FYB1, CD3G, FCMR"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "GZMK",
+       "TCF7",
+       "CD27",
+       "FCMR"
+      ]
+     },
+     "id": "call_12090"
+    }
+   ],
+   "usage": {
+    "input_tokens": 329,
+    "output_tokens": 231,
+    "total_tokens": 560,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 189
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"GZMK\":{\"symbol\":\"GZMK\",\"n_cell_types\":17,\"cell_types\":[{\"cell_type\":\"Effector T cell\",\"rank\":1},{\"cell_type\":\"Effector memory T cell\",\"rank\":1},{\"cell_type\":\"Memory CD8+ T cell\",\"rank\":3},{\"cell_type\":\"CD8 T cell\",\"rank\":4},{\"cell_type\":\"Effector memory CD8 T cell\",\"rank\":4},{\"cell_type\":\"CD8+ T cell\",\"rank\":5},{\"cell_type\":\"Mucosal-associated invariant T cell\",\"rank\":5},{\"cell_type\":\"Cytotoxic CD8+ T cell\",\"rank\":6},{\"cell_type\":\"Cytotoxic T cell\",\"rank\":6},{\"cell_type\":\"Effector memory CD4+ T cell\",\"rank\":6},{\"cell_type\":\"Effector memory CD8+ T cell\",\"rank\":7},{\"cell_type\":\"Mucosa-associated invariant T cell\",\"rank\":7},{\"cell_type\":\"Effector CD8 T cell\",\"rank\":11},{\"cell_type\":\"Effector CD4+ T cell\",\"rank\":13},{\"cell_type\":\"T cell\",\"rank\":21},{\"cell_type\":\"CD16 dim CD56 bright natural killer cell\",\"rank\":30},{\"cell_type\":\"Double-negative T cell\",\"rank\":49}]},\"TCF7\":{\"symbol\":\"TCF7\",\"n_cell_types\":12,\"cell_types\":[{\"cell_type\":\"Naive CD8 T cell\",\"rank\":2},{\"cell_type\":\"Naive CD4+ T cell\",\"rank\":3},{\"cell_type\":\"Naive CD8+ T cell\",\"rank\":4},{\"cell_type\":\"CD4 T cell\",\"rank\":6},{\"cell_type\":\"CD4+ T cell\",\"rank\":7},{\"cell_type\":\"Naive T cell\",\"rank\":7},{\"cell_type\":\"Naive CD4 T cell\",\"rank\":9},{\"cell_type\":\"CD8+ T cell\",\"rank\":10},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":11},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":17},{\"cell_type\":\"T cell\",\"rank\":17},{\"cell_type\":\"Activated CD4+ T cell\",\"rank\":23}]},\"CD27\":{\"symbol\":\"CD27\",\"n_cell_types\":29,\"cell_types\":[{\"cell_type\":\"Atypical B cell\",\"rank\":1},{\"cell_type\":\"Double-negative T cell\",\"rank\":1},{\"cell_type\":\"IgM memory B cell\",\"rank\":1},{\"cell_type\":\"Marginal zone -like B cell\",\"rank\":1},{\"cell_type\":\"Memory B cell\",\"rank\":1},{\"cell_type\":\"Switched memory B cell\",\"rank\":1},{\"cell_type\":\"Activated B cell\",\"rank\":2},{\"cell_type\":\"Class-switched memory B cell\",\"rank\":2},{\"cell_type\":\"Double-negative B cell\",\"rank\":2},{\"cell_type\":\"Non-switched memory B cell\",\"rank\":2},{\"cell_type\":\"Resting memory B cell\",\"rank\":2},{\"cell_type\":\"Unswitched memory B cell\",\"rank\":2},{\"cell_type\":\"Atypical memory B cell\",\"rank\":3},{\"cell_type\":\"Central memory CD8+ T cell\",\"rank\":3},{\"cell_type\":\"Central memory T cell\",\"rank\":3},{\"cell_type\":\"Memory CD4 T cell\",\"rank\":3},{\"cell_type\":\"Naive T cell\",\"rank\":3},{\"cell_type\":\"Plasma cell\",\"rank\":3},{\"cell_type\":\"Plasmablast\",\"rank\":3},{\"cell_type\":\"Central memory CD4+ T cell\",\"rank\":4}]},\"FCMR\":{\"symbol\":\"FCMR\",\"n_cell_types\":0,\"cell_types\":[]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "call_12090"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Central memory CD8+ T cell"
+     },
+     "id": "call_405097"
+    }
+   ],
+   "usage": {
+    "input_tokens": 952,
+    "output_tokens": 268,
+    "total_tokens": 1220,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 239
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Central memory CD8+ T cell\", \"markers\": [\"CCR7\", \"CD3E\", \"CD27\", \"CD8A\", \"SELL\", \"CCL5\", \"IL32\", \"IL7R\", \"LEF1\", \"MAL\", \"MYC\", \"NOSIP\", \"RCAN3\", \"RPS12\", \"RPS6\", \"SOCS3\", \"TCF7\", \"TRBC2\", \"TSHZ2\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "call_405097"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Effector memory CD8+ T cell"
+     },
+     "id": "call_2224903"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1047,
+    "output_tokens": 30,
+    "total_tokens": 1077,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 0
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Effector memory CD8+ T cell\", \"markers\": [\"CD8A\", \"CD3E\", \"CD8B\", \"FGFBP2\", \"CX3CR1\", \"CXCR3\", \"GZMK\", \"GZMH\", \"ASCL2\", \"CST7\", \"FCRL6\", \"JAKMIP1\", \"KIF19\", \"KIF21A\", \"KLRD1\", \"KLRG1\", \"LAG3\", \"MIAT\", \"MXRA7\", \"MYO6\", \"NKG7\", \"OASL\", \"PATL2\", \"PPP2R2B\", \"RGS9\", \"TTC16\", \"ZNF683\", \"ADGRG1\", \"ADRB2\", \"ARHGEF28\", \"B3GAT1\", \"BFSP1\", \"C1ORF21\", \"C8G\", \"CCL4\", \"CCL5\", \"CD2\", \"CD3D\", \"CD3G\", \"CTSW\", \"DNAH10\", \"DUSP8\", \"EPHX4\", \"FBXL19\", \"FHAD1\", \"FOXD2\", \"FRMPD3\", \"GFI1\", \"GLB1L2\", \"GNLY\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "call_2224903"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_cell_type_markers",
+     "args": {
+      "cell_type": "Central memory T cell"
+     },
+     "id": "call_1551704"
+    }
+   ],
+   "usage": {
+    "input_tokens": 1264,
+    "output_tokens": 26,
+    "total_tokens": 1290,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 0
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"cell_type\": \"Central memory T cell\", \"markers\": [\"CCR7\", \"CD4\", \"CD27\", \"CD8A\", \"SELL\", \"CD3E\", \"CCR4\", \"IL7R\", \"ASB2\", \"CD38\", \"CD79A\", \"DDIT4\", \"ELAPOR1\", \"ENTPD1\", \"IGFBP4\", \"LINC01281\", \"P2RX5\", \"PDE7B\", \"PMCH\", \"RAB37\", \"STAP1\", \"TASL\", \"TOX2\", \"AFF2\", \"ALDOC\", \"BCL2L15\", \"CD79B\", \"COL18A1\", \"FGFR1\", \"GNG4\", \"GNG8\", \"GPA33\", \"LINC00426\", \"LMCD1\", \"MAILR\", \"MYL6B\", \"NHS\", \"PTGIR\", \"RASGRP4\", \"SIRPG\", \"TMEM156\", \"TP53INP1\", \"TRIB1\", \"VIPR2\", \"ZG16B\", \"ADA\", \"AHI1-DT\", \"ANKRD55\", \"APOBEC3H\", \"ARMH1\"]}",
+   "tool_name": "cellmarker_cell_type_markers",
+   "tool_call_id": "call_1551704"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\n  \"cell_type\": \"central memory CD8+ T cell\",\n  \"confidence\": 0.85\n}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 1468,
+    "output_tokens": 34,
+    "total_tokens": 1502,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 0
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "hao_cdnT_rank_window_1-10_r0_symbol",
+  "format": "symbol",
+  "knob": "rank_window",
+  "level": "1-10",
+  "replicate": 0,
+  "run": 0,
+  "provider": "openrouter",
+  "model": "google/gemini-3.8-flash",
+  "answer": "dnT",
+  "predicted": "central memory CD8+ T cell",
+  "confidence": 0.85,
+  "raw": "```json\n{\n  \"cell_type\": \"central memory CD8+ T cell\",\n  \"confidence\": 0.85\n}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 5060,
+  "completion_tokens": 589,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00600375,
+  "n_tool_calls": 4,
+  "n_model_calls": 5,
+  "latency_s": 12.6
+ }
+}

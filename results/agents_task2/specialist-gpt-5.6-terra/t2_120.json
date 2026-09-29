@@ -1,0 +1,131 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_120",
+  "X": "FEV",
+  "X_norman_label": "FEV",
+  "Y": "SVIP",
+  "label": "up",
+  "log2FC": 0.5745,
+  "padj": 6.6767996976588415e-56,
+  "ctrl_frac_Y": 0.7652,
+  "coexpr_r_ctrl": 0.06127,
+  "question": "In K562 cells (a human leukemia cell line), gene FEV is activated with CRISPR activation (CRISPRa). What happens to the expression of gene SVIP? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene FEV is activated with CRISPR activation (CRISPRa). What happens to the expression of gene SVIP? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "collectri_lookup",
+     "args": {
+      "tf": "FEV",
+      "target": "SVIP"
+     },
+     "id": "call_csW8lMUlrVPok8bM4UygbA9G"
+    }
+   ],
+   "usage": {
+    "input_tokens": 333,
+    "output_tokens": 59,
+    "total_tokens": 392,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 32
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"tf\":\"FEV\",\"tf_in_collectri\":true,\"n_targets\":6,\"link_to_target\":null,\"some_targets\":[{\"target\":\"DDC\",\"weight\":1},{\"target\":\"HTR1A\",\"weight\":1},{\"target\":\"ICAM1\",\"weight\":-1},{\"target\":\"GCH1\",\"weight\":1},{\"target\":\"GCHFR\",\"weight\":1},{\"target\":\"QDPR\",\"weight\":1}]}",
+   "tool_name": "collectri_lookup",
+   "tool_call_id": "call_csW8lMUlrVPok8bM4UygbA9G"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "FEV",
+      "gene_y": "SVIP"
+     },
+     "id": "call_PtISKDJuZSw0GhnNSEk6UM94"
+    }
+   ],
+   "usage": {
+    "input_tokens": 459,
+    "output_tokens": 50,
+    "total_tokens": 509,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 20
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"FEV\", \"gene_y\": \"SVIP\", \"pearson_r_control_cells\": 0.0613, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.279, \"share_control_cells_expressing_y\": 0.7652}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_PtISKDJuZSw0GhnNSEk6UM94"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.72}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 567,
+    "output_tokens": 43,
+    "total_tokens": 610,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 25
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_120",
+  "X": "FEV",
+  "Y": "SVIP",
+  "label": "up",
+  "predicted": "no_change",
+  "confidence": 0.72,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.72}",
+  "finish_reason": "ok",
+  "prompt_tokens": 1359,
+  "completion_tokens": 152,
+  "cost_usd": 0.004542,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 2,
+  "n_model_calls": 3,
+  "latency_s": 7.2
+ }
+}

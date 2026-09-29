@@ -1,0 +1,7 @@
+adata.var_names_make_unique()
+print("Unique var names done.")
+
+# Let's inspect mitochondrial genes
+adata.var['mt'] = adata.var_names.str.startswith('MT-')
+sc.pp.calculate_qc_metrics(adata, qc_vars=['mt'], percent_top=None, log1p=False, inplace=True)
+print(adata.obs.describe())

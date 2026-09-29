@@ -1,6 +1,11 @@
 """Task 2 specialist agent: Claude Sonnet 5 as a LangGraph prebuilt ReAct agent with three tools.
 
-Usage: python src/run_agent_task2.py [--limit N] [--test]
+Usage: python src/run_agent_task2.py [--limit N] [--test] [--model openai/gpt-5.6-terra]
+
+--model: claude-sonnet-5 (default; Anthropic API, no temperature, as in the main run) or an OpenRouter id
+(openai/gpt-5.6-terra, google/gemini-3.8-flash) - added post hoc; temperature 0, matching those models'
+plain Task 2 answers. Outputs then go to results/agents_task2/specialist-<model>/ and
+agent-specialist-<model>_task2.csv.
 
 Tools (no tool can see perturbation results - only control cells, MyGene.info and CollecTRI):
   gene_info                    MyGene.info: symbol or Ensembl ID -> symbol, name, summary
@@ -41,10 +46,15 @@ load_dotenv()
 parser = argparse.ArgumentParser()
 parser.add_argument("--limit", type=int, help="pilot: only N questions, spread evenly over the set")
 parser.add_argument("--test", action="store_true", help="one question, print the trajectory, save nothing")
+parser.add_argument("--model", default="claude-sonnet-5")
 args = parser.parse_args()
 
-MODEL, MAX_TOOL_CALLS, TIMEOUT_S, WORKERS = "claude-sonnet-5", 5, 120, 4
-OUT_DIR, CSV = "results/agents_task2/specialist", "results/agents_task2/agent-specialist_task2.csv"
+MODEL, MAX_TOOL_CALLS, TIMEOUT_S, WORKERS = args.model, 5, 120, 4
+VIA_OPENROUTER = "/" in MODEL
+if VIA_OPENROUTER:  # new OpenRouter accounts are capped at 20 requests/minute per model (GPT too)
+    WORKERS = 2  # OpenRouter caps new accounts at 20 requests/minute per model
+TAG = "" if MODEL == "claude-sonnet-5" else "-" + MODEL.split("/")[-1]
+OUT_DIR, CSV = f"results/agents_task2/specialist{TAG}", f"results/agents_task2/agent-specialist{TAG}_task2.csv"
 
 # ---- tool data ------------------------------------------------------------------------------------
 _c = np.load("data/norman2019/task2_ctrl_corr.npz", allow_pickle=True)
@@ -135,7 +145,19 @@ def make_tools(counter):
     return [wrap(f) for f in TOOLS]
 
 
-llm = ChatAnthropic(model=MODEL, max_tokens=4000, timeout=TIMEOUT_S, max_retries=6)
+if VIA_OPENROUTER:
+    from langchain_openai import ChatOpenAI
+    llm = ChatOpenAI(model=MODEL, base_url="https://openrouter.ai/api/v1", api_key=os.environ["OPENROUTER_API_KEY"],
+                     max_tokens=4000, temperature=0, timeout=TIMEOUT_S, max_retries=6)
+    _p = next(m["pricing"] for m in requests.get("https://openrouter.ai/api/v1/models", timeout=30).json()["data"]
+              if m["id"] == MODEL)
+    PRICE_IN, PRICE_OUT = float(_p["prompt"]), float(_p["completion"])
+else:
+    llm = ChatAnthropic(model=MODEL, max_tokens=4000, timeout=TIMEOUT_S, max_retries=6)
+
+
+def cost_of(tin, tout):
+    return tin * PRICE_IN + tout * PRICE_OUT if VIA_OPENROUTER else cost_usd(MODEL, tin, tout)
 
 
 def serialize(m):
@@ -180,9 +202,9 @@ def ask(q):
     tout = sum((m.usage_metadata or {}).get("output_tokens", 0) for m in ai)
     row = {"id": q["id"], "X": q["X"], "Y": q["Y"], "label": q["label"], "predicted": pred, "confidence": conf,
            "raw": raw, "finish_reason": status, "prompt_tokens": tin, "completion_tokens": tout,
-           "cost_usd": cost_usd(MODEL, tin, tout), "n_tool_calls": counter["n"], "n_model_calls": len(ai),
+           "cost_usd": cost_of(tin, tout), "model": MODEL, "provider": "openrouter" if VIA_OPENROUTER else "anthropic", "n_tool_calls": counter["n"], "n_model_calls": len(ai),
            "latency_s": round(time.monotonic() - start, 1)}
-    traj = {"condition": "task2_specialist", "model": MODEL, "question": q, "status": status,
+    traj = {"condition": "task2_specialist" + TAG, "model": MODEL, "question": q, "status": status,
             "messages": [serialize(m) for m in messages], "summary": row}
     return row, traj
 

@@ -1,0 +1,140 @@
+{
+ "condition": "specialist",
+ "model": "google/gemini-3.8-flash",
+ "question": {
+  "id": "hao_cCD14-Mono_n_genes_1_r0_ensembl",
+  "dataset": "hao",
+  "cluster": "CD14 Mono",
+  "genes": [
+   "ENSG00000163220"
+  ],
+  "format": "ensembl",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "answer": "CD14 Mono"
+ },
+ "system_prompt": null,
+ "prompt": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000163220",
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "These are the top marker genes of a cluster from human peripheral blood mononuclear cells (PBMCs). What cell type is it? Reply as JSON: {\"cell_type\": ..., \"confidence\": 0-1}\n\nGenes: ENSG00000163220"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "gene_info",
+     "args": {
+      "genes": [
+       "ENSG00000163220"
+      ]
+     },
+     "id": "call_22936"
+    }
+   ],
+   "usage": {
+    "input_tokens": 305,
+    "output_tokens": 50,
+    "total_tokens": 355,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 22
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"ENSG00000163220\":{\"symbol\":\"S100A9\",\"name\":\"S100 calcium binding protein A9\",\"summary\":\"The protein encoded by this gene is a member of the S100 family of proteins containing 2 EF-hand calcium-binding motifs. S100 proteins are localized in the cytoplasm and/or nucleus of a wide range of cells, and involved in the regulation of a number of cellular processes such as cell cycle progression and differentiation. S100 genes include at least 13 members which are located as a cluster on chr\"}}",
+   "tool_name": "gene_info",
+   "tool_call_id": "call_22936"
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "cellmarker_gene_to_cell_types",
+     "args": {
+      "genes": [
+       "S100A9"
+      ]
+     },
+     "id": "call_3828523"
+    }
+   ],
+   "usage": {
+    "input_tokens": 453,
+    "output_tokens": 63,
+    "total_tokens": 516,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 35
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"S100A9\":{\"symbol\":\"S100A9\",\"n_cell_types\":6,\"cell_types\":[{\"cell_type\":\"CD14+ monocyte\",\"rank\":3},{\"cell_type\":\"Classical monocyte\",\"rank\":4},{\"cell_type\":\"CD14 monocyte\",\"rank\":5},{\"cell_type\":\"Monocyte\",\"rank\":8},{\"cell_type\":\"Polymorphonuclear myeloid-derived suppressor cell\",\"rank\":8},{\"cell_type\":\"Neutrophil\",\"rank\":12}]}}",
+   "tool_name": "cellmarker_gene_to_cell_types",
+   "tool_call_id": "call_3828523"
+  },
+  {
+   "type": "ai",
+   "content": "```json\n{\n  \"cell_type\": \"CD14+ monocyte\",\n  \"confidence\": 0.85\n}\n```",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 569,
+    "output_tokens": 89,
+    "total_tokens": 658,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 56
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "hao_cCD14-Mono_n_genes_1_r0_ensembl",
+  "format": "ensembl",
+  "knob": "n_genes",
+  "level": "1",
+  "replicate": 0,
+  "run": 0,
+  "provider": "openrouter",
+  "model": "google/gemini-3.8-flash",
+  "answer": "CD14 Mono",
+  "predicted": "CD14+ monocyte",
+  "confidence": 0.85,
+  "raw": "```json\n{\n  \"cell_type\": \"CD14+ monocyte\",\n  \"confidence\": 0.85\n}\n```",
+  "finish_reason": "ok",
+  "prompt_tokens": 1327,
+  "completion_tokens": 202,
+  "reasoning_tokens": null,
+  "cost_usd": 0.00175275,
+  "n_tool_calls": 2,
+  "n_model_calls": 3,
+  "latency_s": 23.8
+ }
+}

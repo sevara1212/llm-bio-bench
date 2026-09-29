@@ -1,0 +1,1 @@
+print(adata.obs[['n_genes_by_counts', 'total_counts', 'pct_counts_mt', 'pct_counts_ribo']].describe())

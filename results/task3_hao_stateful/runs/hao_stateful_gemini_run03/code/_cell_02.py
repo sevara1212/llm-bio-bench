@@ -1,0 +1,7 @@
+adata = sc.read_h5ad('raw_counts.h5ad')
+print(adata)
+print("obs head:")
+print(adata.obs.head())
+print("var head:")
+print(adata.var.head())
+print("X max, min, is_sparse:", adata.X.min(), adata.X.max(), type(adata.X))

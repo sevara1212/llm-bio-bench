@@ -1,0 +1,23 @@
+import scanpy as sc, numpy as np, pandas as pd
+sc.settings.verbosity=2
+adata=sc.read_h5ad('raw_counts.h5ad')
+adata.var['mt']=adata.var_names.str.upper().str.startswith('MT-')
+sc.pp.calculate_qc_metrics(adata,qc_vars=['mt'],inplace=True,log1p=False)
+keep=(adata.obs.n_genes_by_counts>=500)&(adata.obs.pct_counts_mt<15)
+print('QC retained',keep.sum(),'/',adata.n_obs, 'removed',(~keep).sum())
+adata=adata[keep].copy()
+sc.pp.filter_genes(adata,min_cells=3)
+print('After gene filter',adata)
+adata.layers['counts']=adata.X.copy()
+sc.pp.normalize_total(adata,target_sum=1e4)
+sc.pp.log1p(adata)
+sc.pp.highly_variable_genes(adata,flavor='seurat',n_top_genes=3000)
+print('HVG',adata.var.highly_variable.sum())
+sc.pp.scale(adata,max_value=10)
+sc.tl.pca(adata,n_comps=50,use_highly_variable=True,svd_solver='arpack',random_state=0)
+sc.pp.neighbors(adata,n_neighbors=15,n_pcs=40,random_state=0)
+for r in [.3,.5,.7,1.0]:
+ sc.tl.leiden(adata,resolution=r,key_added=f'leiden_{r}',random_state=0,flavor='igraph',n_iterations=2)
+ print(r,adata.obs[f'leiden_{r}'].value_counts().sort_index().to_dict())
+sc.tl.umap(adata,random_state=0)
+adata.write_h5ad('pbmc_qc_clustered.h5ad')

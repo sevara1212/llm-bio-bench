@@ -1,0 +1,126 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_164",
+  "X": "HK2",
+  "X_norman_label": "HK2",
+  "Y": "TCEB2",
+  "label": "no_change",
+  "log2FC": 0.0056,
+  "padj": 0.9528452005360866,
+  "ctrl_frac_Y": 0.998,
+  "coexpr_r_ctrl": 0.01163,
+  "question": "In K562 cells (a human leukemia cell line), gene HK2 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene TCEB2? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene HK2 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene TCEB2? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "gene_info",
+     "args": {
+      "genes": [
+       "HK2",
+       "TCEB2"
+      ]
+     },
+     "id": "call_T5kgbYahNFjbW0PSeltqGkxI"
+    },
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "HK2",
+      "gene_y": "TCEB2"
+     },
+     "id": "call_mTyxbpSUKdJ5E7yAJtsPuugI"
+    },
+    {
+     "name": "collectri_lookup",
+     "args": {
+      "tf": "HK2",
+      "target": "TCEB2"
+     },
+     "id": "call_8ULFplZIafn4vL7fAOaycstF"
+    }
+   ],
+   "usage": {
+    "input_tokens": 335,
+    "output_tokens": 177,
+    "total_tokens": 512,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 84
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"HK2\":{\"symbol\":\"HK2\",\"name\":\"hexokinase 2\",\"summary\":\"Hexokinases phosphorylate glucose to produce glucose-6-phosphate, the first step in most glucose metabolism pathways. This gene encodes hexokinase 2, the predominant form found in skeletal muscle. It localizes to the outer membrane of mitochondria. Expression of this gene is insulin-responsive, and studies in rat suggest that it is involved in the increased rate of glycolysis seen in rapidly growi\"},\"TCEB2\":{\"notfound\":true}}",
+   "tool_name": "gene_info",
+   "tool_call_id": "call_T5kgbYahNFjbW0PSeltqGkxI"
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"HK2\", \"gene_y\": \"TCEB2\", \"pearson_r_control_cells\": 0.0116, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.1877, \"share_control_cells_expressing_y\": 0.998}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_mTyxbpSUKdJ5E7yAJtsPuugI"
+  },
+  {
+   "type": "tool",
+   "content": "{\"tf\":\"HK2\",\"tf_in_collectri\":false,\"n_targets\":0,\"link_to_target\":null,\"some_targets\":[]}",
+   "tool_name": "collectri_lookup",
+   "tool_call_id": "call_8ULFplZIafn4vL7fAOaycstF"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.88}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 668,
+    "output_tokens": 53,
+    "total_tokens": 721,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 35
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_164",
+  "X": "HK2",
+  "Y": "TCEB2",
+  "label": "no_change",
+  "predicted": "no_change",
+  "confidence": 0.88,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.88}",
+  "finish_reason": "ok",
+  "prompt_tokens": 1003,
+  "completion_tokens": 230,
+  "cost_usd": 0.004765999999999999,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 3,
+  "n_model_calls": 2,
+  "latency_s": 7.8
+ }
+}

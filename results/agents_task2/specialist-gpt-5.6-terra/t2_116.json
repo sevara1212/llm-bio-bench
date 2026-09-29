@@ -1,0 +1,96 @@
+{
+ "condition": "task2_specialist-gpt-5.6-terra",
+ "model": "openai/gpt-5.6-terra",
+ "question": {
+  "id": "t2_116",
+  "X": "SLC6A9",
+  "X_norman_label": "SLC6A9",
+  "Y": "HSPA8",
+  "label": "up",
+  "log2FC": 0.579,
+  "padj": 6.527502000473725e-34,
+  "ctrl_frac_Y": 0.9548,
+  "coexpr_r_ctrl": -0.0211,
+  "question": "In K562 cells (a human leukemia cell line), gene SLC6A9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene HSPA8? Answer up, down, or no_change, as JSON with a confidence 0-1."
+ },
+ "status": "ok",
+ "messages": [
+  {
+   "type": "human",
+   "content": "In K562 cells (a human leukemia cell line), gene SLC6A9 is activated with CRISPR activation (CRISPRa). What happens to the expression of gene HSPA8? Answer up, down, or no_change, as JSON with a confidence 0-1."
+  },
+  {
+   "type": "ai",
+   "content": "",
+   "tool_calls": [
+    {
+     "name": "coexpression_in_control",
+     "args": {
+      "gene_x": "SLC6A9",
+      "gene_y": "HSPA8"
+     },
+     "id": "call_muKiQTH1t7teEnYcqoQa4TtV"
+    }
+   ],
+   "usage": {
+    "input_tokens": 337,
+    "output_tokens": 129,
+    "total_tokens": 466,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 95
+    }
+   },
+   "stop_reason": null
+  },
+  {
+   "type": "tool",
+   "content": "{\"gene_x\": \"SLC6A9\", \"gene_y\": \"HSPA8\", \"pearson_r_control_cells\": -0.0211, \"n_control_cells\": 11855, \"share_control_cells_expressing_x\": 0.0351, \"share_control_cells_expressing_y\": 0.9548}",
+   "tool_name": "coexpression_in_control",
+   "tool_call_id": "call_muKiQTH1t7teEnYcqoQa4TtV"
+  },
+  {
+   "type": "ai",
+   "content": "{\"effect\":\"no_change\",\"confidence\":0.9}",
+   "tool_calls": [],
+   "usage": {
+    "input_tokens": 454,
+    "output_tokens": 72,
+    "total_tokens": 526,
+    "input_token_details": {
+     "audio": 0,
+     "cache_read": 0,
+     "cache_creation": 0
+    },
+    "output_token_details": {
+     "audio": 0,
+     "reasoning": 54
+    }
+   },
+   "stop_reason": null
+  }
+ ],
+ "summary": {
+  "id": "t2_116",
+  "X": "SLC6A9",
+  "Y": "HSPA8",
+  "label": "up",
+  "predicted": "no_change",
+  "confidence": 0.9,
+  "raw": "{\"effect\":\"no_change\",\"confidence\":0.9}",
+  "finish_reason": "ok",
+  "prompt_tokens": 791,
+  "completion_tokens": 201,
+  "cost_usd": 0.003994,
+  "model": "openai/gpt-5.6-terra",
+  "provider": "openrouter",
+  "n_tool_calls": 1,
+  "n_model_calls": 2,
+  "latency_s": 6.7
+ }
+}
