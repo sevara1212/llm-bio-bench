@@ -158,6 +158,27 @@ Models are compared only on (question, run) pairs answered by all three models: 
   made this way (all of them for answers first seen in these later runs; no earlier decision was re-made);
   each is marked in `results/judge_cache_hao_provenance.json`, the others came from the Anthropic API.
 
+## Judge check: second pass over the judge cache (`src/judge_check.py`, run after all results)
+- Every cached judge decision was judged a second time, independently: same judge model (claude-sonnet-5),
+  instructions, label list and parsing, called through OpenRouter. New labels are in
+  `results/judge_check_hao.json`; the main cache and all reported scores still use the first pass.
+  Stopped at the $4 OpenRouter balance floor after **1,140 of 1,290 decisions** (981 of the 1,114 first made
+  via the Anthropic API, 159 of the 176 made via OpenRouter; no failed calls; the balance fell by $5.63).
+- **Agreement:** exact label 90.9%, same lineage 97.4%. Decisions first made via OpenRouter (recently, under the
+  final rule text): 99.4% exact, 100% lineage. Decisions first made via the Anthropic API: 89.5% exact, 96.9%
+  lineage (88.2% for answers with "/" or "or" alternatives, 91.8% without). The two routes are confounded with
+  time: many Anthropic-route labels were made before later rule changes (see "Rule changes" above; the 509
+  alternative-wording answers were never re-judged), so this gap cannot be attributed to the route alone.
+- **Disagreements** are mostly ambiguous memory/effector wordings that the second pass maps to "subtype
+  unclear": CD8 TEM -> CD8 T cell (subtype unclear) 28, CD4 TCM -> CD4 T cell (subtype unclear) 15, CD8 TCM
+  -> CD8 T cell (subtype unclear) 11 (list in `results/judge_check_disagreements.csv`).
+- **Effect on the headline Task 1 scores** (600 questions, strict, first -> second pass): Claude 32.7% ->
+  31.2%, Gemini 29.8% -> 30.0%, CellMarker 28.7% (rule-matched, unchanged), GPT 27.0% -> 26.8%, PanglaoDB
+  16.0% (unchanged); specialist agent 41.2% -> 39.8%. Specialist vs plain Claude, paired: 58 vs 7 ->
+  58 vs 6 (p = 9.0e-12). The ranking and every conclusion are unchanged.
+- **Effect on Task 3 on Hao:** mean strict accuracy of runs with labels 40.5% -> 40.4% (15 steps), 47.7% ->
+  48.0% (30 steps), 25.5% -> 25.6% (stateful); the largest change in any run is 2.9 points.
+
 ## Baselines (no LLM)
 
 - **Random guess:** uniform over the 30 fine types -> strict 3.3%, lenient 7.8% (PBMC3k: 12.5% strict).
@@ -418,7 +439,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | baseline: expression level only (threshold fixed in advance) | 49.0% | 0.391 | 73.1% | 50.0% | 0% |
 | Claude Sonnet 5 | 41.5% | 0.359 | 20.9% | 15.0% | 64% |
 | GPT-5.6 Terra | 46.0% | 0.430 | 29.9% | 31.7% | 49% |
-| Gemini 3.8 Flash | 45.5% | 0.410 | 26.1% | 25.0% | 58% |
+| Gemini 3.8 Flash | 45.5% | 0.410 | 26.1% | 25.0% | 57% |
 | specialist agent (Claude + 3 tools) | 39.0% | 0.288 | 9.7% | 1.7% | 88% |
 
 - **Agent vs plain Claude (paired, same questions):** 3-class, agent right & plain wrong 14 vs the
@@ -458,7 +479,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 |---|---|---|---|---|---|
 | GPT-5.6 Terra, plain | 46.0% | 0.430 | 29.9% | 31.7% | 49% |
 | specialist agent, GPT + 3 tools (post hoc) | 43.5% | 0.370 | 18.7% | 20.0% | 72% |
-| Gemini 3.8 Flash, plain | 45.5% | 0.410 | 26.1% | 25.0% | 58% |
+| Gemini 3.8 Flash, plain | 45.5% | 0.410 | 26.1% | 25.0% | 57% |
 | specialist agent, Gemini + 3 tools (post hoc) | 39.5% | 0.312 | 11.9% | 6.7% | 81% |
 | specialist agent, Claude + 3 tools (main) | 39.0% | 0.288 | 9.7% | 1.7% | 88% |
 
@@ -744,6 +765,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | Post hoc B: Task 3 Hao, 30-step cap, 10 runs | $4.52 |
 | Post hoc C: stateful Gemini, PBMC3k ($0.38) and Hao ($0.51) | $0.89 |
 | **Total logged** | **$48.31** |
+| Judge check (second pass, 1,140 decisions; from the OpenRouter balance, not logged per call) | $5.63 |
 
 Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
 For the runs added in this round (the last six rows, $13.46 logged) the OpenRouter balance fell by $16.80

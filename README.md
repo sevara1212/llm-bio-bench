@@ -70,7 +70,9 @@ them domain tools (gene lookups, marker databases, co-expression data) help or h
 | Random guess | 3.3% | 3.3% | 3.3% |
 
 Specialist vs plain Claude, paired: right where Claude was wrong on 58 questions, the reverse on 7
-(sign test p = 4.3e-11). On the 96-question subset: generic web agent 31.2%, plain Claude 30.2%,
+(sign test p = 4.3e-11). A second, independent judge pass over 1,140 of the 1,290 judge decisions agreed on
+90.9% of labels (97.4% on lineage) and moved these scores by at most 1.5 points without changing the ranking.
+On the 96-question subset: generic web agent 31.2%, plain Claude 30.2%,
 specialist 38.5%, specialist + nudge 42.7% (post hoc). The same specialist agent with GPT reached 43.8%
 (plain GPT 29.2%; 15 vs 1 discordant questions, p = 0.0005) and with Gemini 38.5% (plain Gemini 30.2%;
 11 vs 3, p = 0.057); neither differed significantly from Claude's agent (GPT 8 vs 3, p = 0.227).
@@ -87,7 +89,7 @@ Ensembl drop appears (Gemini 82.1% with symbols vs 63.1% with Ensembl IDs).
 | Method | Accuracy | Macro-F1 | Direction, all up/down | Direction, matched pairs | no_change on up/down |
 |---|---|---|---|---|---|
 | GPT-5.6 Terra | 46.0% | 0.430 | 29.9% | 31.7% | 49% |
-| Gemini 3.8 Flash | 45.5% | 0.410 | 26.1% | 25.0% | 58% |
+| Gemini 3.8 Flash | 45.5% | 0.410 | 26.1% | 25.0% | 57% |
 | Claude Sonnet 5 | 41.5% | 0.359 | 20.9% | 15.0% | 64% |
 | Specialist agent (Claude + 3 tools) | 39.0% | 0.288 | 9.7% | 1.7% | 88% |
 | Expression level only (no LLM) | 49.0% | 0.391 | 73.1% | 50.0% | 0% |
@@ -261,6 +263,7 @@ API spend logged per answer in the results files (US$):
 | Post hoc B: Task 3 Hao, 30-step cap, 10 runs | $4.52 |
 | Post hoc C: stateful Gemini, PBMC3k ($0.38) and Hao ($0.51) | $0.89 |
 | **Total logged** | **$48.31** |
+| Judge check (second pass, 1,140 decisions; from the OpenRouter balance, not logged per call) | $5.63 |
 
 Not included: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
 
