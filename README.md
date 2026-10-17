@@ -179,6 +179,23 @@ over 1,140 of its 1,290 decisions agreed on 90.9% of labels (97.4% on lineage). 
 the headline Task 1 scores change by at most 1.5 points (Claude 32.7% -> 31.2%, specialist 41.2% -> 39.8%),
 and the Task 3 Hao means by at most 0.3 points; no ranking or conclusion changes.
 
+## Conclusion
+
+General-purpose LLMs carry real but shallow single-cell knowledge. They can name broad cell types from
+marker genes, and simple domain tools such as a gene lookup and a marker database make them clearly better
+(the Claude agent improved by 8.5 points, and GPT and Gemini improved on the 96-question subset). But they
+don't resolve fine subtypes: every method was under 8% on CD4 T-cell subtypes.
+
+Tools are not automatically helpful. On perturbation direction, all three models misread weak co-expression
+as "no effect" and did worse with tools than without. A one-line co-expression baseline beat every model.
+
+As analysis agents, the models can reproduce a well-known tutorial almost perfectly (95% on PBMC3k) but reach
+only about 50% on a 30-type dataset. More steps and better tooling did not close that gap, which points to
+biological judgement, not coding ability, as the limit.
+
+In short: LLMs are useful assistants for routine annotation when paired with the right tools, but their
+outputs, and how they read tool results, still need expert checking.
+
 ## Limitations
 
 - **One run per question** for Tasks 1 and 2 (the PBMC3k pilot used 3 runs and moved by at most 1.2 points
