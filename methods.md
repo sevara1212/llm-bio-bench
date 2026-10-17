@@ -158,6 +158,11 @@ Models are compared only on (question, run) pairs answered by all three models: 
   made this way (all of them for answers first seen in these later runs; no earlier decision was re-made);
   each is marked in `results/judge_cache_hao_provenance.json`, the others came from the Anthropic API.
 
+## CD4 T subtypes (600-question set, 120 questions whose answer is a CD4 T type)
+- Strict accuracy on the six CD4 T types (CD4 Naive, TCM, TEM, CTL, Proliferating, Treg): Claude 1.7%,
+  GPT 4.2%, Gemini 7.5%, CellMarker lookup 6.7%, PanglaoDB 0.0%, specialist agent 5.8% - under 8% for
+  every method.
+
 ## Judge check: second pass over the judge cache (`src/judge_check.py`, run after all results)
 - Every cached judge decision was judged a second time, independently: same judge model (claude-sonnet-5),
   instructions, label list and parsing, called through OpenRouter. New labels are in
@@ -772,4 +777,3 @@ For the runs added in this round (the last six rows, $13.46 logged) the OpenRout
 ($26.40 -> $9.60). Most of the difference is the Task 3 Hao runs that were overwritten by the resume bug
 (see "Run-record note"), plus judge calls routed through OpenRouter.
 
-**Account totals (actual spend): [PLACEHOLDER - to be filled in from the Anthropic and OpenRouter accounts]**
