@@ -203,7 +203,7 @@ and the Task 3 Hao means by at most 0.3 points; no ranking or conclusion changes
 
 ## How to reproduce
 
-Python 3.14, packages in `requirements.txt`. API keys go in `.env` (git-ignored, see `.env.example`):
+Python 3.14, packages in `requirements.txt`. API keys go in a `.env` file in the repo root (git-ignored):
 `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`. Run from the repo root:
 
 ```bash
