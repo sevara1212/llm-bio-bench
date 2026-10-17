@@ -13,25 +13,24 @@ including what was decided after seeing results.
 
 ## Key findings
 
-1. **Domain tools help cell-type annotation, for every model.** With a gene-lookup and marker-database tool,
-   Claude went from 32.7% to 41.2% exact cell type on 600 questions (right where plain Claude was wrong on 58
-   questions, the reverse on 7; p = 4.3e-11). On a 96-question subset the same agent lifted GPT from 29.2% to
-   43.8% and Gemini from 30.2% to 38.5%.
-2. **Plain models struggle with Ensembl IDs; tools close most of the gap.** Switching from gene symbols to
-   Ensembl IDs costs the plain models 9.3-15.7 points (Gemini 37.7% -> 22.0%), but the Claude agent only 4.3
-   points. With Ensembl IDs a plain marker lookup (28.7%) is on par with plain Claude (28.0%).
-3. **Fine subtypes remain unsolved.** On the six CD4 T-cell subtypes every method is under 8% exact.
-4. **On perturbation direction no LLM beats a one-line baseline - and tools make it worse.** On 30
-   expression-matched up/down pairs the plain models get the direction right 15.0-31.7% of the time; the sign
-   of the genes' co-expression in control cells gets 60.0%. Given that same co-expression as a tool, all three
-   models read weak correlations as "no change" (85-94% of the time) and lost direction accuracy against their
-   own plain answers.
-5. **End-to-end analysis works on the tutorial dataset and breaks down at 30 cell types.** On PBMC3k (8 types)
-   Claude and GPT agents labelled 95.3% and 91.1% of cells correctly. On Hao 2021 (30 types) the best runs
-   reached about 50%, mainly because CD8 T cells were labelled as CD4. Doubling the step budget or giving
-   Gemini a stateful Python session did not fix that: the remaining errors are decisions, not tooling.
-6. **The scores are robust to the judge.** An independent second pass of the LLM judge agreed on 90.9% of
-   labels (97.4% on lineage) and moved headline scores by at most 1.5 points, without changing any ranking.
+1. Tools help with cell-type annotation. With a gene lookup and a marker database, Claude went from 32.7% to
+   41.2% exact cell type on 600 questions (better on 58 questions, worse on 7; p = 4.3e-11). On a 96-question
+   subset the same tools took GPT from 29.2% to 43.8% and Gemini from 30.2% to 38.5%.
+2. Ensembl IDs are much harder than gene symbols for the plain models, which lose 9.3-15.7 points (Gemini
+   drops from 37.7% to 22.0%). The Claude agent loses only 4.3 points. With Ensembl IDs, a simple marker
+   lookup (28.7%) does about as well as plain Claude (28.0%).
+3. Fine subtypes are still out of reach. On the six CD4 T-cell subtypes every method scores under 8%.
+4. For perturbation direction, a simple baseline does better than any model. On 30 expression-matched
+   up/down pairs the plain models get the direction right 15.0-31.7% of the time, while the sign of the two
+   genes' co-expression in control cells gets 60.0%. When the models were given that co-expression as a tool,
+   they mostly read weak correlations as "no change" (85-94% of the time) and got fewer directions right than
+   without the tool.
+5. As analysis agents, Claude and GPT labelled 95.3% and 91.1% of cells correctly on PBMC3k (8 types), the
+   dataset of the standard scanpy tutorial. On Hao 2021 (30 types) the best runs got about 50%, mostly because
+   CD8 T cells were labelled as CD4. A 30-step budget and, for Gemini, a Python session that keeps variables
+   between calls did not change this, so these look like wrong biological calls rather than coding problems.
+6. Re-running the LLM judge on 1,140 of its 1,290 decisions gave the same label 90.9% of the time (same
+   lineage 97.4%). Headline scores moved by at most 1.5 points and no ranking changed.
 
 ## Repository layout
 
@@ -146,7 +145,7 @@ control-cell correlation (|r| <= 0.05) as "no effect"; for GPT it was 81 of 113,
 
 The most common error was in clustering: CD8 T cells partly merged into a CD4-majority cluster (10 of 21
 runs) or merged with NK cells into one cluster named NK (5 runs). Claude and Gemini kept exactly the scanpy
-tutorial's 2,638 cells, a sign they reproduced the well-known tutorial.
+tutorial's 2,638 cells, which suggests they followed the tutorial from memory.
 
 ![Task 3 runs](results/figures/task3_runs.png)
 
@@ -165,7 +164,7 @@ reused the PBMC3k tutorial's QC thresholds.
 Post hoc follow-ups:
 - **30-step cap (Claude and GPT, 5 runs each):** Claude finished all 5 runs (mean 22 steps, $0.734 per run)
   at 51.1% strict, about the same as before; GPT reached 44.3% and still used only 8-11 steps. The T-cell
-  confusions stayed, so they are decision errors, not step-budget failures.
+  confusions stayed, so they come from the labelling decisions, not from running out of steps.
 - **Stateful Python tool for Gemini (7 runs per dataset):** code errors fell (PBMC3k 26 -> 6, Hao 18 -> 0).
   Mean strict accuracy rose on PBMC3k (53.9% -> 72.5%) but fell on Hao (29.5% -> 21.8%).
 
@@ -177,24 +176,25 @@ The LLM judge (Claude Sonnet 5, blind to the model and the true label) maps free
 agreed with a hand check on 27/30 answers and scores 40/41 on a fixed test set. An independent second pass
 over 1,140 of its 1,290 decisions agreed on 90.9% of labels (97.4% on lineage). With the second-pass labels,
 the headline Task 1 scores change by at most 1.5 points (Claude 32.7% -> 31.2%, specialist 41.2% -> 39.8%),
-and the Task 3 Hao means by at most 0.3 points; no ranking or conclusion changes.
+and the Task 3 Hao means by at most 0.3 points. No ranking or conclusion changes.
 
 ## Conclusion
 
-General-purpose LLMs carry real but shallow single-cell knowledge. They can name broad cell types from
-marker genes, and simple domain tools such as a gene lookup and a marker database make them clearly better
-(the Claude agent improved by 8.5 points, and GPT and Gemini improved on the 96-question subset). But they
-don't resolve fine subtypes: every method was under 8% on CD4 T-cell subtypes.
+The models know a fair amount about blood cell types. They name broad types from marker genes, and a gene
+lookup plus a marker database improves them further (8.5 points for Claude on 600 questions, with similar
+gains for GPT and Gemini on the 96-question subset). They do not get fine subtypes right: every method was
+under 8% on CD4 T-cell subtypes.
 
-Tools are not automatically helpful. On perturbation direction, all three models misread weak co-expression
-as "no effect" and did worse with tools than without. A one-line co-expression baseline beat every model.
+Tools can also make things worse. For perturbation direction, all three models read weak co-expression as
+"no effect" and got fewer directions right with the tool than without it. On direction, the co-expression
+sign alone was more accurate than any model.
 
-As analysis agents, the models can reproduce a well-known tutorial almost perfectly (95% on PBMC3k) but reach
-only about 50% on a 30-type dataset. More steps and better tooling did not close that gap, which points to
-biological judgement, not coding ability, as the limit.
+As analysis agents, the models almost exactly reproduce the well-known PBMC3k tutorial (about 95% for Claude)
+but reach only about 50% on a 30-type dataset. Extra steps and a stateful Python session did not close that
+gap, so the limit seems to be the biological decisions rather than the code.
 
-In short: LLMs are useful assistants for routine annotation when paired with the right tools, but their
-outputs, and how they read tool results, still need expert checking.
+Overall, the models are useful for routine annotation when given the right tools, but their answers, and the
+way they interpret tool output, still need checking by someone who knows the biology.
 
 ## Limitations
 
