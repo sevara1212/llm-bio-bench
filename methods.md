@@ -1,6 +1,8 @@
-# Methods notes
+# Methods
 
-Working notes for the methods section. Numbers are from `results/scores_hao.csv` unless stated.
+Full methods and results for all three tasks, including decisions made along the way and what was changed
+after seeing results. Task 1 numbers are from `results/scores_hao.csv` unless stated. Conditions added after
+earlier results had been seen are marked post hoc.
 
 ## Task 1 pilot: PBMC3k (8 cell types)
 
@@ -129,7 +131,7 @@ Models are compared only on (question, run) pairs answered by all three models: 
   - Effect (600 Hao questions): plain Claude strict 32.5% -> 32.7%, lenient 54.9% -> 54.7%; GPT-5.6
     strict 27.2% -> 27.0%, lenient 47.8% -> 47.5%; 96-question subset, plain Claude lenient 53.6% ->
     52.6%. Gemini, the agents and the lookups are unchanged. All numbers in this file use the new rule;
-    the "Effect of the fix" table above is historical (the state after the earlier fix).
+    the "Effect of the fix" table below is historical (the state after the earlier fix).
   - **Not yet done:** answers with "/" or "or" alternatives but no "likely" (509 distinct answers) still
     carry labels from the earlier rule text, which named "or Y" but not "X/Y"; some are inconsistent
     (e.g. three "effector/central memory CD8" variants -> CD8 TCM, one -> CD8 T cell (subtype unclear)).
@@ -172,7 +174,7 @@ Models are compared only on (question, run) pairs answered by all three models: 
 - **Agreement:** exact label 90.9%, same lineage 97.4%. Decisions first made via OpenRouter (recently, under the
   final rule text): 99.4% exact, 100% lineage. Decisions first made via the Anthropic API: 89.5% exact, 96.9%
   lineage (88.2% for answers with "/" or "or" alternatives, 91.8% without). The two routes are confounded with
-  time: many Anthropic-route labels were made before later rule changes (see "Rule changes" above; the 509
+  time: many Anthropic-route labels were made before later rule changes (see "What was changed after the hand-check" and the "likely" rule above; the 509
   alternative-wording answers were never re-judged), so this gap cannot be attributed to the route alone.
 - **Disagreements** are mostly ambiguous memory/effector wordings that the second pass maps to "subtype
   unclear": CD8 TEM -> CD8 T cell (subtype unclear) 28, CD4 TCM -> CD4 T cell (subtype unclear) 15, CD8 TCM
@@ -235,12 +237,12 @@ points below the lookup (tie-break) and 0.5 points above it (fractional); Gemini
 points below it (5.5-6.2 fractional, 6.7-7.3 tie-break). Each LLM loses 9.3-15.7 points when the same genes are given as
 Ensembl IDs instead of symbols; the lookup loses nothing, because it converts IDs to symbols first.
 
-## Agent conditions (Hao, Claude only)
+## Agent conditions (Hao)
 
 - **Subset** (`src/agent_subset.py`, seed 0, `data/agent_subset_hao.json`): 48 base questions, each in
   both formats (96 total, paired by format); 12 base questions per knob, spread evenly over levels;
   cell types dealt from a shuffled deck, so all 30 appear (2-4 questions each). Noise is included.
-- **Agents** (`src/run_agent.py`): LangGraph prebuilt ReAct agent (`create_react_agent`, LangGraph
+- **Agents** (`src/run_agent.py`; the GPT and Gemini versions are described further below): LangGraph prebuilt ReAct agent (`create_react_agent`, LangGraph
   1.2.12; marked deprecated in favour of `langchain.agents.create_agent` but functional) around
   `claude-sonnet-5` via the Anthropic API (langchain-anthropic 1.7.4), same prompt (`src/prompts.py`,
   shared with plain Claude), no temperature, default thinking, max_tokens 4000, same JSON parsing.
@@ -290,7 +292,7 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
 - Symbol vs Ensembl gap: specialist 4.3 points (43.3% vs 39.0%) vs 9.3 for plain Claude (37.3% vs 28.0%).
 - 1.3 tool calls per question on average; $0.011 per question ($6.78 for the 600); 6.6 s mean latency.
 
-### specialist_nudge — a SEPARATE condition, added AFTER the error analysis (post hoc)
+### specialist_nudge (post hoc, added after the error analysis)
 
 - **Why it exists:** in the error analysis of the specialist's 59 wrong answers (96-question subset),
   21 were "no_cellmarker": the agent converted Ensembl IDs with `gene_info` and answered without
@@ -336,14 +338,15 @@ plain Claude and the lookup were compared on - with `run_agent.py specialist --q
   reverse on 1 (sign test p = 0.0005); Gemini 11 vs 3 (p = 0.057). Vs Claude's agent: GPT 8 vs 3
   (p = 0.227); Gemini 4 vs 4 (p = 1.000).
 
-## Open decisions
+## Unresolved scoring choices
 
-- **"memory/effector":** your hand-check labelled "CD8+ memory/effector T cells (KLRB1+ GZMK+ subset,
+- **"memory/effector":** the hand-check labelled "CD8+ memory/effector T cells (KLRB1+ GZMK+ subset,
   possibly MAIT-like)" as CD8 TEM (reading "memory/effector" as effector memory). Under the strict
   "X/Y alternatives are ignored" rule it would be CD8 T cell (subtype unclear), which is what the judge
-  now answers. The test set keeps the hand-check label until this is decided.
-- **Re-judge the "/" and "or" answers** under the current rule text (needs Anthropic credit, ~500
-  judge calls) - see the "likely" rule above.
+  now answers. The test set keeps the hand-check label; it is the one miss in the 40/41 test-set score.
+- **The "/" and "or" answers** (509 distinct answers) were not re-judged under the final rule text. The
+  second judge pass ("Judge check" above) shows how much this matters: at most 1.5 points on the headline
+  scores.
 
 ---
 
@@ -473,7 +476,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 - Direction biases (what the models answered on true up / true down questions): Claude answered up
   21 / 17 times and down 3 / 7; GPT and Gemini answered down more than up in both.
 
-## Post hoc condition A (SEPARATE, added after the Claude agent results): the Task 2 specialist agent with GPT and Gemini
+## Post hoc condition A: the Task 2 specialist agent with GPT and Gemini (added after the Claude agent results)
 - Same tools, question text, limits (5 tool calls, 2-minute timeout) and parser as the Claude agent; models
   GPT-5.6 Terra and Gemini 3.8 Flash via OpenRouter at temperature 0 (`run_agent_task2.py --model openai/...`
   / `google/...`), all 200 questions, one run each. 3 GPT questions hit OpenRouter rate limits (429) and were
@@ -494,7 +497,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
   direction accuracy, as Claude did (4 vs 19, p = 0.003).
 - **Vs Claude's agent:** GPT agent 3-class 16 vs 7 (p = 0.093), direction 16 vs 4 (p = 0.012); Gemini agent
   3-class 6 vs 5 (p = 1.0), direction 6 vs 3 (p = 0.508).
-- **Weak co-expression read as no_change - yes, for both.** When the (X, Y) control-cell correlation it
+- **Weak co-expression read as no_change:** when the (X, Y) control-cell correlation it
   queried was weak (|r| <= 0.05), the GPT agent answered no_change 85% of the time (n = 162) and the Gemini
   agent 89% (n = 177; Claude's agent 94%). This was the largest class of wrong answers: 81 of GPT's 113 and
   98 of Gemini's 121 (Claude's agent: 105 of 122). When |r| > 0.05 and they answered up/down, they
@@ -585,7 +588,11 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 
 ### Consistency across runs (7 per model; the failed run counts as 0)
 
-| Model | Runs with labels | Strict mean (SD) | Strict range | Lenient mean | ARI mean (SD) | ARI range | Labels range | Steps mean | Code errors per run | Cost per run (est.) |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Claude Sonnet 5 | 7/7 | 95.3% (2.3%) | 92.5%-97.1% | 95.3% | 0.87 (0.12) | 0.62-0.94 | 8-9 | 12.1 | 0.4 | $0.191 |\n| GPT-5.6 Terra | 7/7 | 91.1% (3.5%) | 84.3%-94.2% | 91.1% | 0.75 (0.12) | 0.58-0.87 | 7-10 | 9.7 | 0.9 | $0.148 |\n| Gemini 3.8 Flash | 6/7 | 53.9% (37.0%) | 0.0%-93.1% | 65.2% | 0.81 (0.09) | 0.63-0.87 | 6-9 | 15.0 | 3.7 | $0.077 |
+| Model | Runs with labels | Strict mean (SD) | Strict range | Lenient mean | ARI mean (SD) | ARI range | Labels range | Steps mean | Code errors per run | Cost per run (est.) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Claude Sonnet 5 | 7/7 | 95.3% (2.3%) | 92.5%-97.1% | 95.3% | 0.87 (0.12) | 0.62-0.94 | 8-9 | 12.1 | 0.4 | $0.191 |
+| GPT-5.6 Terra | 7/7 | 91.1% (3.5%) | 84.3%-94.2% | 91.1% | 0.75 (0.12) | 0.58-0.87 | 7-10 | 9.7 | 0.9 | $0.148 |
+| Gemini 3.8 Flash | 6/7 | 53.9% (37.0%) | 0.0%-93.1% | 65.2% | 0.81 (0.09) | 0.63-0.87 | 6-9 | 15.0 | 3.7 | $0.077 |
 
 ## Failure classes
 - **Clustering - CD8 T cells partly merged into a CD4-majority cluster:** 10 of 21 runs (Claude 3, GPT 5,
@@ -621,7 +628,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 - **PBMC3k is a famous tutorial dataset** (the scanpy and Seurat introductory tutorial) and the answer key
   is itself the tutorial pipeline's output; models may have memorised the workflow and its cell types.
   Claude and Gemini reproduced the tutorial QC thresholds exactly in every successful run.
-- One dataset, one instruction, 7 runs per model; no temperature control; the step and cost limits shape
+- One instruction and 7 runs per model (the Hao dataset below is a second test); no temperature control; the step and cost limits shape
   behaviour (Gemini's failures are mostly step-budget failures).
 - ARI compares with 8 tutorial clusters, so reasonable finer splits are penalised.
 
@@ -701,7 +708,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
   A network outage and a full disk also interrupted runs; both are handled now (balance checks retry; each
   run deletes the agent's intermediate .h5ad files after its results are copied).
 
-## Post hoc condition B (SEPARATE, added after the 15-step results): 30-step cap on Hao, Claude and GPT
+## Post hoc condition B: 30-step cap on Hao, Claude and GPT (added after the 15-step results)
 - Identical to the 15-step runs except the step cap (30); 5 runs per model; $1.50 per-run cap unchanged
   (`task3_agent.py --dataset hao --max-steps 30`, results in `results/task3_hao_30steps/`).
 
@@ -730,7 +737,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 - **The remaining errors are decision errors:** the same T-cell confusions persist with 30 steps (CD8 T cells
   given CD4-lineage labels: Claude 55%, GPT 52%; "other T" called CD4/CD8: Claude 81%, GPT 58%).
 
-## Post hoc condition C (SEPARATE, added after the Gemini failures): Gemini with a stateful Python tool
+## Post hoc condition C: Gemini with a stateful Python tool (added after the Gemini failures)
 - Same as the main runs but `run_python` runs in one persistent sandboxed Python session per run (variables
   persist, like a notebook; same sandbox profile, 60 s per call, output truncation; a timeout restarts the
   session and says so). The tool description says variables persist. 7 runs on PBMC3k and 7 on Hao
@@ -773,7 +780,7 @@ Direction accuracy is on the 134 up/down questions; matched pairs are the 30 exp
 | Judge check (second pass, 1,140 decisions; from the OpenRouter balance, not logged per call) | $5.63 |
 
 Not logged: LLM-judge calls, one-question tests, and runs discarded before cost logging was added.
-For the runs added in this round (the last six rows, $13.46 logged) the OpenRouter balance fell by $16.80
+For the later runs (the last six rows above the total, $13.46 logged) the OpenRouter balance fell by $16.80
 ($26.40 -> $9.60). Most of the difference is the Task 3 Hao runs that were overwritten by the resume bug
 (see "Run-record note"), plus judge calls routed through OpenRouter.
 

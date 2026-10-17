@@ -37,7 +37,7 @@ including what was decided after seeing results.
 | Path | Contents |
 |---|---|
 | [`methods.md`](methods.md) | Full methods, every result table, decision log, disclosures |
-| [`failures.md`](failures.md) | Annotated examples of wrong answers from the PBMC3k pilot |
+| [`failures.md`](failures.md) | Examples of how the models and baselines get things wrong, with question IDs |
 | `src/` | All code: data preparation, question building, model and agent runs, judge, scoring, figures |
 | `data/` | Question sets, label lists and answer keys (large raw files are git-ignored; see below) |
 | `results/` | Every model answer (CSV, one row per question), agent trajectories, scores, judge cache |
